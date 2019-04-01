@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.tin.data.Consultation
+import com.example.tin.data.ConsultationType
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.view.*
 
 
@@ -23,25 +24,26 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class ReserveConsultationFragment : Fragment() {
+class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter.ActionListener {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
     private lateinit var recyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
-    private lateinit var viewManager: LinearLayoutManager
 
     private val consultations = listOf(
-        Consultation("Dr. inż. Gawkowski", "12.00", "12.15", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.15", "12.30", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.30", "12.45", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.45", "13.00", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "16.45", "17.15", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "17.15", "17.30", "21.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.00", "12.15", "22.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.15", "12.30", "22.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.30", "12.45", "22.03.2019"),
-        Consultation("Dr. inż. Gawkowski", "12.45", "13.00", "22.03.2019")
+        Consultation("Dr. inż. Gawkowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.15", "12.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.30", "12.45", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.45", "13.00", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "16.45", "17.15", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "17.15", "17.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.00", "12.15", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.15", "12.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.30", "12.45", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "12.45", "13.00", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "13.00", "13.15", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("Dr. inż. Gawkowski", "13.15", "13.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +52,7 @@ class ReserveConsultationFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        recyclerAdapter = MyRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})))
-        viewManager = LinearLayoutManager(context)
+        recyclerAdapter = FreeConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), this)
     }
 
     override fun onCreateView(
@@ -63,9 +64,29 @@ class ReserveConsultationFragment : Fragment() {
         view.recyclerView.apply {
             setHasFixedSize(true)
             adapter = recyclerAdapter
-            layoutManager = viewManager
+            layoutManager = LinearLayoutManager(context)
         }
         return view
+    }
+
+    override fun addBefore(day:String, endTime: String) {
+        (context as ActionListener).addBefore(day, endTime)
+    }
+
+    override fun addAfter(day: String, startTime: String) {
+        (context as ActionListener).addAfter(day, startTime)
+    }
+
+    override fun reserve() {
+        (context as ActionListener).reserve()
+    }
+
+    interface ActionListener {
+        fun addBefore(day: String, endTime: String)
+
+        fun addAfter(day: String, startTime: String)
+
+        fun reserve()
     }
 
     companion object {

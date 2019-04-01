@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".SuggestConsultationFragment" android:id="@+id/layout">
+    <ProgressBar
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/add_progress"
+            android:visibility="gone" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+    />
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/add_consultation_form">
+
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="168dp" app:layout_constraintHorizontal_bias="0.497"
+                android:id="@+id/textInputLayout2" android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toTopOf="@+id/textInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                    android:id="@+id/start_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Start Time"
+                    android:inputType="time"
+                    android:maxLines="1"
+                    android:singleLine="true" android:text="12:00"/>
+
+        </android.support.design.widget.TextInputLayout>
+        <Button
+                android:text="Suggest consultation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/suggest_button" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="161dp"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="162dp"
+                android:layout_marginTop="62dp" app:layout_constraintTop_toBottomOf="@+id/textInputLayout"/>
+        <Spinner
+                android:layout_width="395dp"
+                android:layout_height="59dp"
+                android:id="@+id/lecturer_spinner" android:spinnerMode="dialog" android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="61dp" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp" android:layout_marginBottom="48dp"
+                app:layout_constraintBottom_toTopOf="@+id/textInputLayout2"/>
+        <android.support.design.widget.TextInputLayout
+                android:layout_width="200dp"
+                android:layout_height="0dp" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="256dp" app:layout_constraintHorizontal_bias="0.497"
+                android:id="@+id/textInputLayout">
+
+            <android.support.design.widget.TextInputEditText
+                    android:id="@+id/end_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="End Time"
+                    android:inputType="time"
+                    android:maxLines="1"
+                    android:singleLine="true" android:text="12:00"/>
+
+        </android.support.design.widget.TextInputLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

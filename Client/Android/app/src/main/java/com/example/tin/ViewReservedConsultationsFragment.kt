@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.tin.data.Consultation
+import com.example.tin.data.ConsultationType
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.view.*
 
 
@@ -31,11 +32,10 @@ class ViewReservedConsultationsFragment : Fragment() {
     private var param2: String? = null
 
     private lateinit var recyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
-    private lateinit var viewManager: LinearLayoutManager
 
     private val consultations = listOf(
-        Consultation("Dr. inż. Kozdrowski", "12.00", "12.15", "21.03.2019"),
-        Consultation("Dr. inż. Kozdrowski", "12.15", "12.30", "21.03.2019")
+        Consultation("Dr. inż. Kozdrowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("Dr. inż. Kozdrowski", "12.15", "12.30", "21.03.2019", ConsultationType.LECTURER_SUGGESTED)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +44,7 @@ class ViewReservedConsultationsFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        recyclerAdapter = MyRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})))
-        viewManager = LinearLayoutManager(context)
+        recyclerAdapter = MyBookedConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})))
     }
 
     override fun onCreateView(
@@ -57,7 +56,7 @@ class ViewReservedConsultationsFragment : Fragment() {
         view.recyclerView.apply {
             setHasFixedSize(true)
             adapter = recyclerAdapter
-            layoutManager = viewManager
+            layoutManager = LinearLayoutManager(context)
         }
         return view
     }

@@ -7,12 +7,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.tin.data.CredentialsManager
+import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ReserveConsultationFragment.ActionListener {
 
-
+    private var credential: Credential? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (savedInstanceState != null) {
             return
         }
+        credential = intent.extras.get("Credential") as Credential?
     }
 
     override fun onBackPressed() {
@@ -68,15 +71,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ViewReservedConsultationsFragment.newInstance("", ""))
                     .addToBackStack(null).commit()
             }
+            R.id.suggest_consultation -> {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, ""))
+                    .addToBackStack(null).commit()
+            }
             R.id.nav_share -> {
 
             }
-            R.id.nav_send -> {
-
+            R.id.log_out -> {
+                CredentialsManager(this).deleteCredentials(credential)
+                finish()
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun addBefore(day: String, endTime: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, endTime, ""))
+            .addToBackStack(null).commit()
+    }
+
+    override fun addAfter(day: String, startTime: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(startTime, null, ""))
+            .addToBackStack(null).commit()
+    }
+
+    override fun reserve() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
