@@ -1,6 +1,7 @@
 package com.example.tin
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -9,10 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.example.tin.data.Consultation
 import com.example.tin.data.ConsultationType
 
 class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultation>, private val actionListener: ActionListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private lateinit var context: Context
 
     interface ActionListener {
         fun addBefore(day: String, endTime: String)
@@ -23,6 +27,7 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        context = parent.context
         return when (viewType) {
             0 -> {
                 StudentSuggestedRecyclerViewHolder(LayoutInflater.from(parent.context)
@@ -42,11 +47,28 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val consultation = consultations[position]
         var endTime = consultation.endTime
+        holder.itemView.elevation = 20.0f
+        holder.itemView.findViewById<TextView>(R.id.person).text = consultation.person
+        holder.itemView.findViewById<TextView>(R.id.day).text = consultation.day
+        holder.itemView.setOnTouchListener(object: OnSwipeTouchListener(context) {
+            override fun onSwipeRight() {
+            }
+
+            override fun onSwipeLeft() {
+
+            }
+
+            override fun onSwipeBottom() {
+
+            }
+
+            override fun onSwipeTop() {
+                Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
+            }
+        })
         when (holder) {
             is LecturerSuggestedRecyclerViewHolder -> {
-                holder.itemView.elevation = 20.0f
-                holder.itemView.findViewById<TextView>(R.id.person).text = consultation.person
-                holder.itemView.findViewById<TextView>(R.id.day).text = consultation.day
+
                 holder.itemView.findViewById<TextView>(R.id.start_time).text = "${consultation.startTime} - ${consultation.endTime}"
                 holder.itemView.findViewById<Button>(R.id.reservation_button).setOnClickListener { v ->
                     Log.d("Adapter", "Clicked $position")
@@ -70,15 +92,13 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
                         }
                     }
                 }
-                holder.itemView.elevation = 20.0f
-                holder.itemView.findViewById<TextView>(R.id.person).text = consultation.person
-                holder.itemView.findViewById<TextView>(R.id.day).text = consultation.day
+
                 holder.itemView.findViewById<TextView>(R.id.start_time).text = "${consultation.startTime} - $endTime"
                 holder.itemView.findViewById<Button>(R.id.add_after_button).setOnClickListener {
-                    actionListener.addAfter("", endTime)
+                    actionListener.addAfter(consultation.day, endTime)
                 }
                 holder.itemView.findViewById<Button>(R.id.add_before_button).setOnClickListener {
-                    actionListener.addBefore("", consultation.startTime)
+                    actionListener.addBefore(consultation.day, consultation.startTime)
                 }
             }
         }

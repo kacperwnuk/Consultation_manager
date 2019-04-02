@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .addToBackStack(null).commit()
             }
             R.id.suggest_consultation -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, ""))
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, null, ""))
                     .addToBackStack(null).commit()
             }
             R.id.nav_share -> {
@@ -89,12 +89,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun addBefore(day: String, endTime: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, endTime, ""))
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, endTime, day, ""))
             .addToBackStack(null).commit()
     }
 
     override fun addAfter(day: String, startTime: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(startTime, null, ""))
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(startTime, null, day,""))
             .addToBackStack(null).commit()
     }
 

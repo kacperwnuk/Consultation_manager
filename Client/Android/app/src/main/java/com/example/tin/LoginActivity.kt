@@ -156,7 +156,7 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000)
+                Thread.sleep(200)
             } catch (e: InterruptedException) {
                 return false
             }
