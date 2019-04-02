@@ -13,6 +13,11 @@
 class Consultation {
 private:
     long long id;
+    int lecturerId;
+    std::string room;
+    long long studentId;
+    ConsultationStatus consultationStatus;
+    ConsultationType consultationType;
 public:
     long long int getId() const;
 
@@ -41,14 +46,6 @@ public:
     void book(Account);
 
     void free();
-
-private:
-    int lecturerId;
-
-    std::string room;
-    long long studentId;
-    ConsultationStatus consultationStatus;
-    ConsultationType consultationType;
 };
 
 
