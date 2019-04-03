@@ -9,27 +9,49 @@
 #include <pthread.h>
 #include <vector>
 #include <poll.h>
+#include <map>
 #include "ServerSocket.h"
 #include "SynchronizedVector.h"
+#include "ThreadArgs.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 using namespace std;
 
+enum StringValue {
+    stopCommand,
+    restartCommand
+};
+std::map<std::string, StringValue> s_mapStringValues;
+
+void initialize() {
+    s_mapStringValues["stop"] = stopCommand;
+    s_mapStringValues["restart"] = restartCommand;
+}
+
+//constexpr unsigned int hash(const char *str, int h = 0) {
+//    return !str[h] ? 5381 : (::hash(str, h + 1) * 33) ^ str[h];
+//}
+
 void *connectionListener(void *args) {
-    while (true) {
-        auto sockets = static_cast<SynchronizedVector<int> *>(args);
+    auto *threadArgs = static_cast<ThreadArgs *>(args);
+    auto sockets = threadArgs->getSockets();
+    auto stopCond = threadArgs->getStopCond();
+    while (*stopCond) {
         ServerSocket serverSocket(9999);
-        cout << serverSocket.getPort() << flush;
-        int clientSocket = serverSocket.acceptConnection();
-        sockets->put(clientSocket);
+        int clientSocket;
+        if ((clientSocket = serverSocket.acceptConnection()) != -1) {
+            sockets->put(clientSocket);
+        }
     }
+    cout << "Listener stopped" << endl;
 }
 
 void *dataHandler(void *args) {
-    auto sockets = static_cast<SynchronizedVector<int> *>(args);
+    auto *threadArgs = static_cast<ThreadArgs *>(args);
+    auto sockets = threadArgs->getSockets();
+    auto stopCond = threadArgs->getStopCond();
     do {
-        cout << sockets->getSize() << flush;
         auto tmpSockets = sockets->getAll();
         auto numberOfSockets = tmpSockets->size();
         struct pollfd pollList[numberOfSockets];
@@ -58,24 +80,43 @@ void *dataHandler(void *args) {
                 if (rval == 0) {
                     printf("Ending connection\n");
                     sockets->erase(pollList[i].fd);
-                }
-                else
+                    close(pollList[i].fd);
+                } else
                     printf("%d-->%s\n", pollList[i].fd, buf);
                 fflush(stdout);
             }
         }
-    } while (true);
+    } while (*stopCond);
+    cout << "data handler stopped" << endl;
 }
 
 int main() {
     auto *sockets = new SynchronizedVector<int>();
-    pthread_t listenerThread, dataHandlerThread;
-    pthread_create(&listenerThread, nullptr, connectionListener, sockets);
-    pthread_create(&dataHandlerThread, nullptr, dataHandler, sockets);
+    auto *listenerRunning = new bool(true);
+    auto *dataHandlerRunning = new bool(true);
+    auto running = true;
+    ThreadArgs listenerThreadArgs(sockets, listenerRunning);
+    ThreadArgs dataHandlerThreadArgs(sockets, dataHandlerRunning);
+    pthread_t listenerThread, dataHandlerThread, adminConsoleThread;
+    pthread_create(&listenerThread, nullptr, connectionListener, &listenerThreadArgs);
+    pthread_create(&dataHandlerThread, nullptr, dataHandler, &dataHandlerThreadArgs);
+    initialize();
+    char value[256];
+    while (running) {
+        cin >> value;
+        switch (s_mapStringValues[value]) {
+            case stopCommand:
+                *listenerRunning = false;
+                *dataHandlerRunning = false;
+                cout << "Stopping" << endl;
+                running = false;
+                break;
+            default:
+                break;
+        }
+    }
     pthread_join(listenerThread, nullptr);
     pthread_join(dataHandlerThread, nullptr);
-    cout << sockets->get(0) << flush;
-    cout << "Hello, World!" << endl;
     return 0;
 }
 

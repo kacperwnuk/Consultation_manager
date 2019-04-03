@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <unistd.h>
+#include <poll.h>
 #include "ServerSocket.h"
 
 ServerSocket::ServerSocket(in_port_t port) {
@@ -25,7 +26,7 @@ ServerSocket::ServerSocket(in_port_t port) {
         exit(1);
     }
 
-    if (getsockname(serverSocket,(struct sockaddr *) &serverAddress, &length)
+    if (getsockname(serverSocket, (struct sockaddr *) &serverAddress, &length)
         == -1) {
         perror("getting serverSocket name");
         exit(1);
@@ -35,10 +36,19 @@ ServerSocket::ServerSocket(in_port_t port) {
 }
 
 int ServerSocket::acceptConnection() {
-    int clientSocket = accept(serverSocket,(struct sockaddr *) nullptr,(socklen_t *) nullptr);
-    if (clientSocket == -1 )
-        perror("acceptConnection");
-    return clientSocket;
+    struct pollfd inputConnection;
+    inputConnection.fd = serverSocket;
+    inputConnection.events = POLLIN;
+    auto retval = poll(&inputConnection, 1, 200);
+    if (retval >= 0) {
+        if ((inputConnection.revents & POLLIN) == POLLIN) {
+            int clientSocket = accept(serverSocket, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
+            if (clientSocket == -1)
+                perror("acceptConnection");
+            return clientSocket;
+        }
+    }
+    return -1;
 }
 
 ServerSocket::~ServerSocket() {
