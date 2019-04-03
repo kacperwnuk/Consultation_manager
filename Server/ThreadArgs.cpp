@@ -4,15 +4,13 @@
 
 #include "ThreadArgs.h"
 
-ThreadArgs::ThreadArgs(SynchronizedVector<int> *sockets, bool *stopCond) {
-    this->sockets = sockets;
-    this->stopCond = stopCond;
+ThreadArgs::ThreadArgs(SynchronizedVector<int> &sockets, bool &stopCond): stopCond(stopCond), sockets(sockets) {
 }
 
-SynchronizedVector<int> *ThreadArgs::getSockets() {
+SynchronizedVector<int> &ThreadArgs::getSockets() {
     return sockets;
 }
 
-bool *ThreadArgs::getStopCond() {
+bool &ThreadArgs::getStopCond() {
     return stopCond;
 }
