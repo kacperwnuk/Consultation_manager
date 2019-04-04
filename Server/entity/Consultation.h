@@ -5,35 +5,45 @@
 #ifndef SERVER_CONSULTATION_H
 #define SERVER_CONSULTATION_H
 
+#include <ctime>
 #include <string>
 #include "enums/ConsultationStatus.h"
 #include "enums/ConsultationType.h"
 #include "Account.h"
 
-class Consultation {
+
+class Consultation: public Entity {
 private:
-    long long id;
-    int lecturerId;
+
+    oid id;
+    oid lecturerId;
     std::string room;
-    long long studentId;
+    oid studentId;
     ConsultationStatus consultationStatus;
     ConsultationType consultationType;
+    b_date consultationDate;
+
 public:
-    long long int getId() const;
 
-    void setId(long long int id);
+    Consultation(oid, std::string, oid, ConsultationStatus, ConsultationType, b_date);
 
-    int getLecturerId() const;
+    Consultation(document_view_or_value);
 
-    void setLecturerId(int lecturerId);
+    bsoncxx::document::view_or_value getDocumentFormat() override;
+
+    oid getId() const;
+
+    oid getLecturerId() const;
+
+    void setLecturerId(oid lecturerId);
 
     const std::string &getRoom() const;
 
     void setRoom(const std::string &room);
 
-    long long int getStudentId() const;
+    oid getStudentId() const;
 
-    void setStudentId(long long int studentId);
+    void setStudentId(oid studentId);
 
     ConsultationStatus getConsultationStatus() const;
 
@@ -42,6 +52,10 @@ public:
     ConsultationType getConsultationType() const;
 
     void setConsultationType(ConsultationType consultationType);
+
+    const b_date &getConsultationDate() const;
+
+    void setConsultationDate(const b_date &consultationDate);
 
     void book(Account);
 

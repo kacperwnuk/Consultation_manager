@@ -7,12 +7,15 @@
 
 
 #include <string>
+#include <bsoncxx/document/view_or_value.hpp>
 #include "enums/AccountRole.h"
 #include "enums/AccountStatus.h"
+#include "Entity.h"
 
-class Account {
+class Account: public Entity {
 private:
-    long long id;
+
+    oid id;
     std::string emailAddress;
     std::string login;
     std::string passwordHash;
@@ -20,10 +23,16 @@ private:
     std::string surname;
     AccountRole accountRole;
     AccountStatus accountStatus;
-public:
-    long long int getId() const;
 
-    void setId(long long int id);
+public:
+
+    Account(std::string&, std::string&, std::string&, std::string&, std::string&, AccountRole, AccountStatus);
+
+    Account(document_view_or_value);
+
+    document_view_or_value getDocumentFormat() override;
+
+    const bsoncxx::oid &getId() const;
 
     const std::string &getEmailAdress() const;
 

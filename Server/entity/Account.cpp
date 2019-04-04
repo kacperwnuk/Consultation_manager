@@ -4,12 +4,8 @@
 
 #include "Account.h"
 
-long long int Account::getId() const {
+const bsoncxx::oid &Account::getId() const {
     return id;
-}
-
-void Account::setId(long long int id) {
-    Account::id = id;
 }
 
 const std::string &Account::getEmailAdress() const {
@@ -67,3 +63,45 @@ AccountStatus Account::getAccountStatus() const {
 void Account::setStatus(AccountStatus accountStatus) {
     Account::accountStatus = accountStatus;
 }
+
+Account::Account(std::string &email, std::string &login, std::string &passwordHash,
+                 std::string &name,
+                 std::string &surname, AccountRole role, AccountStatus status) : emailAddress(std::move(email)),
+                                                                                 login(std::move(login)),
+                                                                                 passwordHash(std::move(passwordHash)),
+                                                                                 name(std::move(name)),
+                                                                                 surname(std::move(surname)),
+                                                                                 accountRole(role),
+                                                                                 accountStatus(status) {
+}
+
+document_view_or_value Account::getDocumentFormat() {
+    auto builder = bsoncxx::builder::stream::document{};
+    bsoncxx::document::value docValue = builder
+            << "email" << this->emailAddress
+            << "login" << this->login
+            << "password" << this->passwordHash
+            << "name" << this->name
+            << "surname" << this->surname
+            << "accountRole" << this->accountRole
+            << "accountStatus" << this->accountStatus
+            << bsoncxx::builder::stream::finalize;
+
+    return docValue;
+}
+
+Account::Account(document_view_or_value document) {
+    auto stringValue = bsoncxx::to_json(document);
+    Json::Reader reader;
+    Json::Value jsonValue;
+    reader.parse(stringValue, jsonValue);
+    this->id = bsoncxx::oid(jsonValue["_id"]["$oid"].asString());
+    this->emailAddress = jsonValue["email"].asString();
+    this->login = jsonValue["login"].asString();
+    this->passwordHash = jsonValue["password"].asString();
+    this->name = jsonValue["name"].asString();
+    this->surname = jsonValue["surname"].asString();
+    this->accountRole = AccountRole(jsonValue["accountRole"].asInt());
+    this->accountStatus = AccountStatus(jsonValue["accountStatus"].asInt());
+}
+
