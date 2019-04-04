@@ -6,7 +6,7 @@
 #define SERVER_SYNCHRONIZEDVECTOR_H
 
 
-#include "monitor.h"
+#include "../monitor.h"
 #include <vector>
 #include <algorithm>
 
@@ -50,8 +50,6 @@ void SynchronizedVector<T>::erase(T value) {
     values.erase(position);
     leave();
 }
-
-
 
 template<typename T>
 unsigned long SynchronizedVector<T>::getSize() {

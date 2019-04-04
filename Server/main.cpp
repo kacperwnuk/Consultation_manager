@@ -11,8 +11,8 @@
 #include <poll.h>
 #include <map>
 #include "ServerSocket.h"
-#include "SynchronizedVector.h"
-#include "ThreadArgs.h"
+#include "Containers/SynchronizedVector.h"
+#include "containers/ThreadArgs.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
