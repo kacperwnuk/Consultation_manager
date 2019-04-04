@@ -17,6 +17,10 @@
 #include "Dao.h"
 #include "entity/Account.h"
 #include "entity/Consultation.h"
+#include "containers/OutgoingMessage.h"
+#include "containers/SynchronizedQueue.h"
+#include "containers/OutThreadArgs.h"
+#include "containers/DataHandlerThreadArgs.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push
@@ -27,7 +31,7 @@ enum StringValue {
     stopCommand,
     restartCommand
 };
-std::map<std::string, StringValue> s_mapStringValues;
+map<string, StringValue> s_mapStringValues;
 
 void initialize() {
     s_mapStringValues["stop"] = stopCommand;
@@ -38,10 +42,21 @@ void initialize() {
 //    return !str[h] ? 5381 : (::hash(str, h + 1) * 33) ^ str[h];
 //}
 
+void *responseHandler(void *args) {
+    auto *threadArgs = static_cast<OutThreadArgs *>(args);
+    auto &messages = threadArgs->messages;
+    auto &stopCond = threadArgs->stopCond;
+    while (stopCond) {
+        auto message = messages.get();
+        cout << message.payload << endl;
+        write(message.fd, message.payload, (size_t) message.size);
+    }
+}
+
 void *connectionListener(void *args) {
     auto *threadArgs = static_cast<ThreadArgs *>(args);
-    auto &sockets = threadArgs->getSockets();
-    auto &stopCond = threadArgs->getStopCond();
+    auto &sockets = threadArgs->sockets;
+    auto &stopCond = threadArgs->stopCond;
     while (stopCond) {
         ServerSocket serverSocket(9999);
         int clientSocket;
@@ -53,13 +68,13 @@ void *connectionListener(void *args) {
 }
 
 void *dataHandler(void *args) {
-    auto *threadArgs = static_cast<ThreadArgs *>(args);
-    auto &sockets = threadArgs->getSockets();
-    auto &stopCond = threadArgs->getStopCond();
+    auto *threadArgs = static_cast<DataHandlerThreadArgs *>(args);
+    auto &sockets = threadArgs->sockets;
+    auto &stopCond = threadArgs->stopCond;
+    auto &messages = threadArgs->messages;
     do {
         auto &tmpSockets = sockets.getAll();
         auto numberOfSockets = tmpSockets.size();
-        cout << numberOfSockets << endl;
         struct pollfd pollList[numberOfSockets];
         for (auto i = 0; i < numberOfSockets; ++i) {
             pollList[i].fd = tmpSockets.at(i);
@@ -87,8 +102,10 @@ void *dataHandler(void *args) {
                     printf("Ending connection\n");
                     sockets.erase(pollList[i].fd);
                     close(pollList[i].fd);
-                } else
+                } else {
                     printf("%d-->%s\n", pollList[i].fd, buf);
+                    messages.put(OutgoingMessage(pollList[i].fd, buf, rval));
+                }
                 fflush(stdout);
             }
         }
@@ -156,15 +173,19 @@ void daoSamples(){
 
 
 int main() {
+    SynchronizedQueue<OutgoingMessage> outMessages;
     SynchronizedVector<int> sockets;
     auto listenerRunning = true;
     auto dataHandlerRunning = true;
+    auto responseHandlerRunning = true;
     auto running = true;
     ThreadArgs listenerThreadArgs(sockets, listenerRunning);
-    ThreadArgs dataHandlerThreadArgs(sockets, dataHandlerRunning);
-    pthread_t listenerThread, dataHandlerThread;
+    DataHandlerThreadArgs dataHandlerThreadArgs(outMessages, sockets, dataHandlerRunning);
+    OutThreadArgs outgoingMessagesThreadArgs(outMessages, responseHandlerRunning);
+    pthread_t listenerThread, dataHandlerThread, responseHandlerThread;
     pthread_create(&listenerThread, nullptr, connectionListener, &listenerThreadArgs);
     pthread_create(&dataHandlerThread, nullptr, dataHandler, &dataHandlerThreadArgs);
+    pthread_create(&responseHandlerThread, nullptr, responseHandler, &outgoingMessagesThreadArgs);
     initialize();
     char value[256];
     while (running) {
@@ -182,6 +203,7 @@ int main() {
     }
     pthread_join(listenerThread, nullptr);
     pthread_join(dataHandlerThread, nullptr);
+    pthread_join(responseHandlerThread, nullptr);
     return 0;
 }
 

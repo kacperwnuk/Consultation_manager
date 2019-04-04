@@ -18,6 +18,7 @@ public:
     T get();
     unsigned long getSize();
     std::queue<T> &getAll();
+    Condition isEmpty;
 };
 
 template<typename T>
@@ -28,13 +29,18 @@ template<typename T>
 void SynchronizedQueue<T>::put(T value) {
     enter();
     values.push(value);
+    if (values.size() == 1) {
+        signal(isEmpty);
+    }
     leave();
 }
 
 template<typename T>
 T SynchronizedQueue<T>::get() {
-    int value;
+    T value;
     enter();
+    if (values.size() == 0)
+        Monitor::wait(isEmpty);
     value = values.front();
     values.pop();
     leave();

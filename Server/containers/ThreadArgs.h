@@ -7,15 +7,13 @@
 
 
 #include "SynchronizedVector.h"
+#include "StoppableThreadArgs.h"
+#include "SocketOperatingThreadArgs.h"
 
-class ThreadArgs {
-private:
-    SynchronizedVector<int> &sockets;
-    bool &stopCond;
+class ThreadArgs: public StoppableThreadArgs, public SocketOperatingThreadArgs {
 public:
     ThreadArgs(SynchronizedVector<int> &, bool &);
-    SynchronizedVector<int> &getSockets();
-    bool &getStopCond();
+
 };
 
 #endif //SERVER_THREADARGS_H

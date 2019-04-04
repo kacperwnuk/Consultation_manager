@@ -20,7 +20,7 @@ include_directories("/usr/local/include/libbson-1.0")
 include_directories("/usr/local/lib")
 
 
-set(SOURCE_FILES main.cpp monitor.h Dao.cpp Dao.h dto/LoginRequest.cpp dto/LoginRequest.h entity/Consultation.cpp entity/Consultation.h entity/Account.cpp entity/Account.h entity/enums/AccountRole.h entity/enums/AccountStatus.h entity/enums/ConsultationType.h entity/enums/ConsultationStatus.h ServerSocket.cpp ServerSocket.h containers/SynchronizedVector.cpp containers/SynchronizedVector.h containers/ThreadArgs.cpp containers/ThreadArgs.h containers/SynchronizedQueue.cpp containers/SynchronizedQueue.h)
+set(SOURCE_FILES main.cpp monitor.h Dao.cpp Dao.h dto/LoginRequest.cpp dto/LoginRequest.h entity/Consultation.cpp entity/Consultation.h entity/Account.cpp entity/Account.h entity/enums/AccountRole.h entity/enums/AccountStatus.h entity/enums/ConsultationType.h entity/enums/ConsultationStatus.h ServerSocket.cpp ServerSocket.h containers/SynchronizedVector.cpp containers/SynchronizedVector.h containers/ThreadArgs.cpp containers/ThreadArgs.h containers/SynchronizedQueue.cpp containers/SynchronizedQueue.h containers/OutgoingMessage.cpp containers/OutgoingMessage.h containers/OutThreadArgs.cpp containers/OutThreadArgs.h containers/StoppableThreadArgs.cpp containers/StoppableThreadArgs.h containers/SocketOperatingThreadArgs.cpp containers/SocketOperatingThreadArgs.h containers/DataHandlerThreadArgs.cpp containers/DataHandlerThreadArgs.h)
 
 
 
