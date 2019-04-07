@@ -5,7 +5,7 @@
 #ifndef SERVER_SYNCHRONIZEDQUEUE_H
 #define SERVER_SYNCHRONIZEDQUEUE_H
 
-#include "../monitor.h"
+#include "../../monitor.h"
 #include <queue>
 
 template <typename T>

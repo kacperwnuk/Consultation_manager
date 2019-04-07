@@ -6,8 +6,8 @@
 #define SERVER_OUTTHREADARGS_H
 
 
-#include "SynchronizedQueue.h"
-#include "OutgoingMessage.h"
+#include "../synchronizedcontainers/SynchronizedQueue.h"
+#include "../OutgoingMessage.h"
 #include "StoppableThreadArgs.h"
 
 class OutThreadArgs: public StoppableThreadArgs {

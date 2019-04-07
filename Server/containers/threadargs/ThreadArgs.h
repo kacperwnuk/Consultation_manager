@@ -6,7 +6,7 @@
 #define SERVER_THREADARGS_H
 
 
-#include "SynchronizedVector.h"
+#include "../synchronizedcontainers/SynchronizedVector.h"
 #include "StoppableThreadArgs.h"
 #include "SocketOperatingThreadArgs.h"
 

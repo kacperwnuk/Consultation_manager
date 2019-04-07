@@ -6,7 +6,7 @@
 #define SERVER_SOCKETOPERATINGTHREADARGS_H
 
 
-#include "SynchronizedVector.h"
+#include "../synchronizedcontainers/SynchronizedVector.h"
 
 class SocketOperatingThreadArgs {
 public:

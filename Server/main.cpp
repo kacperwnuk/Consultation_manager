@@ -12,15 +12,16 @@
 #include <map>
 #include <bsoncxx/builder/stream/document.hpp>
 #include "ServerSocket.h"
-#include "containers/SynchronizedVector.h"
-#include "containers/ThreadArgs.h"
+#include "containers/synchronizedcontainers/SynchronizedVector.h"
+#include "containers/threadargs/ThreadArgs.h"
 #include "Dao.h"
 #include "entity/Account.h"
 #include "entity/Consultation.h"
 #include "containers/OutgoingMessage.h"
-#include "containers/SynchronizedQueue.h"
-#include "containers/OutThreadArgs.h"
-#include "containers/DataHandlerThreadArgs.h"
+#include "containers/synchronizedcontainers/SynchronizedQueue.h"
+#include "containers/threadargs/OutThreadArgs.h"
+#include "containers/threadargs/DataHandlerThreadArgs.h"
+#include "containers/threadargs/ListenerThreadArgs.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push
@@ -42,6 +43,13 @@ void initialize() {
 //    return !str[h] ? 5381 : (::hash(str, h + 1) * 33) ^ str[h];
 //}
 
+/**
+ * Thread sending messages from queue
+ * 
+ * @param args structure containing: reference to message queue with messages to send,
+ * reference to variable indicating wheather to stop or not
+ * @return 
+ */
 void *responseHandler(void *args) {
     auto *threadArgs = static_cast<OutThreadArgs *>(args);
     auto &messages = threadArgs->messages;
@@ -53,12 +61,20 @@ void *responseHandler(void *args) {
     }
 }
 
+/**
+ * Listener thread waiting for connections. When there is awaiting connection it is accepted and associated socket is added to vector of sockets
+ * 
+ * @param args structure containing: reference to vector with opened sockets, reference to variable indicating wheather to stop or not, 
+ * port on which to listen for connections
+ * @return 
+ */
 void *connectionListener(void *args) {
-    auto *threadArgs = static_cast<ThreadArgs *>(args);
+    auto *threadArgs = static_cast<ListenerThreadArgs *>(args);
     auto &sockets = threadArgs->sockets;
     auto &stopCond = threadArgs->stopCond;
+    auto port = threadArgs->port;
     while (stopCond) {
-        ServerSocket serverSocket(9999);
+        ServerSocket serverSocket(port);
         int clientSocket;
         if ((clientSocket = serverSocket.acceptConnection()) != -1) {
             sockets.put(clientSocket);
@@ -179,7 +195,7 @@ int main() {
     auto dataHandlerRunning = true;
     auto responseHandlerRunning = true;
     auto running = true;
-    ThreadArgs listenerThreadArgs(sockets, listenerRunning);
+    ListenerThreadArgs listenerThreadArgs(sockets, listenerRunning, 9999);
     DataHandlerThreadArgs dataHandlerThreadArgs(outMessages, sockets, dataHandlerRunning);
     OutThreadArgs outgoingMessagesThreadArgs(outMessages, responseHandlerRunning);
     pthread_t listenerThread, dataHandlerThread, responseHandlerThread;
