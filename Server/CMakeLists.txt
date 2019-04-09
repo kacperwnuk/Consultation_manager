@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(Server)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)

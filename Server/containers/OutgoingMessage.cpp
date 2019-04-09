@@ -4,7 +4,7 @@
 
 #include "OutgoingMessage.h"
 
-OutgoingMessage::OutgoingMessage(int fd, char *payload, int size): fd(fd), size(size) {
+OutgoingMessage::OutgoingMessage(int fd, const char *payload, int size): fd(fd), size(size) {
     std::copy(payload, payload + size, this->payload);
 }
 

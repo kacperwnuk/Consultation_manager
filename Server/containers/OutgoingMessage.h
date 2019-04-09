@@ -11,7 +11,7 @@
 class OutgoingMessage {
 public:
     OutgoingMessage();
-    OutgoingMessage(int, char *, int);
+    OutgoingMessage(int, const char *, int);
     int fd;
     char payload[1024];
     int size;

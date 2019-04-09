@@ -30,13 +30,19 @@ using namespace std;
 
 enum StringValue {
     stopCommand,
-    restartCommand
+    restartCommand,
+    changePortCommand,
+    sendToCommand,
+    gfhjlksdhg
 };
 map<string, StringValue> s_mapStringValues;
 
 void initialize() {
     s_mapStringValues["stop"] = stopCommand;
     s_mapStringValues["restart"] = restartCommand;
+    s_mapStringValues["changeport"] = changePortCommand;
+    s_mapStringValues["sendto"] = sendToCommand;
+    s_mapStringValues["gfhjlksdhg"] = gfhjlksdhg;
 }
 
 //constexpr unsigned int hash(const char *str, int h = 0) {
@@ -56,7 +62,6 @@ void *responseHandler(void *args) {
     auto &stopCond = threadArgs->stopCond;
     while (stopCond) {
         auto message = messages.get();
-        cout << message.payload << endl;
         write(message.fd, message.payload, (size_t) message.size);
     }
 }
@@ -205,6 +210,7 @@ int main() {
     initialize();
     char value[256];
     while (running) {
+        string message;
         cin >> value;
         switch (s_mapStringValues[value]) {
             case stopCommand:
@@ -212,6 +218,23 @@ int main() {
                 dataHandlerRunning = false;
                 cout << "Stopping" << endl;
                 running = false;
+                break;
+            case changePortCommand:
+                in_port_t port;
+                cin >> port;
+                listenerRunning = false;
+                pthread_join(listenerThread, nullptr);
+                listenerRunning = true;
+                listenerThreadArgs.port = port;
+                pthread_create(&listenerThread, nullptr, connectionListener, &listenerThreadArgs);
+                break;
+            case restartCommand:
+                break;
+            case sendToCommand:
+                int sock;
+                cin >> sock;
+                getline(cin, message);
+                outMessages.put(OutgoingMessage(sock, message.c_str() + 1, (int) message.size() - 1));
                 break;
             default:
                 break;
