@@ -22,6 +22,12 @@
 #include "containers/threadargs/OutThreadArgs.h"
 #include "containers/threadargs/DataHandlerThreadArgs.h"
 #include "containers/threadargs/ListenerThreadArgs.h"
+#include "serialization/Serializer.h"
+#include "dto/ConsultationResponse.h"
+#include "dto/ConsultationCancellationRequest.h"
+#include "serialization/Deserializer.h"
+#include "dto/enums/StatusType.h"
+#include "dto/LoginResponse.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push
@@ -141,17 +147,44 @@ void daoSamples(){
     auto collec = dao.getCollection();
     auto consultations = collec.find(bsoncxx::builder::stream::document{} << "room" << "315" << bsoncxx::builder::stream::finalize);
 
-    for(auto& cons : consultations){
+
+    std::vector<Consultation> listOfConsultations;
+    for(auto& cons : consultations) {
         Consultation consultation = Consultation(cons);
+        listOfConsultations.push_back(consultation);
+
+    }
+/*
+        //edytowanie czasu
         std::chrono::milliseconds time(1000);
         consultation.setConsultationDate(b_date(time));
         cout << consultation.getId().to_string() << " " << consultation.getConsultationDate() << endl;
 
         auto new_cons = consultation.getDocumentFormat();
         dao.updateDocument(cons, new_cons);
-    }
+*/
 
-    /*
+   /*
+    //obsługa serializacji i deserializacji
+    ConsultationResponse consultationResponse = ConsultationResponse(listOfConsultations);
+    Serializer serializer = Serializer();
+    serializer.serialize(consultationResponse);
+
+    Deserializer deserializer = Deserializer();
+    std::string jsonMsg = R"({"_id" : "5ca5fe3ab8c46c70543aff4c"})";
+    Json::Value value;
+    Json::Reader reader;
+    reader.parse(jsonMsg, value);
+    ConsultationCancellationRequest consultationCancellationRequest = deserializer.deserialize<ConsultationCancellationRequest>(value);
+    std::cout << consultationCancellationRequest.getConsultationId().to_string();
+
+    LoginResponse loginResponse = LoginResponse(StatusType::OK);
+    std::cout << loginResponse.getJson().toStyledString();
+   */
+
+   /*
+    //dodawanie konsultacji
+
     auto activeLecturers = dao.getAccountsByStatusAndRole(AccountStatus::ACTIVE, AccountRole::LECTURER);
 
     for (auto& lecturer : activeLecturers){
@@ -159,7 +192,7 @@ void daoSamples(){
     }
 
     auto coll = dao.getCollection();
-    auto student_doc = coll.find_one(bsoncxx::builder::stream::document{} << "login" << "lotr" << bsoncxx::builder::stream::finalize);
+    auto student_doc = coll.find_one(bsoncxx::builder::stream::document{} << "login" << "lotr2" << bsoncxx::builder::stream::finalize);
     auto lecturer_doc = coll.find_one(bsoncxx::builder::stream::document{} << "login" << "waldi" << bsoncxx::builder::stream::finalize);
 
     Account student = Account((*student_doc).view());
@@ -171,7 +204,7 @@ void daoSamples(){
     auto cons_doc = consultation.getDocumentFormat();
     dao.setCollection("consultation");
     dao.insertDocument(cons_doc);
-     */
+   */
 //
 //
 //    string name = "Waldemar";
@@ -194,6 +227,7 @@ void daoSamples(){
 
 
 int main() {
+
     SynchronizedQueue<OutgoingMessage> outMessages;
     SynchronizedVector<int> sockets;
     auto listenerRunning = true;

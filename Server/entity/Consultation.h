@@ -10,9 +10,10 @@
 #include "enums/ConsultationStatus.h"
 #include "enums/ConsultationType.h"
 #include "Account.h"
+#include "../serialization/Serializable.h"
 
 
-class Consultation: public Entity {
+class Consultation: public Entity, public Serializable {
 private:
 
     oid id;
@@ -28,6 +29,8 @@ public:
     Consultation(oid, std::string, oid, ConsultationStatus, ConsultationType, b_date);
 
     Consultation(document_view_or_value);
+
+    Json::Value getJson() override;
 
     bsoncxx::document::view_or_value getDocumentFormat() override;
 

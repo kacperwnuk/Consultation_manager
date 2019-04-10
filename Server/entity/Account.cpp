@@ -105,3 +105,18 @@ Account::Account(document_view_or_value document) {
     this->accountStatus = AccountStatus(jsonValue["accountStatus"].asInt());
 }
 
+Json::Value Account::getJson() {
+
+    Json::Value value;
+    value["_id"] = this->id.to_string();
+    value["emailAddress"] = this->emailAddress;
+    value["login"] = this->login;
+    value["passwordHash"] = this->passwordHash;
+    value["name"] = this->name;
+    value["surname"] = this->surname;
+    value["accountRole"] = this->accountRole;
+    value["accountStatus"] = this->accountStatus;
+
+    return value;
+}
+

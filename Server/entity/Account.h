@@ -11,8 +11,9 @@
 #include "enums/AccountRole.h"
 #include "enums/AccountStatus.h"
 #include "Entity.h"
+#include "../serialization/Serializable.h"
 
-class Account: public Entity {
+class Account: public Entity, public Serializable {
 private:
 
     oid id;
@@ -61,6 +62,8 @@ public:
     AccountStatus getAccountStatus() const;
 
     void setStatus(AccountStatus accountStatus);
+
+    Json::Value getJson() override;
 };
 
 

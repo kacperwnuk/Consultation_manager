@@ -60,7 +60,6 @@ void Consultation::free() {
 }
 
 
-
 const b_date &Consultation::getConsultationDate() const {
     return consultationDate;
 }
@@ -83,12 +82,14 @@ bsoncxx::document::view_or_value Consultation::getDocumentFormat() {
     return docValue;
 }
 
-Consultation::Consultation(oid lecturerId, std::string room, oid studentId, ConsultationStatus consultationStatus, ConsultationType consultationType, b_date consultationDate) :
-        lecturerId(lecturerId), room(room), studentId(studentId), consultationStatus(consultationStatus), consultationType(consultationType), consultationDate(consultationDate){
+Consultation::Consultation(oid lecturerId, std::string room, oid studentId, ConsultationStatus consultationStatus,
+                           ConsultationType consultationType, b_date consultationDate) :
+        lecturerId(lecturerId), room(room), studentId(studentId), consultationStatus(consultationStatus),
+        consultationType(consultationType), consultationDate(consultationDate) {
 
 }
 
-Consultation::Consultation(document_view_or_value document): consultationDate(std::chrono::system_clock::now()) {
+Consultation::Consultation(document_view_or_value document) : consultationDate(std::chrono::system_clock::now()) {
     auto stringValue = bsoncxx::to_json(document);
     Json::Reader reader;
     Json::Value jsonValue;
@@ -100,6 +101,20 @@ Consultation::Consultation(document_view_or_value document): consultationDate(st
     this->consultationStatus = ConsultationStatus(jsonValue["consultationStatus"].asInt());
     this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
     this->consultationDate = b_date(std::chrono::milliseconds(jsonValue["consultationDate"]["$date"].asLargestUInt()));
+}
+
+Json::Value Consultation::getJson() {
+
+    Json::Value value;
+    value["_id"] = this->id.to_string();
+    value["lecturerId"] = this->lecturerId.to_string();
+    value["room"] = this->room;
+    value["studentId"] = this->studentId.to_string();
+    value["consultationStatus"] = this->consultationStatus;
+    value["consultationType"] = this->consultationType;
+    value["consultationDate"] = static_cast<unsigned int>(this->consultationDate.value.count());
+
+    return value;
 }
 
 
