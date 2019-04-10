@@ -1,5 +1,6 @@
 package com.example.tin
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -12,7 +13,9 @@ import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ReserveConsultationFragment.ActionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    ReserveConsultationFragment.ActionListener, SuggestConsultationFragment.ActionListener,
+    ViewReservedConsultationsFragment.ActionListener {
 
     private var credential: Credential? = null
 
@@ -68,7 +71,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .addToBackStack(null).commit()
             }
             R.id.my_consultations -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ViewReservedConsultationsFragment.newInstance("", ""))
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ViewReservedConsultationsFragment.newInstance())
                     .addToBackStack(null).commit()
             }
             R.id.suggest_consultation -> {
@@ -80,6 +83,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.log_out -> {
                 CredentialsManager(this).deleteCredentials(credential)
+                val loginIntent = Intent(applicationContext, LoginActivity::class.java)
+                startActivity(loginIntent)
                 finish()
             }
         }
@@ -99,6 +104,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun reserve() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun suggestedConsultation() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun cancelConsultation() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

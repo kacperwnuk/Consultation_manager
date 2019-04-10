@@ -71,27 +71,27 @@ class RegisterActivity : AppCompatActivity() {
         // perform the user login attempt.
         // There was an error; don't attempt login and focus the first
         // form field with an error.
-        when {
-            TextUtils.isEmpty(passwordStr) -> {
-                password.error = getString(R.string.error_field_required)
-                focusView = password
-                cancel = true
-            }
-            TextUtils.isEmpty(emailStr) -> {
-                email.error = getString(R.string.error_field_required)
-                focusView = email
-                cancel = true
-            }
-            TextUtils.isEmpty(nameStr) -> {
-                name.error = getString(R.string.error_field_required)
-                focusView = name
-                cancel = true
-            }
-            TextUtils.isEmpty(surnameStr) -> {
-                surname.error = getString(R.string.error_field_required)
-                focusView = surname
-                cancel = true
-            }
+
+
+        if (TextUtils.isEmpty(surnameStr)) {
+            surname.error = getString(R.string.error_field_required)
+            focusView = surname
+            cancel = true
+        }
+        if (TextUtils.isEmpty(nameStr)) {
+            name.error = getString(R.string.error_field_required)
+            focusView = name
+            cancel = true
+        }
+        if (TextUtils.isEmpty(passwordStr)) {
+            password.error = getString(R.string.error_field_required)
+            focusView = password
+            cancel = true
+        }
+        if (TextUtils.isEmpty(emailStr)) {
+            email.error = getString(R.string.error_field_required)
+            focusView = email
+            cancel = true
         }
 
         if (cancel) {
@@ -102,7 +102,8 @@ class RegisterActivity : AppCompatActivity() {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true)
-            val registrationForm = RegistrationForm(emailStr, passwordStr, nameStr, surnameStr, lecturers_spinner.selectedItem.toString())
+            val registrationForm =
+                RegistrationForm(emailStr, passwordStr, nameStr, surnameStr, lecturers_spinner.selectedItem.toString())
             mRegisterTask = UserRegisterTask(registrationForm)
             mRegisterTask!!.execute(null as Void?)
         }

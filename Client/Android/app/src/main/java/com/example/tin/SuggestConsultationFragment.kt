@@ -38,6 +38,10 @@ private const val LECTURER = "lecturer"
  */
 class SuggestConsultationFragment : Fragment() {
 
+    interface ActionListener {
+        fun suggestedConsultation()
+    }
+
     private var mConsultationSuggestTask: ConsultationSuggestTask? = null
     private var startTime: String? = null
     private var endTime: String? = null
