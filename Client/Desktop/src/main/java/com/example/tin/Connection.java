@@ -1,29 +1,43 @@
 package com.example.tin;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.CharBuffer;
 
 public class Connection {
 
-    String serverAddress = "192.168.0.220";
+    String serverAddress = "192.168.0.164";
     int portNumber = 9975;
     Socket socket;
+    DataOutputStream outToServer;
+    BufferedReader inFromServer;
+    boolean isConnected = false;
 
 
     private void changePort(int port)
     {
         portNumber = port;
+        connect();
     }
 
     public boolean connect()
     {
         try {
+            System.out.println("Lacze z serwerem...");
             socket = new Socket(serverAddress, portNumber);
+            //socket.connect(new InetSocketAddress(serverAddress, portNumber));
+            System.out.println("Polaczono");
+            isConnected = true;
+            outToServer = new DataOutputStream(socket.getOutputStream());
+            inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             return true;
-        } catch(IOException ex)
+        } catch(Exception ex)
         {
             System.out.println("Unable to connect with server!");
+            isConnected = false;
             return false;
         }
     }
@@ -41,14 +55,14 @@ public class Connection {
 
     public int sendMessage(String message) throws IOException
     {
-        DataOutputStream outToServer = new DataOutputStream(socket.getOutputStream());
+
         outToServer.writeBytes(message);
         return 0;
     }
 
     public String recieveMessage() throws IOException
     {
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
         try {
             CharBuffer buffer = CharBuffer.allocate(1024);
             inFromServer.read(buffer);
@@ -61,5 +75,10 @@ public class Connection {
             System.out.println("Problem with receivig message! Disconnecting...");
             return "";
         }
+    }
+
+    public boolean getConnected()
+    {
+        return isConnected;
     }
 }
