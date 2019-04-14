@@ -1,0 +1,15 @@
+//
+// Created by Marcin on 29.03.2019.
+//
+
+#ifndef SERVER_CONSULTATIONTYPE_H
+#define SERVER_CONSULTATIONTYPE_H
+
+
+enum ConsultationType {
+    STUDENT_SUGGESTED,
+    LECTURER_SUGGESTED
+};
+
+
+#endif //SERVER_CONSULTATIONTYPE_H
