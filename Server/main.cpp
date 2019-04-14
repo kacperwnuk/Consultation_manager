@@ -38,8 +38,7 @@ enum StringValue {
     stopCommand,
     restartCommand,
     changePortCommand,
-    sendToCommand,
-    gfhjlksdhg
+    sendToCommand
 };
 map<string, StringValue> s_mapStringValues;
 
@@ -48,7 +47,6 @@ void initialize() {
     s_mapStringValues["restart"] = restartCommand;
     s_mapStringValues["changeport"] = changePortCommand;
     s_mapStringValues["sendto"] = sendToCommand;
-    s_mapStringValues["gfhjlksdhg"] = gfhjlksdhg;
 }
 
 //constexpr unsigned int hash(const char *str, int h = 0) {

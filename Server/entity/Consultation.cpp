@@ -112,7 +112,7 @@ Json::Value Consultation::getJson() {
     value["studentId"] = this->studentId.to_string();
     value["consultationStatus"] = this->consultationStatus;
     value["consultationType"] = this->consultationType;
-    value["consultationDate"] = static_cast<unsigned int>(this->consultationDate.value.count());
+    value["consultationDate"] = static_cast<unsigned long long>(this->consultationDate.value.count());
 
     return value;
 }

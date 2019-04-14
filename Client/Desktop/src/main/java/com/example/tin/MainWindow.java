@@ -1,5 +1,6 @@
 package com.example.tin;
 
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -15,8 +16,18 @@ public class MainWindow {
     @FXML
     TextArea serverConsole;
 
+    @FXML
+    Button reconnectButton;
 
     private Connection connection = new Connection();
+
+    @FXML
+    private void reconnect(){
+        serverConsole.clear();
+        sendButton.setDisable(false);
+        messageArea.setDisable(false);
+        initialize();
+    }
 
     @FXML
     private void initialize() {
@@ -27,6 +38,7 @@ public class MainWindow {
             serverConsole.appendText("Unable to connect with server!");
         }
     }
+
 
     @FXML
     private void btnSendClicked() throws IOException, InterruptedException
