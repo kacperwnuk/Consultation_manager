@@ -87,8 +87,8 @@ void *connectionListener(void *args) {
     auto &sockets = threadArgs->sockets;
     auto &stopCond = threadArgs->stopCond;
     auto port = threadArgs->port;
+    ServerSocket serverSocket(port);
     while (stopCond) {
-        ServerSocket serverSocket(port);
         int clientSocket;
         if ((clientSocket = serverSocket.acceptConnection()) != -1) {
             sockets.put(clientSocket);
