@@ -68,7 +68,10 @@ void *responseHandler(void *args) {
     auto &stopCond = threadArgs->stopCond;
     while (stopCond) {
         auto message = messages.get();
-        write(message.fd, message.payload, (size_t) message.size);
+        auto written = 0;
+        while (stopCond && written != message.size) {
+            written += write(message.fd, message.payload + written, (size_t) message.size - written);
+        }
     }
 }
 
