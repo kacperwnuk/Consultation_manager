@@ -47,7 +47,7 @@ public class MainWindow {
         messageArea.clear();
         if(message.length()!=0) {
             connection.sendMessage(message);
-            Thread.sleep(200);
+            //Thread.sleep(200);
             serverConsole.appendText("Client says: " + message + "\n");
             handleServerMessage();
         }
