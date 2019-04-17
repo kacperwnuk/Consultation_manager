@@ -12,9 +12,10 @@
 #include <algorithm>
 #include "TCPThread.h"
 #include "ServerSocket.h"
-#include "ClientMessageBuilderThread.h"
+#include "ClientMessageBuilder.h"
 #include "IncomingMessage.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
+#include "ClientLogic.h"
 
 void TCPThread::run() {
     ServerSocket serverSocket(port);
@@ -43,8 +44,7 @@ void TCPThread::run() {
             auto clientSocket = accept(pollList[0].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
             if (clientSocket != -1) {
                 sockets.push_back(clientSocket);
-                std::cout<<"tworze nowego"<<std::endl;
-                prepareClientHandlers(clientSocket, readDemands);
+                prepareClientHandler(clientSocket, readDemands);
             }
         }
         for (auto i = 1; i < numberOfSockets; ++i) {
@@ -52,7 +52,7 @@ void TCPThread::run() {
                 closeSocket(pollList[i].fd);
             }
             else if ((pollList[i].revents & POLLIN) == POLLIN) { // client sent data
-                auto *client = clients[pollList[i].fd];
+                auto *client = clients[pollList[i].fd]->clientMessageBuilder;
                 char buf[BUFFER_SIZE];
                 ssize_t rval;
                 memset(buf, 0, sizeof buf);
@@ -67,9 +67,7 @@ void TCPThread::run() {
                         closeSocket(pollList[i].fd);
                     } else { //client sent something
                         readDemands.put(pollList[i].fd, demand - rval);
-//                        printf("%d-->%s\n", pollList[i].fd, buf);
-
-                        if (!client->duringBuilding) {
+                        if (client->gettingHeader) {
                             memcpy(client->header + client->size, buf, rval);
                         } else {
                             memcpy(client->payload + client->size, buf, rval);
@@ -85,6 +83,7 @@ void TCPThread::run() {
             }
         }
     } while (isRunning);
+
 }
 
 TCPThread::TCPThread(in_port_t port) {
@@ -93,6 +92,9 @@ TCPThread::TCPThread(in_port_t port) {
 
 void TCPThread::closeSocket(int socket) {
     auto position = std::find(sockets.begin(), sockets.end(), socket);
+    clients[socket]->cancel();
+    clients[socket]->join();
+    clients.erase(socket);
     sockets.erase(position);
     close(socket);
 }
@@ -101,13 +103,23 @@ TCPThread::~TCPThread() {
     for (auto &socket: sockets) {
         close(socket);
     }
+    stopClientHandlers();
 }
 
 //Create new queue for client and handler to read messages from it
-void TCPThread::prepareClientHandlers(int socket, MutualExclusiveHashMap<size_t> &readDemands) {
-//    (this->clientMessageBuffers)[socket] = std::make_shared<SynchronizedQueue<IncomingMessage>>();
+void TCPThread::prepareClientHandler(int socket, MutualExclusiveHashMap<size_t> &readDemands) {
     readDemands.put(socket, 0);
-    ClientMessageBuilderThread *clientMessageBuilderThread = new ClientMessageBuilderThread(socket, (this->clientMessageBuffers)[socket], readDemands);
-    clients[socket] = clientMessageBuilderThread;
-    clientMessageBuilderThread->start();
+    auto *clientLogic = new ClientLogic(socket, readDemands);
+    clients[socket] = clientLogic;
+    clientLogic->start();
 }
+
+void TCPThread::stopClientHandlers() {
+    std::cout << "Stopping client threads..." << std::endl;
+    for (auto &client: clients) {
+        client.second->cancel();
+        client.second->join();
+    }
+}
+
+

@@ -12,17 +12,18 @@
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "IncomingMessage.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
-#include "ClientMessageBuilderThread.h"
+#include "ClientMessageBuilder.h"
+#include "ClientLogic.h"
 
 
 class TCPThread: public Thread {
 private:
     in_port_t port;
     std::vector<int> sockets;
-    std::unordered_map<int, std::shared_ptr<SynchronizedQueue<IncomingMessage>>> clientMessageBuffers;
-    std::unordered_map<int, ClientMessageBuilderThread*> clients;
+    std::unordered_map<int, ClientLogic*> clients;
     void closeSocket(int);
-    void prepareClientHandlers(int socket, MutualExclusiveHashMap<size_t> &);
+    void prepareClientHandler(int socket, MutualExclusiveHashMap<size_t> &);
+    void stopClientHandlers();
 public:
     explicit TCPThread(in_port_t port);
     ~TCPThread();

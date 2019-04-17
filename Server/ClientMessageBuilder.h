@@ -13,24 +13,24 @@
 #include "IncomingMessage.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
 
-class ClientMessageBuilderThread: public Thread {
+class ClientMessageBuilder {
 private:
 
     int socket;
-//    std::shared_ptr<SynchronizedQueue<IncomingMessage>> messageBuffer;
     MutualExclusiveHashMap<size_t> &readDemands;
-
+    size_t getHeader();
+    std::string getPayload(size_t);
 
 public:
-    ClientMessageBuilderThread(int, std::shared_ptr<SynchronizedQueue<IncomingMessage>>, MutualExclusiveHashMap<size_t> &readDemands);
-    void run() override;
+    ClientMessageBuilder(int, MutualExclusiveHashMap<size_t> &readDemands);
+    std::string getMessage();
     char header[4];
     char *payload;
     size_t size = 0;
-    bool duringBuilding = false;
     pthread_cond_t readComplete;
     pthread_mutex_t mutex;
     size_t demand = 4;
+    bool gettingHeader = true;
 };
 
 
