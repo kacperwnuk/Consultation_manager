@@ -5,22 +5,38 @@
 #include "ClientMessageBuilderThread.h"
 
 void ClientMessageBuilderThread::run() {
+    readDemands.put(socket, demand);
     auto messageSize = 0;
     auto isRunning = true;
     while(isRunning){
-        auto messageChunk = (*messageBuffer).get();
-        if(!duringBuilding){
-            char payloadSize[4];
-            strncpy(payloadSize, messageChunk.payload, 4);
-            messageSize = atoi(payloadSize);
-            std::cout<<messageSize<<std::endl;
-            duringBuilding = true;
-
+        pthread_mutex_lock(&mutex);
+        if (size < demand) {
+            pthread_cond_wait(&readComplete, &mutex);
         }
+        if(!duringBuilding) {
+            demand = atoi(header);
+            payload = new char[demand];
+            readDemands.put(socket, demand);
+            duringBuilding = true;
+            std::cout << "header" << readDemands.get(socket) << " " << demand << std::endl;
+            size = 0;
+        } else {
+            std::cout << "payload" << payload << std::endl;
+            delete[] payload;
+            demand = 4;
+            readDemands.put(socket, demand);
+            duringBuilding = false;
+            size = 0;
+        }
+        pthread_mutex_unlock(&mutex);
     }
 }
 
-ClientMessageBuilderThread::ClientMessageBuilderThread(int socket, std::shared_ptr<SynchronizedQueue<IncomingMessage>> clientMessageBuffer) {
+ClientMessageBuilderThread::ClientMessageBuilderThread(int socket, std::shared_ptr<SynchronizedQueue<IncomingMessage>> clientMessageBuffer,
+                                                       MutualExclusiveHashMap<size_t> &readDemands): readDemands(readDemands) {
     this->socket = socket;
-    this->messageBuffer = clientMessageBuffer;
+//    this->messageBuffer = clientMessageBuffer;
+    pthread_mutex_init(&mutex, nullptr);
+    pthread_cond_init(&readComplete, nullptr);
+    size = 0;
 }
