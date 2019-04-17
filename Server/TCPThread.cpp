@@ -10,6 +10,8 @@
 #include <algorithm>
 #include "TCPThread.h"
 #include "ServerSocket.h"
+#include "ClientMessageBuilderThread.h"
+#include "IncomingMessage.h"
 
 void TCPThread::run() {
     ServerSocket serverSocket(port);
@@ -37,6 +39,8 @@ void TCPThread::run() {
             auto clientSocket = accept(pollList[0].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
             if (clientSocket != -1) {
                 sockets.push_back(clientSocket);
+                std::cout<<"tworze nowego"<<std::endl;
+                prepareClientHandlers(clientSocket);
             }
         }
         for (auto i = 1; i < numberOfSockets; ++i) {
@@ -54,6 +58,8 @@ void TCPThread::run() {
                     closeSocket(pollList[i].fd);
                 } else { //client sent something
                     printf("%d-->%s\n", pollList[i].fd, buf);
+                    IncomingMessage incomingMessage(rval, buf);
+                    (*clientMessageBuffers[pollList[i].fd]).put(incomingMessage);
                 }
                 fflush(stdout);
             }
@@ -75,4 +81,11 @@ TCPThread::~TCPThread() {
     for (auto &socket: sockets) {
         close(socket);
     }
+}
+
+//Create new queue for client and handler to read messages from it
+void TCPThread::prepareClientHandlers(int socket) {
+    (this->clientMessageBuffers)[socket] = std::make_shared<SynchronizedQueue<IncomingMessage>>();
+    ClientMessageBuilderThread clientMessageBuilderThread = ClientMessageBuilderThread(socket, (this->clientMessageBuffers)[socket]);
+    clientMessageBuilderThread.start();
 }
