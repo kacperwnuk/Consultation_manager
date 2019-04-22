@@ -1,3 +1,7 @@
+#include <utility>
+
+#include <utility>
+
 //
 // Created by Marcin on 29.03.2019.
 //
@@ -64,9 +68,9 @@ void Account::setStatus(AccountStatus accountStatus) {
     Account::accountStatus = accountStatus;
 }
 
-Account::Account(std::string &email, std::string &login, std::string &passwordHash,
-                 std::string &name,
-                 std::string &surname, AccountRole role, AccountStatus status) : emailAddress(std::move(email)),
+Account::Account(std::string email, std::string login, std::string passwordHash,
+                 std::string name,
+                 std::string surname, AccountRole role, AccountStatus status) : emailAddress(std::move(email)),
                                                                                  login(std::move(login)),
                                                                                  passwordHash(std::move(passwordHash)),
                                                                                  name(std::move(name)),
@@ -119,4 +123,6 @@ Json::Value Account::getJson() {
 
     return value;
 }
+
+
 

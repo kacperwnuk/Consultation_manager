@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <memory>
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
-#include "IncomingMessage.h"
+#include "Message.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
 #include "ClientMessageBuilder.h"
 #include "ClientLogic.h"
@@ -21,11 +21,15 @@ private:
     in_port_t port;
     std::vector<int> sockets;
     std::unordered_map<int, ClientLogic*> clients;
+    std::shared_ptr<SynchronizedQueue<OutgoingMessage>> messageQueue;
     void closeSocket(int);
     void prepareClientHandler(int socket, MutualExclusiveHashMap<size_t> &);
     void stopClientHandlers();
+    void executePoll(pollfd[]);
+    void serveClient(pollfd[], MutualExclusiveHashMap<size_t>&);
+
 public:
-    explicit TCPThread(in_port_t port);
+    TCPThread(in_port_t, const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &);
     ~TCPThread();
     void run() override;
 

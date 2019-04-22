@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include "Thread.h"
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
-#include "IncomingMessage.h"
+#include "Message.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
 
 class ClientMessageBuilder {

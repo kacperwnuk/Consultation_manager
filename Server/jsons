@@ -1,0 +1,10 @@
+//rejestracja
+0049{
+"type":3,"login":"k","password":"w","email":"e"
+}
+
+//logowanie
+0037{"type":1,"login":"k","password":"w"}
+
+//rejestracja full
+0098{"type":3,"login":"k","password":"w","email":"e","name":"Kacper","surname":"Wnuk","accountRole":2}

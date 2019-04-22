@@ -13,7 +13,7 @@ public:
     OutgoingMessage();
     OutgoingMessage(int, const char *, int);
     int fd;
-    char payload[1024];
+    char* payload;
     int size;
 };
 

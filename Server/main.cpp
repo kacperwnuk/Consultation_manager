@@ -30,6 +30,7 @@
 #include "dto/enums/StatusType.h"
 #include "dto/LoginResponse.h"
 #include "TCPThread.h"
+#include "MessageSender.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push
@@ -89,8 +90,11 @@ int main(int argc, char *argv[]) {
         }
     }
     auto running = true;
-    TCPThread tcpThread(port);
+    MessageSender messageSender;
+    messageSender.start();
+    TCPThread tcpThread(port, messageSender.getMessageQueue());
     tcpThread.start();
+
     initialize();
     char value[256];
     while (running) {
@@ -100,6 +104,7 @@ int main(int argc, char *argv[]) {
             case stopCommand:
                 cout << "Stopping server..." << endl;
                 tcpThread.cancel();
+                messageSender.cancel();
                 running = false;
                 break;
             case changePortCommand:
@@ -113,6 +118,7 @@ int main(int argc, char *argv[]) {
         }
     }
     tcpThread.join();
+    messageSender.join();
     cout << "Server stopped." << endl;
     return 0;
 }

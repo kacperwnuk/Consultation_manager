@@ -27,7 +27,7 @@ private:
 
 public:
 
-    Account(std::string&, std::string&, std::string&, std::string&, std::string&, AccountRole, AccountStatus);
+    Account(std::string, std::string, std::string, std::string, std::string, AccountRole, AccountStatus);
 
     Account(document_view_or_value);
 

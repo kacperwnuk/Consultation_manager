@@ -7,8 +7,8 @@
 
 
 enum AccountRole {
-    LECTURER,
-    STUDENT
+    LECTURER = 1,
+    STUDENT = 2
 };
 
 

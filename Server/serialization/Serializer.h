@@ -21,7 +21,7 @@ template<typename T>
 std::string Serializer::serialize(T element) {
 
     Json::Value value = element.getJson();
-    Json::StyledWriter writer;
+    Json::FastWriter writer;
     std::string jsonMessage = writer.write(value);
     std::cout << jsonMessage;
 

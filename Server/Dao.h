@@ -29,7 +29,7 @@ public:
 
     const mongocxx::collection &getCollection() const;
 
-    Dao(const std::string&, const std::string&);
+    explicit Dao(const std::string&);
 
     void insertDocument(const document_view_or_value&);
 
@@ -44,6 +44,7 @@ public:
 
     std::vector<Account> getAccountsByStatusAndRole(AccountStatus, AccountRole);
 
+    Account getAccountByLogin(std::string login);
 };
 
 template<typename T>
