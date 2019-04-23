@@ -11,8 +11,9 @@
 #include <mongocxx/uri.hpp>
 #include <string>
 #include "Dao.h"
+#include "MongoInstanceContainer.h"
 
-Dao::Dao(const std::string &databaseName) {
+Dao::Dao(const std::string &databaseName): instance(MongoInstanceContainer::getMongoInstanceContainer().getMongoInstance()) {
     db = client[databaseName];
 }
 

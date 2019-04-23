@@ -21,7 +21,7 @@ using bsoncxx::builder::stream::open_array;
 class Dao {
 private:
 
-    mongocxx::instance instance{}; // This should be done only once.
+    mongocxx::instance &instance; // This should be done only once.
     mongocxx::client client{mongocxx::uri{}};
     mongocxx::database db;
     mongocxx::collection coll;

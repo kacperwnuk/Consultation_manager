@@ -23,7 +23,7 @@ std::string Serializer::serialize(T element) {
     Json::Value value = element.getJson();
     Json::FastWriter writer;
     std::string jsonMessage = writer.write(value);
-    std::cout << jsonMessage;
+    std::cout << jsonMessage << std::endl;
 
     return jsonMessage;
 }
