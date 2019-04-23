@@ -6,7 +6,7 @@
 #include "ConsultationCancellationRequest.h"
 
 ConsultationCancellationRequest::ConsultationCancellationRequest(Json::Value jsonValue) {
-    std::cout<<jsonValue.toStyledString()<<std::endl;
+    std::cout << jsonValue.toStyledString() << std::endl;
     this->consultationId = oid(jsonValue["_id"].asString());
 }
 

@@ -16,15 +16,18 @@ class Deserializer {
     Json::Value payloadValue;
 public:
     std::shared_ptr<ClientMessageBuilder> clientMessageBuilder;
+
     Deserializer(std::shared_ptr<ClientMessageBuilder>);
 
     RequestType getType();
 
-    template <typename T>
+    template<typename T>
     T deserializedObject();
 
-    template <typename T>
+    template<typename T>
     T deserialize(Json::Value);
+
+    std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
 
 };
 

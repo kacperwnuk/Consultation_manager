@@ -5,19 +5,24 @@
 #ifndef SERVER_SYNCHRONIZEDQUEUE_H
 #define SERVER_SYNCHRONIZEDQUEUE_H
 
-#include "../../monitor.h"
+#include "monitor.h"
 #include <queue>
 
-template <typename T>
-class SynchronizedQueue: Monitor {
+template<typename T>
+class SynchronizedQueue : Monitor {
 private:
     std::queue<T> values;
 public:
     SynchronizedQueue();
+
     void put(T);
+
     T get();
+
     unsigned long getSize();
+
     std::queue<T> &getAll();
+
     Condition isEmpty;
 };
 
@@ -56,7 +61,7 @@ unsigned long SynchronizedQueue<T>::getSize() {
 }
 
 template<typename T>
-std::queue<T>& SynchronizedQueue<T>::getAll() {
+std::queue<T> &SynchronizedQueue<T>::getAll() {
     enter();
     auto &valuesToReturn = values;
     leave();

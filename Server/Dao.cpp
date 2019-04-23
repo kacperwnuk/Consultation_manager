@@ -13,7 +13,8 @@
 #include "Dao.h"
 #include "MongoInstanceContainer.h"
 
-Dao::Dao(const std::string &databaseName): instance(MongoInstanceContainer::getMongoInstanceContainer().getMongoInstance()) {
+Dao::Dao(const std::string &databaseName) : instance(
+        MongoInstanceContainer::getMongoInstanceContainer().getMongoInstance()) {
     db = client[databaseName];
 }
 
@@ -53,7 +54,7 @@ std::vector<Account> Dao::getAccountsByStatusAndRole(AccountStatus accountStatus
 Account Dao::getAccountByLogin(std::string login) {
 
     auto results = coll.find(s_document{} << "login" << login << bsoncxx::builder::stream::finalize);
-    for(auto result : results){
+    for (auto result : results) {
         return Account(result);
     }
     throw std::runtime_error(std::string("No user with this login!"));

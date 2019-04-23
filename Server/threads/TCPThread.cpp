@@ -11,10 +11,10 @@
 #include <unistd.h>
 #include <algorithm>
 #include "TCPThread.h"
-#include "ServerSocket.h"
-#include "ClientMessageBuilder.h"
-#include "Message.h"
-#include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
+#include "../ServerSocket.h"
+#include "../ClientMessageBuilder.h"
+#include "../Message.h"
+#include "../containers/synchronizedcontainers/MutualExclusiveHashMap.h"
 #include "ClientLogic.h"
 
 void TCPThread::run() {
@@ -42,7 +42,8 @@ void TCPThread::run() {
 
 }
 
-TCPThread::TCPThread(in_port_t port, const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) : port(port), messageQueue(messageQueue) {
+TCPThread::TCPThread(in_port_t port, const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) : port(
+        port), messageQueue(messageQueue) {
 }
 
 void TCPThread::executePoll(pollfd pollList[]) {
@@ -72,7 +73,7 @@ void TCPThread::serveClient(pollfd pollList[], MutualExclusiveHashMap<size_t> &r
         if ((pollList[i].revents & POLLHUP) == POLLHUP) { // client closed connection
             closeSocket(pollList[i].fd);
         } else if ((pollList[i].revents & POLLIN) == POLLIN) { // client sent data
-            auto client = clients[pollList[i].fd]->deserializer->clientMessageBuilder;
+            auto client = clients[pollList[i].fd]->getClientMessageBuilder();
             char buf[BUFFER_SIZE];
             ssize_t rval;
             memset(buf, 0, sizeof buf);
@@ -108,7 +109,6 @@ void TCPThread::serveClient(pollfd pollList[], MutualExclusiveHashMap<size_t> &r
 void TCPThread::closeSocket(int socket) {
     auto position = std::find(sockets.begin(), sockets.end(), socket);
     clients[socket]->cancel();
-    clients[socket]->join();
     clients.erase(socket);
     sockets.erase(position);
     close(socket);

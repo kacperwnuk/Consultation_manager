@@ -14,23 +14,19 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include "ServerSocket.h"
 #include "containers/synchronizedcontainers/SynchronizedVector.h"
-#include "containers/threadargs/ThreadArgs.h"
 #include "Dao.h"
 #include "entity/Account.h"
 #include "entity/Consultation.h"
 #include "containers/OutgoingMessage.h"
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
-#include "containers/threadargs/OutThreadArgs.h"
-#include "containers/threadargs/DataHandlerThreadArgs.h"
-#include "containers/threadargs/ListenerThreadArgs.h"
 #include "serialization/Serializer.h"
 #include "dto/ConsultationResponse.h"
 #include "dto/ConsultationCancellationRequest.h"
 #include "serialization/Deserializer.h"
 #include "dto/enums/StatusType.h"
 #include "dto/LoginResponse.h"
-#include "TCPThread.h"
-#include "MessageSender.h"
+#include "threads/TCPThread.h"
+#include "threads/MessageSender.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push

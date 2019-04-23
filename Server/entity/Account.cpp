@@ -12,7 +12,7 @@ const bsoncxx::oid &Account::getId() const {
     return id;
 }
 
-const std::string &Account::getEmailAdress() const {
+const std::string &Account::getEmailAddress() const {
     return emailAddress;
 }
 
@@ -71,12 +71,12 @@ void Account::setStatus(AccountStatus accountStatus) {
 Account::Account(std::string email, std::string login, std::string passwordHash,
                  std::string name,
                  std::string surname, AccountRole role, AccountStatus status) : emailAddress(std::move(email)),
-                                                                                 login(std::move(login)),
-                                                                                 passwordHash(std::move(passwordHash)),
-                                                                                 name(std::move(name)),
-                                                                                 surname(std::move(surname)),
-                                                                                 accountRole(role),
-                                                                                 accountStatus(status) {
+                                                                                login(std::move(login)),
+                                                                                passwordHash(std::move(passwordHash)),
+                                                                                name(std::move(name)),
+                                                                                surname(std::move(surname)),
+                                                                                accountRole(role),
+                                                                                accountStatus(status) {
 }
 
 document_view_or_value Account::getDocumentFormat() {

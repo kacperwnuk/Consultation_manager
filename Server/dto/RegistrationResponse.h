@@ -12,7 +12,7 @@
 class RegistrationResponse : public Serializable {
     StatusType status;
 public:
-    RegistrationResponse(StatusType);
+    explicit RegistrationResponse(StatusType);
 
     Json::Value getJson() override;
 };

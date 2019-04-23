@@ -8,11 +8,12 @@
 
 #include "../entity/Consultation.h"
 
-class ConsultationResponse: public Serializable {
+class ConsultationResponse : public Serializable {
 private:
     std::vector<Consultation> consultations;
 public:
     ConsultationResponse(std::vector<Consultation>);
+
     Json::Value getJson() override;
 };
 

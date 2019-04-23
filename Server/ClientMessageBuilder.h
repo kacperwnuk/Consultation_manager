@@ -8,7 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include "Thread.h"
+#include "threads/Thread.h"
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "Message.h"
 #include "containers/synchronizedcontainers/MutualExclusiveHashMap.h"
@@ -18,12 +18,16 @@ private:
 
     int socket;
     MutualExclusiveHashMap<size_t> &readDemands;
+
     size_t getHeader();
+
     std::string getPayload(size_t);
 
 public:
     ClientMessageBuilder(int, MutualExclusiveHashMap<size_t> &readDemands);
+
     std::string getMessage();
+
     char header[4];
     char *payload;
     size_t size = 0;

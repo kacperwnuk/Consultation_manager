@@ -5,7 +5,7 @@
 #include "MessageSender.h"
 
 MessageSender::MessageSender() {
-    messageQueue = std::make_shared<SynchronizedQueue<OutgoingMessage>>();
+    messageQueue = std::make_shared < SynchronizedQueue < OutgoingMessage >> ();
 }
 
 const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &MessageSender::getMessageQueue() const {
@@ -14,7 +14,7 @@ const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &MessageSender::getMes
 
 void MessageSender::run() {
     auto isRunning = true;
-    while(isRunning){
+    while (isRunning) {
         auto message = messageQueue->get();
         write(message.fd, message.payload, message.size);
     }

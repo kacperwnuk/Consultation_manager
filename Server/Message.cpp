@@ -4,7 +4,7 @@
 
 #include "Message.h"
 
-Message::Message(int size, char* payload): size(size), payload(payload) {
+Message::Message(int size, char *payload) : size(size), payload(payload) {
 }
 
 Message::~Message() {

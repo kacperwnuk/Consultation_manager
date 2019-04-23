@@ -4,7 +4,7 @@
 
 #include "MongoInstanceContainer.h"
 
-MongoInstanceContainer::MongoInstanceContainer(mongocxx::instance &instance): instance(instance) {
+MongoInstanceContainer::MongoInstanceContainer(mongocxx::instance &instance) : instance(instance) {
 
 }
 
@@ -14,6 +14,6 @@ MongoInstanceContainer &MongoInstanceContainer::getMongoInstanceContainer() {
     return mongoInstanceContainer;
 }
 
-mongocxx::instance& MongoInstanceContainer::getMongoInstance() {
+mongocxx::instance &MongoInstanceContainer::getMongoInstance() {
     return instance;
 }

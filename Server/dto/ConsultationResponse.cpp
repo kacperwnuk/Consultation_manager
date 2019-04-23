@@ -4,13 +4,14 @@
 
 #include "ConsultationResponse.h"
 
-ConsultationResponse::ConsultationResponse(std::vector<Consultation> consultations): consultations(std::move(consultations)){
+ConsultationResponse::ConsultationResponse(std::vector<Consultation> consultations) :
+        consultations(std::move(consultations)) {
 
 }
 
 Json::Value ConsultationResponse::getJson() {
     Json::Value value;
-    for (auto consultation : consultations){
+    for (auto consultation : consultations) {
         value["consultations"].append(consultation.getJson());
     }
 

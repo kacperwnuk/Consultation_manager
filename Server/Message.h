@@ -10,9 +10,12 @@ class Message {
 
 public:
     int size;
-    char* payload;
-    Message(int, char*);
+    char *payload;
+
+    Message(int, char *);
+
     Message();
+
     ~Message();
 };
 

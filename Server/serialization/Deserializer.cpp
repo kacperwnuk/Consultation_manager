@@ -4,7 +4,7 @@
 
 #include "Deserializer.h"
 
-Deserializer::Deserializer(std::shared_ptr<ClientMessageBuilder> clientMessageBuilder){
+Deserializer::Deserializer(std::shared_ptr<ClientMessageBuilder> clientMessageBuilder) {
     this->clientMessageBuilder = clientMessageBuilder;
 }
 
@@ -15,6 +15,10 @@ RequestType Deserializer::getType() {
 
     auto requestType = RequestType(payloadValue["type"].asInt());
     return requestType;
+}
+
+std::shared_ptr<ClientMessageBuilder> Deserializer::getClientMessageBuilder() {
+    return clientMessageBuilder;
 }
 
 

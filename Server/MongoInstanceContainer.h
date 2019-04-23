@@ -11,9 +11,11 @@
 class MongoInstanceContainer {
 private:
     explicit MongoInstanceContainer(mongocxx::instance &);
+
     mongocxx::instance &instance;
 public:
-    static MongoInstanceContainer& getMongoInstanceContainer();
+    static MongoInstanceContainer &getMongoInstanceContainer();
+
     mongocxx::instance &getMongoInstance();
 };
 

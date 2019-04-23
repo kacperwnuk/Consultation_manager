@@ -11,10 +11,10 @@
 class OutgoingMessage {
 public:
     OutgoingMessage();
-    OutgoingMessage(int, const char *, int);
+    OutgoingMessage(int, const char *, unsigned long);
     int fd;
     char* payload;
-    int size;
+    unsigned long size;
 };
 
 

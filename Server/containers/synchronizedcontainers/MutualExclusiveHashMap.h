@@ -8,17 +8,19 @@
 #include <pthread.h>
 #include <unordered_map>
 
-template <typename T>
+template<typename T>
 class MutualExclusiveHashMap {
     pthread_mutex_t mutex;
     std::unordered_map<int, T> map;
 public:
     MutualExclusiveHashMap();
+
     void put(int, T);
+
     T get(int);
 };
 
-template <typename T>
+template<typename T>
 MutualExclusiveHashMap<T>::MutualExclusiveHashMap() {
     pthread_mutex_init(&mutex, nullptr);
 }

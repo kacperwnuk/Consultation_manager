@@ -10,12 +10,20 @@
 class Thread {
 private:
     pthread_t thread;
-    static void* internalThreadEntryFunc(void * This) {((Thread*)This)->run(); return nullptr;}
+
+    static void *internalThreadEntryFunc(void *This) {
+        ((Thread *) This)->run();
+        return nullptr;
+    }
+
 protected:
     virtual void run() = 0;
+
 public:
     void start();
+
     void cancel();
+
     void join();
 
 };
