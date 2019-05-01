@@ -3,13 +3,19 @@ package com.example.tin
 import android.annotation.SuppressLint
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.tin.data.Consultation
 import kotlinx.android.synthetic.main.my_booked_consultation_item.view.*
 
-class MyBookedConsultationsRecyclerAdapter(private val consultations: List<Consultation>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MyBookedConsultationsRecyclerAdapter(
+    private val consultations: List<Consultation>,
+    private val actionListener: ActionListener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    interface ActionListener {
+        fun cancelConsultation(id: String)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val item = LayoutInflater.from(parent.context)
@@ -29,9 +35,9 @@ class MyBookedConsultationsRecyclerAdapter(private val consultations: List<Consu
         holder.itemView.day.text = consultation.day
         holder.itemView.start_time.text = "${consultation.startTime} - ${consultation.endTime}"
         holder.itemView.cancellation_button.setOnClickListener { v ->
-            Log.d("Adapter", "Clicked $position")
+            actionListener.cancelConsultation(consultation.id)
         }
     }
 }
 
-class MyBookedConsultationRecyclerViewHolder(item: ConstraintLayout): RecyclerView.ViewHolder(item)
+class MyBookedConsultationRecyclerViewHolder(item: ConstraintLayout) : RecyclerView.ViewHolder(item)

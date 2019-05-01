@@ -4,13 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import com.example.tin.data.Consultation
 import com.example.tin.data.ConsultationType
 
@@ -23,7 +21,7 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
 
         fun addAfter(day: String, startTime: String)
 
-        fun reserve()
+        fun reserve(id: String)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -50,28 +48,12 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
         holder.itemView.elevation = 20.0f
         holder.itemView.findViewById<TextView>(R.id.person).text = consultation.person
         holder.itemView.findViewById<TextView>(R.id.day).text = consultation.day
-        holder.itemView.setOnTouchListener(object: OnSwipeTouchListener(context) {
-            override fun onSwipeRight() {
-            }
-
-            override fun onSwipeLeft() {
-
-            }
-
-            override fun onSwipeBottom() {
-
-            }
-
-            override fun onSwipeTop() {
-                Toast.makeText(context, "refresh", Toast.LENGTH_LONG).show()
-            }
-        })
         when (holder) {
             is LecturerSuggestedRecyclerViewHolder -> {
 
                 holder.itemView.findViewById<TextView>(R.id.start_time).text = "${consultation.startTime} - ${consultation.endTime}"
                 holder.itemView.findViewById<Button>(R.id.reservation_button).setOnClickListener { v ->
-                    Log.d("Adapter", "Clicked $position")
+                    actionListener.reserve(consultation.id)
                 }
             }
             else -> { //student suggested item

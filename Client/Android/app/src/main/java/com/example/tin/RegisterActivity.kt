@@ -3,6 +3,7 @@ package com.example.tin
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.TargetApi
+import android.content.Context
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.example.tin.data.DataService
+import com.example.tin.data.entity.Account
 import kotlinx.android.synthetic.main.activity_register.*
 
 /**
@@ -104,7 +107,7 @@ class RegisterActivity : AppCompatActivity() {
             showProgress(true)
             val registrationForm =
                 RegistrationForm(emailStr, passwordStr, nameStr, surnameStr, lecturers_spinner.selectedItem.toString())
-            mRegisterTask = UserRegisterTask(registrationForm)
+            mRegisterTask = UserRegisterTask(registrationForm, this)
             mRegisterTask!!.execute(null as Void?)
         }
     }
@@ -151,27 +154,13 @@ class RegisterActivity : AppCompatActivity() {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    inner class UserRegisterTask internal constructor(private val registrationForm: RegistrationForm) :
+    inner class UserRegisterTask internal constructor(private val registrationForm: RegistrationForm,private val context: Context) :
         AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000)
-            } catch (e: InterruptedException) {
-                return false
-            }
-
-            return DUMMY_CREDENTIALS
-                .map { it.split(":") }
-                .firstOrNull { it[0] == registrationForm.email }
-                ?.let {
-                    // Account exists, return true if the password matches.
-                    it[1] == registrationForm.password
-                }
-                ?: true
+            val dataService = DataService(context)
+            val account = Account(registrationForm.email, registrationForm.password)
+            return dataService.register(account)
         }
 
         override fun onPostExecute(success: Boolean?) {

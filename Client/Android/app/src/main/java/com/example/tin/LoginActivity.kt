@@ -98,6 +98,9 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
+            this.credential = Credential.Builder(loginStr)
+                .setPassword(passwordStr)
+                .build()
             showProgress(true)
             mAuthTask = UserLoginTask(loginStr, passwordStr)
             mAuthTask!!.execute(null as Void?)

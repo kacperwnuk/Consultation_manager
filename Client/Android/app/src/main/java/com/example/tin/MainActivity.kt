@@ -8,7 +8,9 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.example.tin.data.CredentialsManager
+import com.example.tin.data.DataService
 import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -17,14 +19,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     ReserveConsultationFragment.ActionListener, SuggestConsultationFragment.ActionListener,
     ViewReservedConsultationsFragment.ActionListener {
 
-    private var credential: Credential? = null
+    var credential: Credential? = null
+    private lateinit var dataService: DataService
+
+    private lateinit var reserveConsultationFragment: ReserveConsultationFragment
+    private lateinit var viewReservedConsultationsFragment: ViewReservedConsultationsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(toolbar)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = "Zarezerwuj konsultacje"
 
-        val reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
+        reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment).commit()
 
         val toggle = ActionBarDrawerToggle(
@@ -37,6 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return
         }
         credential = intent.extras.get("Credential") as Credential?
+        dataService = DataService(this)
     }
 
     override fun onBackPressed() {
@@ -67,18 +75,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.find_consultation -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ReserveConsultationFragment.newInstance("", ""))
+                reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
                     .addToBackStack(null).commit()
             }
             R.id.my_consultations -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ViewReservedConsultationsFragment.newInstance())
+                viewReservedConsultationsFragment = ViewReservedConsultationsFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, viewReservedConsultationsFragment)
                     .addToBackStack(null).commit()
             }
             R.id.suggest_consultation -> {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, null, ""))
                     .addToBackStack(null).commit()
             }
-            R.id.nav_share -> {
+            R.id.settings -> {
 
             }
             R.id.log_out -> {
@@ -103,15 +113,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .addToBackStack(null).commit()
     }
 
-    override fun reserve() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun reserve(id: String) {
+        dataService.reserveConsultation(id, credential!!.id)
+        reserveConsultationFragment.update()
+        Toast.makeText(this, "reserve", Toast.LENGTH_LONG).show()
+
     }
 
     override fun suggestedConsultation() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(this, "suggest", Toast.LENGTH_LONG).show()
     }
 
-    override fun cancelConsultation() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun cancelConsultation(id: String) {
+        dataService.cancelConsultation(id, credential!!.id)
+        viewReservedConsultationsFragment.update()
+        Toast.makeText(this, "cancel", Toast.LENGTH_LONG).show()
     }
 }

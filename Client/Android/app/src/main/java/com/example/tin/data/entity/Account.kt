@@ -4,7 +4,7 @@ import com.example.tin.data.entity.enums.AccountRole
 import com.example.tin.data.entity.enums.AccountStatus
 
 class Account(
-    val id: Long,
+    val id: String,
     val name: String,
     val surname: String,
     val email: String,
@@ -13,4 +13,6 @@ class Account(
     val role: AccountRole,
     val status: AccountStatus
 ) {
+
+    constructor(email: String, password: String) : this("", "", "", email, "", password, AccountRole.STUDENT, AccountStatus.INACTIVE)
 }
