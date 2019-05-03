@@ -64,7 +64,6 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-        recyclerAdapter = FreeConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), this)
     }
 
     override fun onCreateView(

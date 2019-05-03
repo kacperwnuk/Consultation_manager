@@ -10,8 +10,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.tin.data.Consultation
-import com.example.tin.data.ConsultationType
 import com.example.tin.data.DataService
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.*
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.view.*
@@ -46,16 +44,8 @@ class ViewReservedConsultationsFragment : Fragment(),
         fun cancelConsultation(id: String)
     }
 
-    private lateinit var recyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
-
-    private val consultations = listOf(
-        Consultation("1","Dr. inż. Kozdrowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("2","Dr. inż. Kozdrowski", "12.15", "12.30", "21.03.2019", ConsultationType.LECTURER_SUGGESTED)
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        recyclerAdapter = MyBookedConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), this)
     }
 
     override fun onCreateView(
@@ -73,23 +63,27 @@ class ViewReservedConsultationsFragment : Fragment(),
         MyAsyncTask(context!!, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
-    private class MyAsyncTask internal constructor(context: Context, actionListener: ViewReservedConsultationsFragment): AsyncTask<Void, Void, MyBookedConsultationsRecyclerAdapter>() {
+    private class MyAsyncTask internal constructor(context: Context, actionListener: ViewReservedConsultationsFragment): AsyncTask<Void, Void, RecyclerView.Adapter<RecyclerView.ViewHolder>>() {
 
         private val context: WeakReference<Context> = WeakReference(context)
         private val actionListener: WeakReference<ViewReservedConsultationsFragment> = WeakReference(actionListener)
 
-        override fun doInBackground(vararg params: Void): MyBookedConsultationsRecyclerAdapter {
+        override fun doInBackground(vararg params: Void): RecyclerView.Adapter<RecyclerView.ViewHolder> {
             val dataService = DataService(context.get()!!)
             val consultations = dataService.getReservedConsultations((context.get() as MainActivity).credential!!.id)
-            return MyBookedConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), actionListener.get()!!)
+            return if (consultations.isNotEmpty()) {
+                MyBookedConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), actionListener.get()!!)
+            } else {
+                NoConsultationsRecyclerAdapter()
+            }
         }
 
-        override fun onPostExecute(result: MyBookedConsultationsRecyclerAdapter) {
+        override fun onPostExecute(result: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
             actionListener.get()!!.updateView(result)
         }
     }
 
-    fun updateView(result: MyBookedConsultationsRecyclerAdapter) {
+    fun updateView(result: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
         view!!.recyclerView.apply {
             setHasFixedSize(true)
             adapter = result
