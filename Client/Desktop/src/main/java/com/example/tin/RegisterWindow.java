@@ -63,9 +63,9 @@ public class RegisterWindow {
         else
             handleRegisterError(validationResult);
         if (studentRadioButton.isPressed())
-            isStudent = true;
+            role = 0;
         else if (lecturerRadioButton.isPressed())
-            isStudent = false;
+        role = 1;
         showLoginWindow();
     }
 
