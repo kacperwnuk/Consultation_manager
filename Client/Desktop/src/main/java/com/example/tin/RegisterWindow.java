@@ -65,8 +65,7 @@ public class RegisterWindow {
         if (studentRadioButton.isPressed())
             role = 0;
         else if (lecturerRadioButton.isPressed())
-        role = 1;
-        showLoginWindow();
+            role = 1;
     }
 
     @FXML

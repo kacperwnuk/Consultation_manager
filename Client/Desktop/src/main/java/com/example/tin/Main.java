@@ -16,7 +16,6 @@ public class Main extends Application {
         final LoginWindow controller = fxmlLoader.getController();
         primaryStage.setResizable(false);
         primaryStage.setTitle("Login Window");
-        //primaryStage.setOnHidden(e -> controller.disconnect());
         primaryStage.show();
     }
 }

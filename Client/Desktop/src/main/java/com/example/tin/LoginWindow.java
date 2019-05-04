@@ -70,6 +70,7 @@ public class LoginWindow {
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.setTitle("TIN Main Window");
+            stage.setOnHidden(e -> controller.disconnect());
             stage.show();
             Stage oldstage = (Stage) loginButton.getScene().getWindow();
             oldstage.close();
