@@ -47,7 +47,7 @@ public class LoginWindow {
     private void showRegisterWindow()
     {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../tin/register.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/register.fxml"));
             AnchorPane root = fxmlLoader.load();
             final RegisterWindow controller = fxmlLoader.getController();
 
@@ -67,7 +67,7 @@ public class LoginWindow {
     private void showMainWindow()
     {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../tin/sample.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
             AnchorPane root = fxmlLoader.load();
             final MainWindow controller = fxmlLoader.getController();
             Scene scene = new Scene(root);
