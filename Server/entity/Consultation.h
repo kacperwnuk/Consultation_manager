@@ -13,7 +13,7 @@
 #include "../serialization/Serializable.h"
 
 
-class Consultation: public Entity, public Serializable {
+class Consultation : public Entity, public Serializable {
 private:
 
     oid id;

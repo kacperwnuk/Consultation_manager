@@ -15,11 +15,25 @@ private:
     in_port_t port;
     int serverSocket;
     struct sockaddr_in serverAddress;
+
+    void prepareServerAddress();
+
+    void bindSocket();
+
+    void createSocket();
+
+    void getSocketName();
+
+    void startListening();
+
 public:
     explicit ServerSocket(in_port_t = 0);
+
     ~ServerSocket();
-    int acceptConnection();
+
     in_port_t getPort();
+
+    int getServerSocket();
 };
 
 

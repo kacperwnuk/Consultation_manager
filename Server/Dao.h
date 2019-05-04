@@ -21,7 +21,7 @@ using bsoncxx::builder::stream::open_array;
 class Dao {
 private:
 
-    mongocxx::instance instance{}; // This should be done only once.
+    mongocxx::instance &instance; // This should be done only once.
     mongocxx::client client{mongocxx::uri{}};
     mongocxx::database db;
     mongocxx::collection coll;
@@ -29,26 +29,29 @@ public:
 
     const mongocxx::collection &getCollection() const;
 
-    Dao(const std::string&, const std::string&);
+    explicit Dao(const std::string &);
 
-    void insertDocument(const document_view_or_value&);
+    void insertDocument(const document_view_or_value &);
 
-    void setCollection(const std::string&);
+    void setCollection(const std::string &);
 
-    template <typename T>
-    void updateDocument(const document_view_or_value&, const std::string&, T);
+    template<typename T>
+    void updateDocument(const document_view_or_value &, const std::string &, T);
 
-    void updateDocument(const document_view_or_value&, const document_view_or_value&);
+    void updateDocument(const document_view_or_value &, const document_view_or_value &);
 
-    void deleteDocument(const document_view_or_value&);
+    void deleteDocument(const document_view_or_value &);
 
     std::vector<Account> getAccountsByStatusAndRole(AccountStatus, AccountRole);
 
+    Account getAccountByLogin(std::string login);
 };
 
 template<typename T>
-void Dao::updateDocument(const document_view_or_value& prevDocument, const std::string& attribute, T value) {
+void Dao::updateDocument(const document_view_or_value &prevDocument, const std::string &attribute, T value) {
     coll.update_one(prevDocument, s_document{} << "$set" << bsoncxx::builder::stream::open_document
-    << attribute << value << bsoncxx::builder::stream::close_document << bsoncxx::builder::stream::finalize);
+                                               << attribute << value << bsoncxx::builder::stream::close_document
+                                               << bsoncxx::builder::stream::finalize);
 }
+
 #endif //SERVER_DAO_H

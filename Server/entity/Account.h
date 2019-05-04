@@ -27,15 +27,15 @@ private:
 
 public:
 
-    Account(std::string&, std::string&, std::string&, std::string&, std::string&, AccountRole, AccountStatus);
+    Account(std::string, std::string, std::string, std::string, std::string, AccountRole, AccountStatus);
 
-    Account(document_view_or_value);
+    explicit Account(document_view_or_value);
 
     document_view_or_value getDocumentFormat() override;
 
     const bsoncxx::oid &getId() const;
 
-    const std::string &getEmailAdress() const;
+    const std::string &getEmailAddress() const;
 
     void setEmailAddress(const std::string &emailAddress);
 

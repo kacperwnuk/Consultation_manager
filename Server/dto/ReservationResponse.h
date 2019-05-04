@@ -9,11 +9,12 @@
 #include "enums/StatusType.h"
 #include "../serialization/Serializable.h"
 
-class ReservationResponse: public Serializable {
+class ReservationResponse : public Serializable {
 private:
     StatusType status;
 public:
     explicit ReservationResponse(const StatusType &);
+
     Json::Value getJson() override;
 };
 

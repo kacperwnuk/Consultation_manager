@@ -8,12 +8,10 @@
 
 #include <jsoncpp/json/value.h>
 
-class Serializable{
+class Serializable {
 public:
     virtual Json::Value getJson() = 0;
 };
-
-
 
 
 #endif //SERVER_SERIALIZABLE_H

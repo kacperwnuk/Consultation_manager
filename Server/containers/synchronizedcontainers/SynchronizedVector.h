@@ -6,21 +6,26 @@
 #define SERVER_SYNCHRONIZEDVECTOR_H
 
 
-#include "../../monitor.h"
+#include "monitor.h"
 #include <vector>
 #include <algorithm>
 
-template <typename T>
-class SynchronizedVector: Monitor {
+template<typename T>
+class SynchronizedVector : Monitor {
 private:
     std::vector<T> values;
 public:
     SynchronizedVector();
+
     void put(T);
+
     T get(int);
+
     void erase(T);
+
     unsigned long getSize();
-    std::vector<T>& getAll();
+
+    std::vector<T> &getAll();
 };
 
 template<typename T>
@@ -60,7 +65,7 @@ unsigned long SynchronizedVector<T>::getSize() {
 }
 
 template<typename T>
-std::vector<T>& SynchronizedVector<T>::getAll() {
+std::vector<T> &SynchronizedVector<T>::getAll() {
     enter();
     auto &valuesToReturn = values;
     leave();
