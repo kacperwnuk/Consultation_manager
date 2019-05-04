@@ -34,6 +34,7 @@ public class LoginWindow {
         password = passwordTextField.getText();
         System.out.println("Login: " + login);
         System.out.println("Password: " + password);
+        //sprawdzanie poprawności tutaj!;
         showMainWindow();
     }
 
