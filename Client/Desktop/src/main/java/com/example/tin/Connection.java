@@ -1,19 +1,18 @@
 package com.example.tin;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.sql.SQLOutput;
 
 public class Connection {
 
     String serverAddress = "192.168.0.164";
-    int portNumber = 9975;
+    int portNumber = 9994;
     Socket socket;
     DataOutputStream outToServer;
-    BufferedReader inFromServer;
+    DataInputStream inFromServer;
     boolean isConnected = false;
 
 
@@ -32,7 +31,7 @@ public class Connection {
             System.out.println("Polaczono");
             isConnected = true;
             outToServer = new DataOutputStream(socket.getOutputStream());
-            inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            inFromServer = new DataInputStream(socket.getInputStream());
             return true;
         } catch(Exception ex)
         {
@@ -56,7 +55,9 @@ public class Connection {
     public int sendMessage(String message) throws IOException
     {
 
+        System.out.println("Pisze info");
         outToServer.writeBytes(message);
+        System.out.println("Napisalem info");
         return 0;
     }
 
@@ -64,8 +65,9 @@ public class Connection {
     {
 
         try {
-            CharBuffer buffer = CharBuffer.allocate(1024);
-            inFromServer.read(buffer);
+            System.out.println("Czekam na wiadomosc");
+            ByteBuffer buffer = ByteBuffer.allocate(1024);
+            inFromServer.read(buffer.array());
             String message = new String(buffer.array());
             System.out.println("Wiadomosc: " + message);
             return message;

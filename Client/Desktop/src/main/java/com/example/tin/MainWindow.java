@@ -37,23 +37,23 @@ public class MainWindow {
             sendButton.setDisable(true);
             serverConsole.appendText("Unable to connect with server!");
         }
+
     }
 
 
     @FXML
-    private void btnSendClicked() throws IOException, InterruptedException
+    private void btnSendClicked() throws IOException
     {
         String message = messageArea.getText();
         messageArea.clear();
         if(message.length()!=0) {
             connection.sendMessage(message);
-            //Thread.sleep(200);
             serverConsole.appendText("Client says: " + message + "\n");
             handleServerMessage();
         }
     }
 
-    private void handleServerMessage() throws IOException
+    public void handleServerMessage() throws IOException
     {
         String message = connection.recieveMessage();
         serverConsole.appendText("Server says: " + message + "\n");

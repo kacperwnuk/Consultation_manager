@@ -11,15 +11,15 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../tin/sample.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../tin/login.fxml"));
         AnchorPane root = fxmlLoader.load();
 
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
-        final MainWindow controller = fxmlLoader.getController();
+        final LoginWindow controller = fxmlLoader.getController();
         primaryStage.setResizable(false);
-        primaryStage.setTitle("TIN Basic client");
-        primaryStage.setOnHidden(e -> controller.disconnect());
+        primaryStage.setTitle("Login Window");
+        //primaryStage.setOnHidden(e -> controller.disconnect());
         primaryStage.show();
 
         /*
