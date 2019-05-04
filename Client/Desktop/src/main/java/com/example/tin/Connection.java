@@ -16,14 +16,12 @@ public class Connection {
     boolean isConnected = false;
 
 
-    private void changePort(int port)
-    {
+    private void changePort(int port) {
         portNumber = port;
         connect();
     }
 
-    public boolean connect()
-    {
+    public boolean connect() {
         try {
             System.out.println("Lacze z serwerem...");
             socket = new Socket(serverAddress, portNumber);
@@ -33,27 +31,22 @@ public class Connection {
             outToServer = new DataOutputStream(socket.getOutputStream());
             inFromServer = new DataInputStream(socket.getInputStream());
             return true;
-        } catch(Exception ex)
-        {
+        } catch (Exception ex) {
             System.out.println("Unable to connect with server!");
             isConnected = false;
             return false;
         }
     }
 
-    public void disconnect()
-    {
+    public void disconnect() {
         try {
             socket.close();
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             System.out.println("Problem with disconnecting");
         }
     }
 
-    public int sendMessage(String message) throws IOException
-    {
+    public int sendMessage(String message) throws IOException {
 
         System.out.println("Pisze info");
         outToServer.writeBytes(message);
@@ -61,8 +54,7 @@ public class Connection {
         return 0;
     }
 
-    public String recieveMessage() throws IOException
-    {
+    public String recieveMessage() throws IOException {
 
         try {
             System.out.println("Czekam na wiadomosc");
@@ -71,16 +63,14 @@ public class Connection {
             String message = new String(buffer.array());
             System.out.println("Wiadomosc: " + message);
             return message;
-        } catch(IOException ex)
-        {
+        } catch (IOException ex) {
             disconnect();
             System.out.println("Problem with receivig message! Disconnecting...");
             return "";
         }
     }
 
-    public boolean getConnected()
-    {
+    public boolean getConnected() {
         return isConnected;
     }
 }

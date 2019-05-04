@@ -37,8 +37,7 @@ public class RegisterWindow {
     private int role;
 
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
     }
 
     @FXML
@@ -54,7 +53,6 @@ public class RegisterWindow {
             role = 0;
         else if(lecturerRadioButton.isSelected())
             role = 1;
-
         int validationResult = validate();
         System.out.println(validationResult);
         if(validationResult == 0) {
@@ -64,17 +62,20 @@ public class RegisterWindow {
         }
         else
             handleRegisterError(validationResult);
+        if (studentRadioButton.isPressed())
+            isStudent = true;
+        else if (lecturerRadioButton.isPressed())
+            isStudent = false;
+        showLoginWindow();
     }
 
     @FXML
-    private void studentSelected()
-    {
+    private void studentSelected() {
         lecturerRadioButton.setSelected(false);
     }
 
     @FXML
-    private void lecturerSelected()
-    {
+    private void lecturerSelected() {
         studentRadioButton.setSelected(false);
     }
 
@@ -148,10 +149,9 @@ public class RegisterWindow {
         alert.showAndWait();
     }
 
-    private void showLoginWindow()
-    {
+    private void showLoginWindow() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../tin/login.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
             AnchorPane root = fxmlLoader.load();
             final LoginWindow controller = fxmlLoader.getController();
             Scene scene = new Scene(root);
@@ -161,16 +161,8 @@ public class RegisterWindow {
             stage.show();
             Stage oldstage = (Stage) registerButton.getScene().getWindow();
             oldstage.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
-
 }

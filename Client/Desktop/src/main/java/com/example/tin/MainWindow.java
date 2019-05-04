@@ -1,6 +1,5 @@
 package com.example.tin;
 
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -22,7 +21,7 @@ public class MainWindow {
     private Connection connection = new Connection();
 
     @FXML
-    private void reconnect(){
+    private void reconnect() {
         serverConsole.clear();
         sendButton.setDisable(false);
         messageArea.setDisable(false);
@@ -31,8 +30,7 @@ public class MainWindow {
 
     @FXML
     private void initialize() {
-        if(!connection.connect())
-        {
+        if (!connection.connect()) {
             messageArea.setDisable(true);
             sendButton.setDisable(true);
             serverConsole.appendText("Unable to connect with server!");
@@ -42,27 +40,24 @@ public class MainWindow {
 
 
     @FXML
-    private void btnSendClicked() throws IOException
-    {
+    private void btnSendClicked() throws IOException {
         String message = messageArea.getText();
         messageArea.clear();
-        if(message.length()!=0) {
+        if (message.length() != 0) {
             connection.sendMessage(message);
             serverConsole.appendText("Client says: " + message + "\n");
             handleServerMessage();
         }
     }
 
-    public void handleServerMessage() throws IOException
-    {
+    public void handleServerMessage() throws IOException {
         String message = connection.recieveMessage();
         serverConsole.appendText("Server says: " + message + "\n");
     }
 
-    public void disconnect()
-    {
+    public void disconnect() {
         System.out.println("MW: Disconnecting...");
-        if(connection.getConnected())
+        if (connection.getConnected())
             connection.disconnect();
     }
 }
