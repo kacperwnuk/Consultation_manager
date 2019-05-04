@@ -35,13 +35,11 @@ public class RegisterWindow {
     private boolean isStudent;
 
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
     }
 
     @FXML
-    private void btnRegisterClicked()
-    {
+    private void btnRegisterClicked() {
         System.out.println("Register!");
         login = loginTextField.getText();
         name = nameTextField.getText();
@@ -49,28 +47,24 @@ public class RegisterWindow {
         password = passwordTextField.getText();
         password2 = password2TextField.getText();
         email = emailTextField.getText();
-        if(studentRadioButton.isPressed())
+        if (studentRadioButton.isPressed())
             isStudent = true;
-        else if(lecturerRadioButton.isPressed())
+        else if (lecturerRadioButton.isPressed())
             isStudent = false;
         showLoginWindow();
     }
 
     @FXML
-    private void studentSelected()
-    {
+    private void studentSelected() {
         lecturerRadioButton.setSelected(false);
     }
 
     @FXML
-    private void lecturerSelected()
-    {
+    private void lecturerSelected() {
         studentRadioButton.setSelected(false);
-
     }
 
-    private void showLoginWindow()
-    {
+    private void showLoginWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
             AnchorPane root = fxmlLoader.load();
@@ -82,14 +76,10 @@ public class RegisterWindow {
             stage.show();
             Stage oldstage = (Stage) registerButton.getScene().getWindow();
             oldstage.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
-
 
 
 }

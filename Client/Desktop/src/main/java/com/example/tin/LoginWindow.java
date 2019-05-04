@@ -28,8 +28,7 @@ public class LoginWindow {
     private String password;
 
     @FXML
-    private void btnLoginClicked()
-    {
+    private void btnLoginClicked() {
         login = loginTextField.getText();
         password = passwordTextField.getText();
         System.out.println("Login: " + login);
@@ -38,14 +37,12 @@ public class LoginWindow {
     }
 
     @FXML
-    private void btnRegisterClicked()
-    {
+    private void btnRegisterClicked() {
         System.out.println("Przycisk rejestracji");
         showRegisterWindow();
     }
 
-    private void showRegisterWindow()
-    {
+    private void showRegisterWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/register.fxml"));
             AnchorPane root = fxmlLoader.load();
@@ -58,14 +55,12 @@ public class LoginWindow {
             stage.show();
             Stage oldstage = (Stage) loginButton.getScene().getWindow();
             oldstage.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void showMainWindow()
-    {
+    private void showMainWindow() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
             AnchorPane root = fxmlLoader.load();
@@ -77,8 +72,7 @@ public class LoginWindow {
             stage.show();
             Stage oldstage = (Stage) loginButton.getScene().getWindow();
             oldstage.close();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
