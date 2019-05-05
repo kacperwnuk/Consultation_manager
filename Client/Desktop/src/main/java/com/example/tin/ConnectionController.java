@@ -11,7 +11,7 @@ public class ConnectionController {
     }
 
     public String receive() throws IOException {
-        return connection.recieveMessage();
+        return connection.receiveMessage();
     }
 
     private String getLenghtWithZeros(int lenght){

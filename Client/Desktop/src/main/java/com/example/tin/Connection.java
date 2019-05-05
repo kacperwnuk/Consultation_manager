@@ -55,7 +55,7 @@ public class Connection {
         return 0;
     }
 
-    public String recieveMessage() throws IOException {
+    public String receiveMessage() throws IOException {
 
         try {
             System.out.println("Czekam na wiadomosc");
@@ -66,7 +66,7 @@ public class Connection {
             return message;
         } catch (IOException ex) {
             disconnect();
-            System.out.println("Problem with receivig message! Disconnecting...");
+            System.out.println("Problem with receiving message! Disconnecting...");
             return "";
         }
     }

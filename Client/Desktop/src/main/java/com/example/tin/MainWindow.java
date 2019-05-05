@@ -56,7 +56,7 @@ public class MainWindow {
     }
 
     public void handleServerMessage() throws IOException {
-        String message = connection.recieveMessage();
+        String message = connection.receiveMessage();
         serverConsole.appendText("Server says: " + message + "\n");
     }
 
