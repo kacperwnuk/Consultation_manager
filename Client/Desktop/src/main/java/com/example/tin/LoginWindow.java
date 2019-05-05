@@ -1,14 +1,10 @@
 package com.example.tin;
 
+import com.example.tin.dto.LoginRequest;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -26,6 +22,7 @@ public class LoginWindow {
 
     private String login;
     private String password;
+    private Serializer serializer = new Serializer();
 
     @FXML
     private void btnLoginClicked() {
@@ -33,8 +30,17 @@ public class LoginWindow {
         password = passwordTextField.getText();
         System.out.println("Login: " + login);
         System.out.println("Password: " + password);
-        //sprawdzanie poprawności tutaj!;
-        showMainWindow();
+        try {
+            serializer.serializeAndSend(new LoginRequest(login, password));
+            if (serializer.deserialize())
+                showMainWindow();
+            else
+                showDialog();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
@@ -48,7 +54,7 @@ public class LoginWindow {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/register.fxml"));
             AnchorPane root = fxmlLoader.load();
             final RegisterWindow controller = fxmlLoader.getController();
-
+            controller.setSerializer(serializer);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -66,6 +72,7 @@ public class LoginWindow {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
             AnchorPane root = fxmlLoader.load();
             final MainWindow controller = fxmlLoader.getController();
+            controller.setSerializer(serializer);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -77,6 +84,13 @@ public class LoginWindow {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showDialog(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Błąd");
+        alert.setHeaderText("Błąd logowania");
+        alert.showAndWait();
     }
 
 }

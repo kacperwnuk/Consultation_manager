@@ -1,5 +1,6 @@
 package com.example.tin;
 
+import com.example.tin.dto.RegisterRequest;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -35,20 +37,19 @@ public class RegisterWindow {
 
     private String login, name, surname, email, password, password2;
     private int role;
+    Serializer serializer;
+
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
+    }
 
     @FXML
     private void initialize() {
     }
 
     @FXML
-    private void btnRegisterClicked()
-    {
-        login = loginTextField.getText();
-        name = nameTextField.getText();
-        surname = surnameTextField.getText();
-        password = passwordTextField.getText();
-        password2 = password2TextField.getText();
-        email = emailTextField.getText();
+    private void btnRegisterClicked() throws IOException, JSONException {
+        readValuesFromIputs();
         if(studentRadioButton.isSelected())
             role = 0;
         else if(lecturerRadioButton.isSelected())
@@ -57,8 +58,10 @@ public class RegisterWindow {
         System.out.println(validationResult);
         if(validationResult == 0) {
             registerUser();
-            //Tutaj sprawdzenie czy jest dobrze zarejestrowany - tylko wtedy wchodzi do showLoginWindow
-            showLoginWindow();
+            if (serializer.deserialize())
+                showLoginWindow();
+            else
+                showDialog();
         }
         else
             handleRegisterError(validationResult);
@@ -107,19 +110,16 @@ public class RegisterWindow {
             return 0;   //Status OK
     }
 
-    private void registerUser()     //Ma być bool - zwracać status rejestracji
+    private void registerUser() throws IOException     //Ma być bool - zwracać status rejestracji
     {
         User newUser = new User(login, name, surname, email, password, role);
-        //parsuj do jsona
-        //wyślij do serwera
-        //przetwórz odpowiedź
-        //zwróć status
+        serializer.serializeAndSend(new RegisterRequest(login,password,email,name,surname,role));
     }
 
     private void handleRegisterError(int error)
     {
         String messageToUser = "";
-        System.out.println("Erorr type: " + error);
+        System.out.println("Error type: " + error);
         switch (error)
         {
             case 1: { messageToUser =  "Wprowadź poprawny login! (Min. 8 znaków)";
@@ -163,5 +163,21 @@ public class RegisterWindow {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void showDialog(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Ups");
+        alert.setHeaderText("Coś poszło nie tak!");
+        alert.showAndWait();
+    }
+
+    private  void readValuesFromIputs(){
+        login = loginTextField.getText();
+        name = nameTextField.getText();
+        surname = surnameTextField.getText();
+        password = passwordTextField.getText();
+        password2 = password2TextField.getText();
+        email = emailTextField.getText();
     }
 }

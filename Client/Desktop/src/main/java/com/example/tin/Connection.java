@@ -8,8 +8,8 @@ import java.sql.SQLOutput;
 
 public class Connection {
 
-    String serverAddress = "192.168.0.164";
-    int portNumber = 9994;
+    String serverAddress = "192.168.0.94";
+    int portNumber = 9999;
     Socket socket;
     DataOutputStream outToServer;
     DataInputStream inFromServer;
@@ -49,6 +49,7 @@ public class Connection {
     public int sendMessage(String message) throws IOException {
 
         System.out.println("Pisze info");
+        System.out.println(message);
         outToServer.writeBytes(message);
         System.out.println("Napisalem info");
         return 0;

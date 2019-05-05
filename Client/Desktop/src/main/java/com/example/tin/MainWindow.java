@@ -19,6 +19,7 @@ public class MainWindow {
     Button reconnectButton;
 
     private Connection connection = new Connection();
+    private Serializer serializer;
 
     @FXML
     private void reconnect() {
@@ -48,6 +49,10 @@ public class MainWindow {
             serverConsole.appendText("Client says: " + message + "\n");
             handleServerMessage();
         }
+    }
+
+    public void setSerializer(Serializer serializer){
+        this.serializer = serializer;
     }
 
     public void handleServerMessage() throws IOException {

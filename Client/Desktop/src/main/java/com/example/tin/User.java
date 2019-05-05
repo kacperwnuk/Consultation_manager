@@ -1,5 +1,12 @@
 package com.example.tin;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class User {
     private String login;
     private String name;
@@ -26,6 +33,6 @@ public class User {
     private String parseToJson()
     {
         //kod parsowania do JSON
-        return "Do zrobienia przez Sławka leniwego chuja";
+        return "TODO";
     }
 }
