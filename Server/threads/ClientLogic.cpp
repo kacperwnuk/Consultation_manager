@@ -9,6 +9,8 @@
 #include "../dto/RegistrationRequest.h"
 #include "../dto/RegistrationResponse.h"
 #include "../dto/LoginResponse.h"
+#include "../dto/DailyConsultationsListRequest.h"
+#include "../entity/Consultation.h"
 
 void ClientLogic::run() {
     bool isRunning = true;
@@ -23,6 +25,9 @@ void ClientLogic::run() {
                 break;
             case RequestType::Registration:
                 gotRegistrationRequest();
+                break;
+            case RequestType::DailyConsultationsList:
+                gotDailyConsultationListRequest();
                 break;
             default:
                 break;
@@ -46,7 +51,7 @@ void ClientLogic::gotLoginRequest() {
 void ClientLogic::gotRegistrationRequest() {
     auto registrationRequest = deserializer->deserializedObject<RegistrationRequest>();
     std::cout << registrationRequest << std::endl;
-    auto status = tryToRegister(deserializer->deserializedObject<RegistrationRequest>());
+    auto status = tryToRegister(registrationRequest);
     RegistrationResponse registrationResponse(status);
     sendResponse(registrationResponse);
 }
@@ -98,6 +103,12 @@ std::shared_ptr<ClientMessageBuilder> ClientLogic::getClientMessageBuilder() {
     return deserializer->getClientMessageBuilder();
 }
 
+void ClientLogic::gotDailyConsultationListRequest() {
+    auto dailyConsultationsListRequest = deserializer->deserializedObject<DailyConsultationsListRequest>();
+    getConsultations(dailyConsultationsListRequest.getDate());
+}
 
-
+std::vector<Consultation> ClientLogic::getConsultations(b_date date) {
+    return std::vector<Consultation>();
+}
 

@@ -39,13 +39,13 @@ enum Commands {
     changePortCommand,
     sendToCommand
 };
-map<string, Commands> s_mapStringValues;
+map<string, Commands> mapStringCommands;
 
 void initialize() {
-    s_mapStringValues["stop"] = stopCommand;
-    s_mapStringValues["restart"] = restartCommand;
-    s_mapStringValues["changeport"] = changePortCommand;
-    s_mapStringValues["sendto"] = sendToCommand;
+    mapStringCommands["stop"] = stopCommand;
+    mapStringCommands["restart"] = restartCommand;
+    mapStringCommands["changeport"] = changePortCommand;
+    mapStringCommands["sendto"] = sendToCommand;
 }
 
 in_port_t getPortFromArgument(char *arg) {
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
     while (running) {
         string message;
         cin >> value;
-        switch (s_mapStringValues[value]) {
+        switch (mapStringCommands[value]) {
             case stopCommand:
                 cout << "Stopping server..." << endl;
                 tcpThread.cancel();

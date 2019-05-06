@@ -9,7 +9,8 @@ enum RequestType {
     None = 0,
     Login = 1,
     ConsultationCancellation = 2,
-    Registration = 3
+    Registration = 3,
+    DailyConsultationsList = 4
 };
 
 

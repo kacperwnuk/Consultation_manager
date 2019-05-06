@@ -16,6 +16,7 @@
 #include "../serialization/Serializer.h"
 #include "../Dao.h"
 #include "../dto/LoginRequest.h"
+#include "../entity/Consultation.h"
 
 class ClientLogic : public Thread {
     int socket;
@@ -30,6 +31,8 @@ class ClientLogic : public Thread {
     void gotLoginRequest();
 
     void gotRegistrationRequest();
+
+    std::vector<Consultation> getConsultations(b_date);
 
 public:
 
@@ -46,6 +49,10 @@ public:
     void sendResponse(T);
 
     std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
+
+    void gotDailyConsultationListRequest();
+
+
 };
 
 template<typename T>
