@@ -59,6 +59,7 @@ public:
     void gotNewConsultationRequest();
 
 
+    void showSerializedConsultation();
 };
 
 template<typename T>

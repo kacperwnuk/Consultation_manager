@@ -27,7 +27,7 @@ private:
 
 public:
 
-    Consultation(oid, std::string, oid, ConsultationStatus, ConsultationType, b_date);
+    Consultation(Account, std::string, Account, ConsultationStatus, ConsultationType, b_date);
 
     Consultation(document_view_or_value);
     Consultation(Json::Value);
@@ -38,17 +38,9 @@ public:
 
     oid getId() const;
 
-    oid getLecturerId() const;
-
-    void setLecturerId(oid lecturerId);
-
     const std::string &getRoom() const;
 
     void setRoom(const std::string &room);
-
-    oid getStudentId() const;
-
-    void setStudentId(oid studentId);
 
     ConsultationStatus getConsultationStatus() const;
 

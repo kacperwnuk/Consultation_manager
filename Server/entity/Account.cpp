@@ -82,9 +82,9 @@ Account::Account(std::string email, std::string login, std::string passwordHash,
 document_view_or_value Account::getDocumentFormat() {
     auto builder = bsoncxx::builder::stream::document{};
     bsoncxx::document::value docValue = builder
-            << "email" << this->emailAddress
+            << "emailAddress" << this->emailAddress
             << "login" << this->login
-            << "password" << this->passwordHash
+            << "passwordHash" << this->passwordHash
             << "name" << this->name
             << "surname" << this->surname
             << "accountRole" << this->accountRole
@@ -100,9 +100,9 @@ Account::Account(document_view_or_value document) {
     Json::Value jsonValue;
     reader.parse(stringValue, jsonValue);
     this->id = bsoncxx::oid(jsonValue["_id"]["$oid"].asString());
-    this->emailAddress = jsonValue["email"].asString();
+    this->emailAddress = jsonValue["emailAddress"].asString();
     this->login = jsonValue["login"].asString();
-    this->passwordHash = jsonValue["password"].asString();
+    this->passwordHash = jsonValue["passwordHash"].asString();
     this->name = jsonValue["name"].asString();
     this->surname = jsonValue["surname"].asString();
     this->accountRole = AccountRole(jsonValue["accountRole"].asInt());
@@ -112,7 +112,11 @@ Account::Account(document_view_or_value document) {
 Json::Value Account::getJson() {
 
     Json::Value value;
-    value["_id"] = this->id.to_string();
+    try {
+        value["_id"] = this->id.to_string();
+    } catch (std::exception &e){
+
+    }
     value["emailAddress"] = this->emailAddress;
     value["login"] = this->login;
     value["passwordHash"] = this->passwordHash;
@@ -123,6 +127,31 @@ Json::Value Account::getJson() {
 
     return value;
 }
+
+
+
+Account::Account(Json::Value jsonValue) {
+    try{
+        this->id = bsoncxx::oid(jsonValue["_id"].asString());
+    } catch (std::exception &e){
+
+    }
+    this->emailAddress = jsonValue["emailAddress"].asString();
+    this->login = jsonValue["login"].asString();
+    this->passwordHash = jsonValue["passwordHash"].asString();
+    this->name = jsonValue["name"].asString();
+    this->surname = jsonValue["surname"].asString();
+    this->accountRole = AccountRole(jsonValue["accountRole"].asInt());
+    this->accountStatus = AccountStatus(jsonValue["accountStatus"].asInt());
+}
+
+std::ostream &operator<<(std::ostream &os, const Account &account) {
+    os << " name: "
+       << account.name << " surname: " << account.surname << " accountRole: " << account.accountRole;
+    return os;
+}
+
+Account::Account() = default;
 
 
 
