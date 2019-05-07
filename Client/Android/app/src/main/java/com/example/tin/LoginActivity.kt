@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredentialsListener, DataService.LoginListener {
 
     private val handler = Handler()
+    private var progressing = false
 
     init {
         DataService.setLoginListener(this)
@@ -43,8 +44,18 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
 
     override fun onLoginFailure() {
         handler.post {
+
+            showProgress(false)
             password.error = getString(R.string.error_incorrect_password)
             password.requestFocus()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (progressing) {
+            showProgress(false)
+        } else {
+            super.onBackPressed()
         }
     }
 
@@ -138,6 +149,7 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
+        progressing = show
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
