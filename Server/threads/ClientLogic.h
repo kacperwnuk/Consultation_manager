@@ -17,6 +17,7 @@
 #include "../Dao.h"
 #include "../dto/LoginRequest.h"
 #include "../entity/Consultation.h"
+#include "../dto/NewConsultationRequest.h"
 
 class ClientLogic : public Thread {
     int socket;
@@ -45,12 +46,17 @@ public:
 
     StatusType tryToLogin(const LoginRequest &);
 
+    StatusType tryToAddConsultation(NewConsultationRequest);
+
     template<typename T>
     void sendResponse(T);
 
     std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
 
     void gotDailyConsultationListRequest();
+
+
+    void gotNewConsultationRequest();
 
 
 };

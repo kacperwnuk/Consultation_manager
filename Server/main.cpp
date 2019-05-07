@@ -20,7 +20,7 @@
 #include "containers/OutgoingMessage.h"
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "serialization/Serializer.h"
-#include "dto/ConsultationResponse.h"
+#include "dto/DailyConsultationsListResponse.h"
 #include "dto/ConsultationCancellationRequest.h"
 #include "serialization/Deserializer.h"
 #include "dto/enums/StatusType.h"

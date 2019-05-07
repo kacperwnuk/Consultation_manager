@@ -12,6 +12,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include "entity/enums/AccountStatus.h"
 #include "entity/Account.h"
+#include "entity/Consultation.h"
 
 using bsoncxx::builder::stream::close_array;
 using s_document = bsoncxx::builder::stream::document;
@@ -45,6 +46,8 @@ public:
     std::vector<Account> getAccountsByStatusAndRole(AccountStatus, AccountRole);
 
     Account getAccountByLogin(std::string login);
+
+    std::vector<Consultation> getConsultationsByDate(b_date);
 };
 
 template<typename T>

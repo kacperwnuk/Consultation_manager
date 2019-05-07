@@ -11,6 +11,9 @@
 #include "../dto/LoginResponse.h"
 #include "../dto/DailyConsultationsListRequest.h"
 #include "../entity/Consultation.h"
+#include "../dto/NewConsultationRequest.h"
+#include "../dto/NewConsultationResponse.h"
+#include "../dto/DailyConsultationsListResponse.h"
 
 void ClientLogic::run() {
     bool isRunning = true;
@@ -28,6 +31,9 @@ void ClientLogic::run() {
                 break;
             case RequestType::DailyConsultationsList:
                 gotDailyConsultationListRequest();
+                break;
+            case RequestType::NewConsultation:
+                gotNewConsultationRequest();
                 break;
             default:
                 break;
@@ -56,6 +62,23 @@ void ClientLogic::gotRegistrationRequest() {
     sendResponse(registrationResponse);
 }
 
+void ClientLogic::gotNewConsultationRequest() {
+    auto newConsultationRequest = deserializer->deserializedObject<NewConsultationRequest>();
+    std::cout << newConsultationRequest << std::endl;
+    auto status = tryToAddConsultation(newConsultationRequest);
+    NewConsultationResponse newConsultationResponse(status);
+    sendResponse(newConsultationResponse);
+}
+
+void ClientLogic::gotDailyConsultationListRequest() {
+    auto dailyConsultationsListRequest = deserializer->deserializedObject<DailyConsultationsListRequest>();
+    auto consultations = getConsultations(dailyConsultationsListRequest.getDate());
+    DailyConsultationsListResponse dailyConsultationsListResponse(consultations);
+    sendResponse(dailyConsultationsListResponse);
+}
+
+
+
 ClientLogic::ClientLogic(int socket, MutualExclusiveHashMap<size_t> &readDemands,
                          const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) :
         socket(socket), readDemands(readDemands), messageQueue(messageQueue), dao("TIN") {
@@ -69,7 +92,7 @@ StatusType ClientLogic::tryToRegister(RegistrationRequest request) {
     auto account = Account(request.getEmail(), request.getLogin(), request.getPassword(), request.getName(),
                            request.getSurname(), request.getAccountRole(), AccountStatus::INACTIVE);
     auto document = account.getDocumentFormat();
-    dao.setCollection("accounts");
+    dao.setCollection("account");
 
     try {
         dao.insertDocument(document);
@@ -84,7 +107,7 @@ StatusType ClientLogic::tryToRegister(RegistrationRequest request) {
 
 
 StatusType ClientLogic::tryToLogin(const LoginRequest &loginRequest) {
-    dao.setCollection("accounts");
+    dao.setCollection("account");
     try {
         auto account = dao.getAccountByLogin(loginRequest.getLogin());
         if (account.getPasswordHash() != loginRequest.getPassword()) {
@@ -99,16 +122,35 @@ StatusType ClientLogic::tryToLogin(const LoginRequest &loginRequest) {
     return OK;
 }
 
+StatusType ClientLogic::tryToAddConsultation(NewConsultationRequest newConsultationRequest) {
+    dao.setCollection("consultation");
+//    czy nie ma juz konsultacji o tej porze?
+    auto document = newConsultationRequest.getConsultationDocumentFormat();
+    try {
+        dao.insertDocument(document);
+    } catch (std::exception &e) {
+        std::cout << e.what();
+        return ERROR;
+    }
+
+
+    return OK;
+}
+
+
 std::shared_ptr<ClientMessageBuilder> ClientLogic::getClientMessageBuilder() {
     return deserializer->getClientMessageBuilder();
 }
 
-void ClientLogic::gotDailyConsultationListRequest() {
-    auto dailyConsultationsListRequest = deserializer->deserializedObject<DailyConsultationsListRequest>();
-    getConsultations(dailyConsultationsListRequest.getDate());
-}
 
 std::vector<Consultation> ClientLogic::getConsultations(b_date date) {
-    return std::vector<Consultation>();
+    dao.setCollection("consultation");
+
+    auto consultations = dao.getConsultationsByDate(date);
+
+    return consultations;
 }
+
+
+
 

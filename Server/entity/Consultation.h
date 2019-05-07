@@ -7,6 +7,7 @@
 
 #include <ctime>
 #include <string>
+#include <ostream>
 #include "enums/ConsultationStatus.h"
 #include "enums/ConsultationType.h"
 #include "Account.h"
@@ -17,9 +18,9 @@ class Consultation : public Entity, public Serializable {
 private:
 
     oid id;
-    oid lecturerId;
+    Account lecturer;
     std::string room;
-    oid studentId;
+    Account student;
     ConsultationStatus consultationStatus;
     ConsultationType consultationType;
     b_date consultationDate;
@@ -29,6 +30,7 @@ public:
     Consultation(oid, std::string, oid, ConsultationStatus, ConsultationType, b_date);
 
     Consultation(document_view_or_value);
+    Consultation(Json::Value);
 
     Json::Value getJson() override;
 
@@ -63,6 +65,9 @@ public:
     void book(Account);
 
     void free();
+
+    friend std::ostream &operator<<(std::ostream &os, const Consultation &consultation);
+
 };
 
 
