@@ -117,7 +117,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
         private val actionListener: WeakReference<ReserveConsultationFragment> = WeakReference(actionListener)
 
         override fun doInBackground(vararg params: Void): FreeConsultationsRecyclerAdapter {
-            val dataService = DataService(context.get()!!)
+            val dataService = DataService
             val consultations = dataService.getFreeConsultations()
             return FreeConsultationsRecyclerAdapter(
                 consultations.sortedWith(

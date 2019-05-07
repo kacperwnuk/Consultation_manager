@@ -69,7 +69,7 @@ class ViewReservedConsultationsFragment : Fragment(),
         private val actionListener: WeakReference<ViewReservedConsultationsFragment> = WeakReference(actionListener)
 
         override fun doInBackground(vararg params: Void): RecyclerView.Adapter<RecyclerView.ViewHolder> {
-            val dataService = DataService(context.get()!!)
+            val dataService = DataService
             val consultations = dataService.getReservedConsultations((context.get() as MainActivity).credential!!.id)
             return if (consultations.isNotEmpty()) {
                 MyBookedConsultationsRecyclerAdapter(consultations.sortedWith (compareBy ({it.day}, {it.startTime})), actionListener.get()!!)

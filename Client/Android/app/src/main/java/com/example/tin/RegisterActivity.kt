@@ -158,9 +158,10 @@ class RegisterActivity : AppCompatActivity() {
         AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {
-            val dataService = DataService(context)
+            val dataService = DataService
             val account = Account(registrationForm.email, registrationForm.password)
-            return dataService.register(account)
+            dataService.register(account)
+            return true
         }
 
         override fun onPostExecute(success: Boolean?) {

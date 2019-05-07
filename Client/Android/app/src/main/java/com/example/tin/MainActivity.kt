@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return
         }
         credential = intent.extras.get("Credential") as Credential?
-        dataService = DataService(this)
+        dataService = DataService
     }
 
     override fun onBackPressed() {
