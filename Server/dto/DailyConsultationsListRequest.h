@@ -16,8 +16,6 @@ private:
 public:
     const b_date &getDate() const;
 
-    friend std::ostream &operator<<(std::ostream &os, const DailyConsultationsListRequest &request);
-
     DailyConsultationsListRequest(Json::Value);
 };
 

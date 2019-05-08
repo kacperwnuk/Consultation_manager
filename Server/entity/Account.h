@@ -8,6 +8,7 @@
 
 #include <string>
 #include <bsoncxx/document/view_or_value.hpp>
+#include <ostream>
 #include "enums/AccountRole.h"
 #include "enums/AccountStatus.h"
 #include "Entity.h"
@@ -28,8 +29,11 @@ private:
 public:
 
     Account(std::string, std::string, std::string, std::string, std::string, AccountRole, AccountStatus);
-
+    Account();
     explicit Account(document_view_or_value);
+    Account(Json::Value);
+
+    friend std::ostream &operator<<(std::ostream &os, const Account &account);
 
     document_view_or_value getDocumentFormat() override;
 

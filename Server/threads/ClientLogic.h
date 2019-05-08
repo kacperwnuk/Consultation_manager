@@ -17,6 +17,7 @@
 #include "../Dao.h"
 #include "../dto/LoginRequest.h"
 #include "../entity/Consultation.h"
+#include "../dto/NewConsultationRequest.h"
 
 class ClientLogic : public Thread {
     int socket;
@@ -45,6 +46,8 @@ public:
 
     StatusType tryToLogin(const LoginRequest &);
 
+    StatusType tryToAddConsultation(NewConsultationRequest);
+
     template<typename T>
     void sendResponse(T);
 
@@ -53,6 +56,10 @@ public:
     void gotDailyConsultationListRequest();
 
 
+    void gotNewConsultationRequest();
+
+
+    void showSerializedConsultation();
 };
 
 template<typename T>
