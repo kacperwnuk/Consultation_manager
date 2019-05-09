@@ -57,6 +57,7 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
         val consultation = consultations[position]
         holder.itemView.elevation = 20.0f
         holder.itemView.findViewById<TextView>(R.id.person).text = "${consultation.consultationCreator.name} ${consultation.consultationCreator.surname}"
+        holder.itemView.findViewById<TextView>(R.id.room).text = consultation.room
         val (startDate, startTime) = dateToString(consultation.consultationDateStart)
         val (endDate,  endTime) = dateToString(consultation.consultationDateEnd)
         var consultationDateEnd = endTime
