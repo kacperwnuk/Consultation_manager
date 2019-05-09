@@ -10,10 +10,8 @@
 0098{"type":3,"login":"k","password":"w","email":"e","name":"Kacper","surname":"Wnuk","accountRole":2}
 
 //dodanie konsultacji
-0363{"consultationDateStart":1557302400000,"consultationStatus":0,"consultationType":0,"lecturer":{"login":"k","passwordHash":"w","emailAddress":"e","name":"Kacper","surname":"Wnuk","accountRole":1,"accountStatus":0},"room":"315","student":{"login":"k","passwordHash":"w","emailAddress":"e","name":"Marcin","surname":"Zyzynski","accountRole":2,"accountStatus":0},"type":5}
+0187{"consultationDateStart":1557482400000,"consultationDateEnd":1557483000000,"consultationType":0,"consultationCreator":{"login":"k","name":"Kacper","surname":"Wnuk"},"room":"315","type":5}
 
 //wyciagniecie konsultacji z 24h
 0043{"consultationDateStart":1557266400000,"type":4}
 
-//struktura listy konsultacji
-{"consultations":[{"_id":"5cd2136025a537244e18c9b2","consultationDateStart":1557316800000,"consultationStatus":0,"consultationType":0,"lecturer":{"_id":"5cd213bc25a537244e18c9c4","accountRole":1,"accountStatus":0,"emailAddress":"e","login":"k","name":"Kacper","passwordHash":"w","surname":"Wnuk"},"room":"315","student":{"_id":"5cd213bc25a537244e18c9c5","accountRole":2,"accountStatus":0,"emailAddress":"e","login":"k","name":"Marcin","passwordHash":"w","surname":"Zyzynski"}},{"_id":"5cd2137325a537244e18c9b7","consultationDateStart":1557320400000,"consultationStatus":0,"consultationType":0,"lecturer":{"_id":"5cd213bc25a537244e18c9c9","accountRole":1,"accountStatus":0,"emailAddress":"e","login":"k","name":"Kacper","passwordHash":"w","surname":"Wnuk"},"room":"315","student":{"_id":"5cd213bc25a537244e18c9ca","accountRole":2,"accountStatus":0,"emailAddress":"e","login":"k","name":"Marcin","passwordHash":"w","surname":"Zyzynski"}},{"_id":"5cd2137f25a537244e18c9bc","consultationDateStart":1557302400000,"consultationStatus":0,"consultationType":0,"lecturer":{"_id":"5cd213bc25a537244e18c9ce","accountRole":1,"accountStatus":0,"emailAddress":"e","login":"k","name":"Kacper","passwordHash":"w","surname":"Wnuk"},"room":"315","student":{"_id":"5cd213bc25a537244e18c9cf","accountRole":2,"accountStatus":0,"emailAddress":"e","login":"k","name":"Marcin","passwordHash":"w","surname":"Zyzynski"}}],"type":4}
