@@ -44,7 +44,6 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
 
     override fun onLoginFailure() {
         handler.post {
-
             showProgress(false)
             password.error = getString(R.string.error_incorrect_password)
             password.requestFocus()

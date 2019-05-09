@@ -17,11 +17,12 @@ import com.example.tin.data.DataService
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.*
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.view.*
 import java.lang.ref.WeakReference
+import java.util.*
 
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
+private const val DATE = "date"
 private const val ARG_PARAM2 = "param2"
 
 /**
@@ -31,37 +32,49 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter.ActionListener,
-    SwipeRefreshLayout.OnRefreshListener {
+    SwipeRefreshLayout.OnRefreshListener, DataService.ConsultationsListener {
+
+    override fun updateFreeConsultations(consultations: List<Consultation>) {
+        updateView(
+            FreeConsultationsRecyclerAdapter(
+                consultations.sortedWith(
+                    compareBy({ it.day },
+                        { it.startTime })
+                ), this
+            )
+        )
+    }
 
     override fun onRefresh() {
         update()
     }
 
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
+    private var date: Long = Date().time
     private var param2: String? = null
 
     private lateinit var recyclerAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private val consultations = listOf(
-        Consultation("3","Dr. inż. Gawkowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("4","Dr. inż. Gawkowski", "12.15", "12.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("5","Dr. inż. Gawkowski", "12.30", "12.45", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("6","Dr. inż. Gawkowski", "12.45", "13.00", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("7","Dr. inż. Gawkowski", "16.45", "17.15", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("8","Dr. inż. Gawkowski", "17.15", "17.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("9","Dr. inż. Gawkowski", "12.00", "12.15", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("10","Dr. inż. Gawkowski", "12.15", "12.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("11","Dr. inż. Gawkowski", "12.30", "12.45", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
-        Consultation("12","Dr. inż. Gawkowski", "12.45", "13.00", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("13","Dr. inż. Gawkowski", "13.00", "13.15", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
-        Consultation("14","Dr. inż. Gawkowski", "13.15", "13.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED)
+        Consultation("3", "Dr. inż. Gawkowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("4", "Dr. inż. Gawkowski", "12.15", "12.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("5", "Dr. inż. Gawkowski", "12.30", "12.45", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("6", "Dr. inż. Gawkowski", "12.45", "13.00", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("7", "Dr. inż. Gawkowski", "16.45", "17.15", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("8", "Dr. inż. Gawkowski", "17.15", "17.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("9", "Dr. inż. Gawkowski", "12.00", "12.15", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("10", "Dr. inż. Gawkowski", "12.15", "12.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("11", "Dr. inż. Gawkowski", "12.30", "12.45", "22.03.2019", ConsultationType.LECTURER_SUGGESTED),
+        Consultation("12", "Dr. inż. Gawkowski", "12.45", "13.00", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("13", "Dr. inż. Gawkowski", "13.00", "13.15", "22.03.2019", ConsultationType.STUDENT_SUGGESTED),
+        Consultation("14", "Dr. inż. Gawkowski", "13.15", "13.30", "22.03.2019", ConsultationType.LECTURER_SUGGESTED)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DataService.setConsultationsListener(this)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
+            date = it.getLong(DATE)
             param2 = it.getString(ARG_PARAM2)
         }
     }
@@ -77,7 +90,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
         return view
     }
 
-    override fun addBefore(day:String, endTime: String) {
+    override fun addBefore(day: String, endTime: String) {
         (context as ActionListener).addBefore(day, endTime)
     }
 
@@ -98,7 +111,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
     }
 
     fun update() {
-        MyAsyncTask(context!!, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
+        MyAsyncTask(context!!, this, date).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
     fun updateView(result: FreeConsultationsRecyclerAdapter) {
@@ -110,7 +123,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
         swipe_container.isRefreshing = false
     }
 
-    private class MyAsyncTask internal constructor(context: Context, actionListener: ReserveConsultationFragment):
+    private class MyAsyncTask internal constructor(context: Context, actionListener: ReserveConsultationFragment, val date: Long) :
         AsyncTask<Void, Void, FreeConsultationsRecyclerAdapter>() {
 
         private val context: WeakReference<Context> = WeakReference(context)
@@ -118,7 +131,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
 
         override fun doInBackground(vararg params: Void): FreeConsultationsRecyclerAdapter {
             val dataService = DataService
-            val consultations = dataService.getFreeConsultations()
+            val consultations = dataService.getFreeConsultations(date)
             return FreeConsultationsRecyclerAdapter(
                 consultations.sortedWith(
                     compareBy({ it.day },
@@ -128,7 +141,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
         }
 
         override fun onPostExecute(result: FreeConsultationsRecyclerAdapter) {
-            actionListener.get()!!.updateView(result)
+//            actionListener.get()!!.updateView(result)
         }
     }
 
@@ -143,10 +156,10 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(date: Long, param2: String) =
             ReserveConsultationFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
+                    putLong(DATE, date)
                     putString(ARG_PARAM2, param2)
                 }
             }

@@ -20,7 +20,20 @@ import kotlinx.android.synthetic.main.activity_register.*
 /**
  * A login screen that offers login via email/password.
  */
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity(), DataService.RegisterListener {
+
+    init {
+        DataService.setRegisterListener(this)
+    }
+
+    override fun onRegisterSuccess() {
+        showProgress(false)
+        finish()
+    }
+
+    override fun onRegisterFailure() {
+        showProgress(false)
+    }
 
     /**
      * Keep track of the registration task to ensure we can cancel it if requested.
@@ -166,13 +179,11 @@ class RegisterActivity : AppCompatActivity() {
 
         override fun onPostExecute(success: Boolean?) {
             mRegisterTask = null
-            showProgress(false)
 
             if (success!!) {
-                finish()
+
             } else {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
+
             }
         }
 

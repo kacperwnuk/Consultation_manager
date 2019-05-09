@@ -17,13 +17,14 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     ReserveConsultationFragment.ActionListener, SuggestConsultationFragment.ActionListener,
-    ViewReservedConsultationsFragment.ActionListener {
+    ViewReservedConsultationsFragment.ActionListener, FindConsultationFragment.OnSearchListener {
 
     var credential: Credential? = null
     private lateinit var dataService: DataService
 
     private lateinit var reserveConsultationFragment: ReserveConsultationFragment
     private lateinit var viewReservedConsultationsFragment: ViewReservedConsultationsFragment
+    private lateinit var findConsultationFragment: FindConsultationFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         supportActionBar!!.title = getString(R.string.consultation_reservation_title)
 
-        reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
+        reserveConsultationFragment = ReserveConsultationFragment.newInstance(0, "")
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment).commit()
 
         val toggle = ActionBarDrawerToggle(
@@ -75,8 +76,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.find_consultation -> {
-                reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
+                findConsultationFragment = FindConsultationFragment.newInstance("", "")
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, findConsultationFragment)
                     .addToBackStack(null).commit()
                 supportActionBar!!.title = getString(R.string.consultation_reservation_title)
             }
@@ -131,5 +132,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dataService.cancelConsultation(id, credential!!.id)
         viewReservedConsultationsFragment.update()
         Toast.makeText(this, "cancel", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onSearchConsultation(date: Long) {
+        reserveConsultationFragment = ReserveConsultationFragment.newInstance(date, "")
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
+            .addToBackStack(null).commit()
+        supportActionBar!!.title = getString(R.string.consultation_reservation_title)
     }
 }
