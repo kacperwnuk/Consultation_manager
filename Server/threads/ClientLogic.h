@@ -18,6 +18,7 @@
 #include "../dto/LoginRequest.h"
 #include "../entity/Consultation.h"
 #include "../dto/NewConsultationRequest.h"
+#include "../dto/DailyConsultationsListRequest.h"
 
 class ClientLogic : public Thread {
     int socket;
@@ -27,39 +28,30 @@ class ClientLogic : public Thread {
     std::unique_ptr<Serializer> serializer;
     std::unique_ptr<Deserializer> deserializer;
 
-    void gotConsultationCancellationRequest();
+    std::vector<Consultation> tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest);
 
-    void gotLoginRequest();
+    StatusType tryToRegister(RegistrationRequest);
 
-    void gotRegistrationRequest();
+    StatusType tryToLogin(LoginRequest);
 
-    std::vector<Consultation> getConsultations(b_date);
+    StatusType tryToAddConsultation(NewConsultationRequest);
+
+    template<typename Request, typename ReturnType, typename Response>
+    void handleRequest(std::function<ReturnType(ClientLogic*, Request)>);
+
 
 public:
+
 
     ClientLogic(int socket, MutualExclusiveHashMap<size_t> &readDemands,
                 const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue);
 
     void run() override;
 
-    StatusType tryToRegister(RegistrationRequest);
-
-    StatusType tryToLogin(const LoginRequest &);
-
-    StatusType tryToAddConsultation(NewConsultationRequest);
-
     template<typename T>
     void sendResponse(T);
 
     std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
-
-    void gotDailyConsultationListRequest();
-
-
-    void gotNewConsultationRequest();
-
-
-    void showSerializedConsultation();
 };
 
 template<typename T>
@@ -68,6 +60,14 @@ void ClientLogic::sendResponse(T response) {
     OutgoingMessage outgoingMessage(socket, output.c_str(), output.length());
     messageQueue->put(outgoingMessage);
 
+}
+
+
+template<typename Request, typename ReturnType, typename Response>
+void ClientLogic::handleRequest(std::function<ReturnType(ClientLogic*, Request)> tryHandleRequest) {
+    Request request = deserializer->getDeserializedObject<Request>();
+    Response response(tryHandleRequest(this, request));
+    sendResponse(response);
 }
 
 

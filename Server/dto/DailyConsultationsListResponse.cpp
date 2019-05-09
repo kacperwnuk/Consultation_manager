@@ -12,9 +12,14 @@ DailyConsultationsListResponse::DailyConsultationsListResponse(std::vector<Consu
 
 Json::Value DailyConsultationsListResponse::getJson() {
     Json::Value value;
-    for (auto consultation : consultations) {
-        value["consultations"].append(consultation.getJson());
+    if (this->consultations.empty()){
+        value["consultations"];
+    } else {
+        for (auto consultation : consultations) {
+            value["consultations"].append(consultation.getJson());
+        }
     }
+
     value["type"] = ResponseType::DailyConsultationsListResp;
     return value;
 }

@@ -60,15 +60,25 @@ Account Dao::getAccountByLogin(std::string login) {
     throw std::runtime_error(std::string("No user with this login!"));
 }
 
-std::vector<Consultation> Dao::getConsultationsByDate(b_date date) {
+std::vector<Consultation> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
 
-    std::cout<< date.value.count() << std::endl;
-    auto dayAfter = std::chrono::milliseconds(date.value.count() + std::chrono::milliseconds(std::chrono::hours(24)).count());
-    auto results = coll.find(s_document{} << "consultationDate" << bsoncxx::builder::stream::open_document <<
-                                          "$gt" << date <<
-                                          "$lte" << b_date(dayAfter)
-                                          << bsoncxx::builder::stream::close_document
-                                          << bsoncxx::builder::stream::finalize);
+//    auto result = coll.find(s_document{} << "consultationDateStart" << bsoncxx::builder::stream::open_document <<
+//                                          "$gte" << dateStart <<
+//                                          "$lte" << dateEnd
+//                                          << bsoncxx::builder::stream::close_document
+//                                          << bsoncxx::builder::stream::finalize);
+    auto results = coll.find(
+            make_document(kvp("$or",
+                              make_array( make_document(kvp("consultationDateStart",
+                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd)))),
+                                          make_document(kvp("consultatoinDateEnd",
+                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd))))
+                              )
+                          )
+            ));
+
+
+
     std::vector<Consultation> consultations;
     for (auto consultationDoc : results) {
         Consultation consultation = Consultation(consultationDoc);

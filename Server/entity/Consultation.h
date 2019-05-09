@@ -12,25 +12,29 @@
 #include "enums/ConsultationType.h"
 #include "Account.h"
 #include "../serialization/Serializable.h"
+#include "AccountInfoForClient.h"
+#include "ConsultationInfoForClient.h"
 
 
 class Consultation : public Entity, public Serializable {
 private:
 
     oid id;
-    Account lecturer;
+    AccountInfoForClient lecturer;
     std::string room;
-    Account student;
+    AccountInfoForClient student;
     ConsultationStatus consultationStatus;
     ConsultationType consultationType;
-    b_date consultationDate;
+    b_date consultationDateStart;
+    b_date consultationDateEnd;
 
 public:
 
-    Consultation(Account, std::string, Account, ConsultationStatus, ConsultationType, b_date);
+    Consultation(AccountInfoForClient, std::string, AccountInfoForClient, ConsultationStatus, ConsultationType, b_date, b_date);
 
     Consultation(document_view_or_value);
     Consultation(Json::Value);
+    Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status);
 
     Json::Value getJson() override;
 
@@ -50,16 +54,15 @@ public:
 
     void setConsultationType(ConsultationType consultationType);
 
-    const b_date &getConsultationDate() const;
+    const b_date &getConsultationDateStart() const;
 
-    void setConsultationDate(const b_date &consultationDate);
+    void setConsultationDateStart(const b_date &consultationDate);
 
     void book(Account);
 
     void free();
 
     friend std::ostream &operator<<(std::ostream &os, const Consultation &consultation);
-
 };
 
 
