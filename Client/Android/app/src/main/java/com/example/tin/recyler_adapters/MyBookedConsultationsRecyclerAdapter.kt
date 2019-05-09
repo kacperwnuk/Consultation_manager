@@ -1,10 +1,11 @@
-package com.example.tin
+package com.example.tin.recyler_adapters
 
 import android.annotation.SuppressLint
 import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.example.tin.R
 import com.example.tin.data.Consultation
 import kotlinx.android.synthetic.main.my_booked_consultation_item.view.*
 

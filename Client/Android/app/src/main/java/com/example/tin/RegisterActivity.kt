@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
@@ -22,17 +23,23 @@ import kotlinx.android.synthetic.main.activity_register.*
  */
 class RegisterActivity : AppCompatActivity(), DataService.RegisterListener {
 
+    private val handler = Handler()
+
     init {
         DataService.setRegisterListener(this)
     }
 
     override fun onRegisterSuccess() {
-        showProgress(false)
-        finish()
+        handler.post {
+            showProgress(false)
+            finish()
+        }
     }
 
     override fun onRegisterFailure() {
-        showProgress(false)
+        handler.post {
+            showProgress(false)
+        }
     }
 
     /**
@@ -172,7 +179,7 @@ class RegisterActivity : AppCompatActivity(), DataService.RegisterListener {
 
         override fun doInBackground(vararg params: Void): Boolean? {
             val dataService = DataService
-            val account = Account(registrationForm.email, registrationForm.password)
+            val account = Account(registrationForm.name, registrationForm.surname, registrationForm.email, registrationForm.email, registrationForm.password)
             dataService.register(account)
             return true
         }

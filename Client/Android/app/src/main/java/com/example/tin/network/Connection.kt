@@ -72,7 +72,7 @@ object Connection : Runnable {
 
                 }
             } catch (e: IOException) {
-
+                print(e)
             }
         }
     }

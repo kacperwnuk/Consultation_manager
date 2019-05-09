@@ -1,10 +1,12 @@
 package com.example.tin.dto.request
 
 class RegisterRequest(
-    val username: String,
+    val email: String,
+    val login: String,
     val password: String,
     val name: String,
-    val surnname: String,
-    val type: Int = 2
+    val surname: String,
+    val accountRole: Int = 2,
+    val type: Int = 3
 ) {
 }

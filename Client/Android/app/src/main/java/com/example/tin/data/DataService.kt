@@ -1,7 +1,9 @@
 package com.example.tin.data
 
 import com.example.tin.data.entity.Account
+import com.example.tin.data.entity.ConsultationInfo
 import com.example.tin.dto.request.*
+import com.example.tin.dto.response.ConsultationList
 import com.example.tin.dto.response.LoginResponse
 import com.example.tin.dto.response.RegisterResponse
 import com.example.tin.network.Connection
@@ -21,7 +23,7 @@ object DataService : Connection.NetworkEventListener {
     }
 
     interface ConsultationsListener {
-        fun updateFreeConsultations(consultations: List<Consultation>)
+        fun updateFreeConsultations(consultations: List<ConsultationInfo>)
     }
 
     private val objectMapper = ObjectMapper()
@@ -47,8 +49,11 @@ object DataService : Connection.NetworkEventListener {
             1 -> {
                 processLoginResponse(message)
             }
-            2 -> {
+            3 -> {
                 processRegisterResponse(message)
+            }
+            4 -> {
+                processConsultationsForDay(message)
             }
         }
 
@@ -84,6 +89,16 @@ object DataService : Connection.NetworkEventListener {
         }
     }
 
+    private fun processConsultationsForDay(message: String) {
+        var consultationsResponse = objectMapper.readValue(message, ConsultationList::class.java)
+
+        try {
+            consultationsListener!!.get()!!.updateFreeConsultations(consultationsResponse.consultations)
+        } catch (e: NullPointerException) {
+
+        }
+    }
+
     private val connection = Connection
 
     init {
@@ -91,78 +106,8 @@ object DataService : Connection.NetworkEventListener {
     }
 
 
-    fun getFreeConsultations(date: Long): List<Consultation> {
+    fun getFreeConsultations(date: Long) {
         connection.sendMessage(objectMapper.writeValueAsString(GetFreeConsultationsForDateRequest(date)))
-        return listOf(
-            Consultation(
-                "3",
-                "Dr. inż. Gawkowski",
-                "12.00",
-                "12.15",
-                "21.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            ),
-            Consultation("4", "Dr. inż. Gawkowski", "12.15", "12.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-            Consultation(
-                "5",
-                "Dr. inż. Gawkowski",
-                "12.30",
-                "12.45",
-                "21.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            ),
-            Consultation("6", "Dr. inż. Gawkowski", "12.45", "13.00", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-            Consultation("7", "Dr. inż. Gawkowski", "16.45", "17.15", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-            Consultation("8", "Dr. inż. Gawkowski", "17.15", "17.30", "21.03.2019", ConsultationType.STUDENT_SUGGESTED),
-            Consultation(
-                "9",
-                "Dr. inż. Gawkowski",
-                "12.00",
-                "12.15",
-                "22.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            ),
-            Consultation(
-                "10",
-                "Dr. inż. Gawkowski",
-                "12.15",
-                "12.30",
-                "22.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            ),
-            Consultation(
-                "11",
-                "Dr. inż. Gawkowski",
-                "12.30",
-                "12.45",
-                "22.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            ),
-            Consultation(
-                "12",
-                "Dr. inż. Gawkowski",
-                "12.45",
-                "13.00",
-                "22.03.2019",
-                ConsultationType.STUDENT_SUGGESTED
-            ),
-            Consultation(
-                "13",
-                "Dr. inż. Gawkowski",
-                "13.00",
-                "13.15",
-                "22.03.2019",
-                ConsultationType.STUDENT_SUGGESTED
-            ),
-            Consultation(
-                "14",
-                "Dr. inż. Gawkowski",
-                "13.15",
-                "13.30",
-                "22.03.2019",
-                ConsultationType.LECTURER_SUGGESTED
-            )
-        )
     }
 
     fun reserveConsultation(id: String, username: String) {
@@ -198,6 +143,7 @@ object DataService : Connection.NetworkEventListener {
         connection.sendMessage(
             objectMapper.writeValueAsString(
                 RegisterRequest(
+                    account.login,
                     account.login,
                     account.hashedPassword,
                     account.name,
