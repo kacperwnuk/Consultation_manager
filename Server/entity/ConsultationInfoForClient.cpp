@@ -11,7 +11,7 @@ Json::Value ConsultationInfoForClient::getJson() {
     value["consultationDateEnd"] = static_cast<unsigned long long>(this->consultationDateEnd.value.count());
     value["room"] = this->room;
     value["consultationType"] = this->consultationType;
-    return Json::Value();
+    return value;
 }
 
 ConsultationInfoForClient::ConsultationInfoForClient(std::string id, const AccountInfoForClient &consultationCreator,

@@ -50,7 +50,7 @@ public:
 
     Account getAccountByLogin(std::string login);
 
-    std::vector<Consultation> getConsultationsByDate(b_date, b_date);
+    std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
 };
 
 template<typename T>

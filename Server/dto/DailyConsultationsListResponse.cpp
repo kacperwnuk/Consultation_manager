@@ -5,7 +5,7 @@
 #include "DailyConsultationsListResponse.h"
 #include "enums/ResponseType.h"
 
-DailyConsultationsListResponse::DailyConsultationsListResponse(std::vector<Consultation> consultations) :
+DailyConsultationsListResponse::DailyConsultationsListResponse(std::vector<ConsultationInfoForClient> consultations) :
         consultations(std::move(consultations)) {
 
 }

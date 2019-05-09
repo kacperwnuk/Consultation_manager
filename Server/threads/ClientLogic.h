@@ -28,7 +28,7 @@ class ClientLogic : public Thread {
     std::unique_ptr<Serializer> serializer;
     std::unique_ptr<Deserializer> deserializer;
 
-    std::vector<Consultation> tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest);
+    std::vector<ConsultationInfoForClient> tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest);
 
     StatusType tryToRegister(RegistrationRequest);
 

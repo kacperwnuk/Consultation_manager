@@ -52,6 +52,10 @@ public:
 
     ConsultationType getConsultationType() const;
 
+    const AccountInfoForClient &getLecturer() const;
+
+    const b_date &getConsultationDateEnd() const;
+
     void setConsultationType(ConsultationType consultationType);
 
     const b_date &getConsultationDateStart() const;

@@ -151,4 +151,12 @@ Consultation::Consultation(ConsultationInfoForClient consultationClientInfo, Con
 
 }
 
+const AccountInfoForClient &Consultation::getLecturer() const {
+    return lecturer;
+}
+
+const b_date &Consultation::getConsultationDateEnd() const {
+    return consultationDateEnd;
+}
+
 

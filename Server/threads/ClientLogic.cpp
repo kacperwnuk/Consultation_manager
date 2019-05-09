@@ -29,7 +29,7 @@ void ClientLogic::run() {
                 handleRequest<RegistrationRequest, StatusType, RegistrationResponse>(&ClientLogic::tryToRegister);
                 break;
             case RequestType::DailyConsultationsList:
-                handleRequest<DailyConsultationsListRequest, std::vector<Consultation>, DailyConsultationsListResponse>(
+                handleRequest<DailyConsultationsListRequest, std::vector<ConsultationInfoForClient>, DailyConsultationsListResponse>(
                         &ClientLogic::tryToGetConsultations);
                 break;
             case RequestType::NewConsultationLecturer:
@@ -116,7 +116,7 @@ std::shared_ptr<ClientMessageBuilder> ClientLogic::getClientMessageBuilder() {
 }
 
 
-std::vector<Consultation> ClientLogic::tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest) {
+std::vector<ConsultationInfoForClient> ClientLogic::tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest) {
     dao.setCollection("consultation");
 
     auto today = dailyConsultationsListRequest.getDate();
