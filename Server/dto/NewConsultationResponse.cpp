@@ -10,7 +10,7 @@ NewConsultationResponse::NewConsultationResponse(StatusType statusType) : status
 Json::Value NewConsultationResponse::getJson() {
     Json::Value value;
     value["status"] = this->statusType;
-    value["type"] = ResponseType::NewConsultationResp;
+    value["type"] = ResponseType::NewConsultationLecturerResp;
 
     return value;
 }

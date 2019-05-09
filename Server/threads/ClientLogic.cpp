@@ -21,63 +21,25 @@ void ClientLogic::run() {
         RequestType requestType = deserializer->getType();
         switch (requestType) {
             case RequestType::Login:
-                gotLoginRequest();
+                handleRequest<LoginRequest, StatusType, LoginResponse>(&ClientLogic::tryToLogin);
                 break;
             case RequestType::ConsultationCancellation:
-                gotConsultationCancellationRequest();
                 break;
             case RequestType::Registration:
-                gotRegistrationRequest();
+                handleRequest<RegistrationRequest, StatusType, RegistrationResponse>(&ClientLogic::tryToRegister);
                 break;
             case RequestType::DailyConsultationsList:
-                gotDailyConsultationListRequest();
+                handleRequest<DailyConsultationsListRequest, std::vector<Consultation>, DailyConsultationsListResponse>(
+                        &ClientLogic::tryToGetConsultations);
                 break;
-            case RequestType::NewConsultation:
-                gotNewConsultationRequest();
+            case RequestType::NewConsultationLecturer:
+                handleRequest<NewConsultationRequest, StatusType, NewConsultationResponse>(&ClientLogic::tryToAddConsultation);
                 break;
             default:
                 break;
         }
     }
 }
-
-void ClientLogic::gotConsultationCancellationRequest() {
-    std::cout << deserializer->deserializedObject<ConsultationCancellationRequest>()
-            .getConsultationId().to_string() << std::endl;
-}
-
-void ClientLogic::gotLoginRequest() {
-    auto loginRequest = deserializer->deserializedObject<LoginRequest>();
-    std::cout << loginRequest << std::endl;
-    auto status = tryToLogin(loginRequest);
-    LoginResponse loginResponse(status);
-    sendResponse(loginResponse);
-}
-
-void ClientLogic::gotRegistrationRequest() {
-    auto registrationRequest = deserializer->deserializedObject<RegistrationRequest>();
-    std::cout << registrationRequest << std::endl;
-    auto status = tryToRegister(registrationRequest);
-    RegistrationResponse registrationResponse(status);
-    sendResponse(registrationResponse);
-}
-
-void ClientLogic::gotNewConsultationRequest() {
-    auto newConsultationRequest = deserializer->deserializedObject<NewConsultationRequest>();
-    std::cout << newConsultationRequest << std::endl;
-    auto status = tryToAddConsultation(newConsultationRequest);
-    NewConsultationResponse newConsultationResponse(status);
-    sendResponse(newConsultationResponse);
-}
-
-void ClientLogic::gotDailyConsultationListRequest() {
-    auto dailyConsultationsListRequest = deserializer->deserializedObject<DailyConsultationsListRequest>();
-    auto consultations = getConsultations(dailyConsultationsListRequest.getDate());
-    DailyConsultationsListResponse dailyConsultationsListResponse(consultations);
-    sendResponse(dailyConsultationsListResponse);
-}
-
-
 
 ClientLogic::ClientLogic(int socket, MutualExclusiveHashMap<size_t> &readDemands,
                          const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) :
@@ -106,7 +68,7 @@ StatusType ClientLogic::tryToRegister(RegistrationRequest request) {
 }
 
 
-StatusType ClientLogic::tryToLogin(const LoginRequest &loginRequest) {
+StatusType ClientLogic::tryToLogin(LoginRequest loginRequest) {
     dao.setCollection("account");
     try {
         auto account = dao.getAccountByLogin(loginRequest.getLogin());
@@ -124,16 +86,27 @@ StatusType ClientLogic::tryToLogin(const LoginRequest &loginRequest) {
 
 StatusType ClientLogic::tryToAddConsultation(NewConsultationRequest newConsultationRequest) {
     dao.setCollection("consultation");
-//    czy nie ma juz konsultacji o tej porze?
-    auto document = newConsultationRequest.getConsultationDocumentFormat();
+
+    auto consultationStart = newConsultationRequest.getConsultationDateStart();
+    auto consultationEnd = newConsultationRequest.getConsultationDateEnd();
+
+    if (consultationStart >= consultationEnd){
+        //Consultaton start after end!
+        return ERROR;
+    }
+    auto consultations = dao.getConsultationsByDate(consultationStart, consultationEnd);
+    if (!consultations.empty()){
+        //There is another consultation in this time!
+        return ERROR;
+    }
+    Consultation consultation = Consultation(newConsultationRequest.getConsultationInfo(), ConsultationStatus::FREE);
+    auto document = consultation.getDocumentFormat();
     try {
         dao.insertDocument(document);
     } catch (std::exception &e) {
         std::cout << e.what();
         return ERROR;
     }
-
-
     return OK;
 }
 
@@ -143,13 +116,16 @@ std::shared_ptr<ClientMessageBuilder> ClientLogic::getClientMessageBuilder() {
 }
 
 
-std::vector<Consultation> ClientLogic::getConsultations(b_date date) {
+std::vector<Consultation> ClientLogic::tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest) {
     dao.setCollection("consultation");
 
-    auto consultations = dao.getConsultationsByDate(date);
+    auto today = dailyConsultationsListRequest.getDate();
+    auto tomorrow = b_date(std::chrono::milliseconds(today.value.count() + std::chrono::milliseconds(std::chrono::hours(24)).count()));
+    auto consultations = dao.getConsultationsByDate(today, tomorrow);
 
     return consultations;
 }
+
 
 
 

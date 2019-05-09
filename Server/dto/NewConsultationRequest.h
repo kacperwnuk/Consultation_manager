@@ -8,15 +8,20 @@
 
 #include <ostream>
 #include "../entity/Consultation.h"
+#include "../entity/ConsultationInfoForClient.h"
 
 class NewConsultationRequest {
 private:
-    Consultation consultation;
+    ConsultationInfoForClient consultationInfo;
 public:
-    bsoncxx::document::view_or_value getConsultationDocumentFormat();
-    friend std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request);
+    const ConsultationInfoForClient &getConsultationInfo() const;
 
+public:
+    friend std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request);
+    b_date getConsultationDateStart();
     NewConsultationRequest(Json::Value);
+
+    b_date getConsultationDateEnd();
 };
 
 

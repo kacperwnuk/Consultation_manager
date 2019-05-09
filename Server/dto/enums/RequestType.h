@@ -12,7 +12,7 @@ enum RequestType {
     ConsultationCancellation = 2,
     Registration = 3,
     DailyConsultationsList = 4,
-    NewConsultation = 5
+    NewConsultationLecturer = 5
 
 };
 

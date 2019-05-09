@@ -12,7 +12,7 @@ enum ResponseType {
     ConsultationCancellationResp = 2,
     RegistrationResp = 3,
     DailyConsultationsListResp = 4,
-    NewConsultationResp = 5
+    NewConsultationLecturerResp = 5
 
 };
 

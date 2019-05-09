@@ -10,5 +10,5 @@ const b_date &DailyConsultationsListRequest::getDate() const {
 
 DailyConsultationsListRequest::DailyConsultationsListRequest(Json::Value value) :
         date(std::chrono::system_clock::now()) {
-    this->date = b_date(std::chrono::milliseconds(value["consultationDate"].asLargestUInt()));
+    this->date = b_date(std::chrono::milliseconds(value["consultationDateStart"].asLargestUInt()));
 }

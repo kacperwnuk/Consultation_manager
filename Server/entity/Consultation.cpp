@@ -44,12 +44,12 @@ void Consultation::free() {
 }
 
 
-const b_date &Consultation::getConsultationDate() const {
-    return consultationDate;
+const b_date &Consultation::getConsultationDateStart() const {
+    return consultationDateStart;
 }
 
-void Consultation::setConsultationDate(const b_date &consultationDate) {
-    Consultation::consultationDate = consultationDate;
+void Consultation::setConsultationDateStart(const b_date &consultationDate) {
+    Consultation::consultationDateStart = consultationDate;
 }
 
 bsoncxx::document::view_or_value Consultation::getDocumentFormat() {
@@ -61,46 +61,55 @@ bsoncxx::document::view_or_value Consultation::getDocumentFormat() {
             << "student" << this->student.getDocumentFormat()
             << "consultationStatus" << this->consultationStatus
             << "consultationType" << this->consultationType
-            << "consultationDate" << this->consultationDate
+            << "consultationDateStart" << this->consultationDateStart
+            << "consultationDateEnd" << this->consultationDateEnd
             << bsoncxx::builder::stream::finalize;
     return docValue;
 }
 
-Consultation::Consultation(Account lecturer, std::string room, Account student, ConsultationStatus consultationStatus,
-                           ConsultationType consultationType, b_date consultationDate) :
+Consultation::Consultation(AccountInfoForClient lecturer, std::string room, AccountInfoForClient student,
+                           ConsultationStatus consultationStatus,
+                           ConsultationType consultationType, b_date consultationDateStart, b_date consultatinDateEnd) :
         lecturer(lecturer), room(room), student(student), consultationStatus(consultationStatus),
-        consultationType(consultationType), consultationDate(consultationDate) {
+        consultationType(consultationType), consultationDateStart(consultationDateStart),
+        consultationDateEnd(consultatinDateEnd) {
 
 }
 
-Consultation::Consultation(document_view_or_value document) : consultationDate(std::chrono::system_clock::now()) {
+Consultation::Consultation(document_view_or_value document) : consultationDateStart(std::chrono::system_clock::now()),
+                                                              consultationDateEnd(std::chrono::system_clock::now()) {
     auto stringValue = bsoncxx::to_json(document);
     Json::Reader reader;
     Json::Value jsonValue;
     reader.parse(stringValue, jsonValue);
     this->id = oid(jsonValue["_id"]["$oid"].asString());
-    this->lecturer = Account(jsonValue["lecturer"]);
+    this->lecturer = AccountInfoForClient(jsonValue["lecturer"]);
     this->room = jsonValue["room"].asString();
-    this->student = Account(jsonValue["student"]);
+    this->student = AccountInfoForClient(jsonValue["student"]);
     this->consultationStatus = ConsultationStatus(jsonValue["consultationStatus"].asInt());
     this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
-    this->consultationDate = b_date(std::chrono::milliseconds(jsonValue["consultationDate"]["$date"].asLargestUInt()));
+    this->consultationDateStart = b_date(
+            std::chrono::milliseconds(jsonValue["consultationDateStart"]["$date"].asLargestUInt()));
+    this->consultationDateEnd = b_date(
+            std::chrono::milliseconds(jsonValue["consultationDateEnd"]["$date"].asLargestUInt()));
 }
 
-Consultation::Consultation(Json::Value jsonValue) : consultationDate(std::chrono::system_clock::now()) {
+Consultation::Consultation(Json::Value jsonValue) : consultationDateStart(std::chrono::system_clock::now()),
+                                                    consultationDateEnd(std::chrono::system_clock::now()) {
 
     try {
         this->id = oid(jsonValue["_id"].asString());
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
-    this->lecturer = Account(jsonValue["lecturer"]);
+    this->lecturer = AccountInfoForClient(jsonValue["lecturer"]);
     this->room = jsonValue["room"].asString();
-    this->student = Account(jsonValue["student"]);
+    this->student = AccountInfoForClient(jsonValue["student"]);
     this->consultationStatus = ConsultationStatus(jsonValue["consultationStatus"].asInt());
     this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
-    std::cout << jsonValue["consultationDate"].asString() << std::endl;
-    this->consultationDate = b_date(std::chrono::milliseconds(jsonValue["consultationDate"].asLargestUInt()));
+    std::cout << jsonValue["consultationDateStart"].asString() << std::endl;
+    this->consultationDateStart = b_date(std::chrono::milliseconds(jsonValue["consultationDateStart"].asLargestUInt()));
+    this->consultationDateEnd = b_date(std::chrono::milliseconds(jsonValue["consultationDateEnd"].asLargestUInt()));
 }
 
 Json::Value Consultation::getJson() {
@@ -116,7 +125,8 @@ Json::Value Consultation::getJson() {
     value["student"] = this->student.getJson();
     value["consultationStatus"] = this->consultationStatus;
     value["consultationType"] = this->consultationType;
-    value["consultationDate"] = static_cast<unsigned long long>(this->consultationDate.value.count());
+    value["consultationDateStart"] = static_cast<unsigned long long>(this->consultationDateStart.value.count());
+    value["consultationDateEnd"] = static_cast<unsigned long long>(this->consultationDateEnd.value.count());
 
     return value;
 }
@@ -127,9 +137,18 @@ std::ostream &operator<<(std::ostream &os, const Consultation &consultation) {
        << consultation.room
        << " student: " << consultation.student << " consultationStatus: "
        << consultation.consultationStatus
-       << " consultationType: " << consultation.consultationType << " consultationDate: "
-       << consultation.consultationDate;
+       << " consultationType: " << consultation.consultationType << " consultationDateStart: "
+       << consultation.consultationDateStart << "consultationDateEnd" << consultation.consultationDateEnd;
     return os;
+}
+
+Consultation::Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status)
+        : consultationStatus(status), id(consultationClientInfo.getId()),
+          lecturer(consultationClientInfo.getConsultationCreator()), room(consultationClientInfo.getRoom()), student(),
+          consultationType(consultationClientInfo.getConsultationType()),
+          consultationDateStart(consultationClientInfo.getConsultationDateStart()),
+          consultationDateEnd(consultationClientInfo.getConsultationDateEnd()) {
+
 }
 
 

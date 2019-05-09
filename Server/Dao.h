@@ -18,6 +18,9 @@ using bsoncxx::builder::stream::close_array;
 using s_document = bsoncxx::builder::stream::document;
 using document_view_or_value = bsoncxx::document::view_or_value;
 using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::basic::make_document;
+using bsoncxx::builder::basic::kvp;
+using bsoncxx::builder::basic::make_array;
 
 class Dao {
 private:
@@ -47,7 +50,7 @@ public:
 
     Account getAccountByLogin(std::string login);
 
-    std::vector<Consultation> getConsultationsByDate(b_date);
+    std::vector<Consultation> getConsultationsByDate(b_date, b_date);
 };
 
 template<typename T>
