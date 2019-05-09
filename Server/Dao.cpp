@@ -60,6 +60,43 @@ Account Dao::getAccountByLogin(std::string login) {
     throw std::runtime_error(std::string("No user with this login!"));
 }
 
+std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
+
+//    auto result = coll.find(s_document{} << "consultationDateStart" << bsoncxx::builder::stream::open_document <<
+//                                          "$gte" << dateStart <<
+//                                          "$lte" << dateEnd
+//                                          << bsoncxx::builder::stream::close_document
+//                                          << bsoncxx::builder::stream::finalize);
+    auto results = coll.find(
+            make_document(kvp("$or",
+                              make_array( make_document(kvp("consultationDateStart",
+                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd)))),
+                                          make_document(kvp("consultatoinDateEnd",
+                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd))))
+                              )
+                          )
+            ));
+
+
+
+    std::vector<ConsultationInfoForClient> consultations;
+    for (auto consultationDoc : results) {
+        Consultation consultation = Consultation(consultationDoc);
+        std::cout << consultation << std::endl;
+        auto consultationInfo = ConsultationInfoForClient(
+                consultation.getId().to_string(),
+                consultation.getLecturer(),
+                consultation.getConsultationDateStart(),
+                consultation.getConsultationDateEnd(),
+                consultation.getRoom(),
+                consultation.getConsultationType()
+                );
+        consultations.push_back(consultationInfo);
+    }
+
+    return consultations;
+}
+
 
 
 

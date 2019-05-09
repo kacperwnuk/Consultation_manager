@@ -22,7 +22,7 @@ public:
     RequestType getType();
 
     template<typename T>
-    T deserializedObject();
+    T getDeserializedObject();
 
     template<typename T>
     T deserialize(Json::Value);
@@ -38,7 +38,7 @@ T Deserializer::deserialize(Json::Value jsonValue) {
 }
 
 template<typename T>
-T Deserializer::deserializedObject() {
+T Deserializer::getDeserializedObject() {
 
     return deserialize<T>(payloadValue);
 }

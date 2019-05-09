@@ -9,18 +9,10 @@
 #include<string.h>
 #include "OutgoingMessage.h"
 
-OutgoingMessage::OutgoingMessage(int fd, const char *payload, unsigned long size): fd(fd), size(size) {
-    this->payload = new char[size + 4];
-    this->size += 4;
+OutgoingMessage::OutgoingMessage(int fd, const char *payload, unsigned long payloadSize): fd(fd), size(payloadSize + 4) {
+    this->payload = new char[this->size];
 
-    std::string payloadSize = std::to_string(size);
-    auto amountOfZerosNeeded = 4 - payloadSize.length();
-    char* zeros = new char[amountOfZerosNeeded];
-    std::fill_n(zeros, amountOfZerosNeeded, '0');
-
-    strcpy(this->payload, zeros);
-    strcpy(this->payload + amountOfZerosNeeded, payloadSize.c_str());
-    strcpy(this->payload + 4, payload);
+    snprintf(this->payload, this->size,"%04ld%s", payloadSize, payload);
 }
 
 OutgoingMessage::OutgoingMessage() {

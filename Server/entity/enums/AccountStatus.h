@@ -7,8 +7,8 @@
 
 
 enum AccountStatus {
-    ACTIVE,
-    INACTIVE
+    ACTIVE = 0,
+    INACTIVE = 1
 };
 
 

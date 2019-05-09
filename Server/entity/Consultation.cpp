@@ -3,20 +3,12 @@
 //
 
 #include <bsoncxx/builder/stream/document.hpp>
+#include <iostream>
 #include "Consultation.h"
 #include "Account.h"
 
 oid Consultation::getId() const {
     return id;
-}
-
-
-oid Consultation::getLecturerId() const {
-    return lecturerId;
-}
-
-void Consultation::setLecturerId(oid lecturerId) {
-    Consultation::lecturerId = lecturerId;
 }
 
 const std::string &Consultation::getRoom() const {
@@ -25,14 +17,6 @@ const std::string &Consultation::getRoom() const {
 
 void Consultation::setRoom(const std::string &room) {
     Consultation::room = room;
-}
-
-oid Consultation::getStudentId() const {
-    return studentId;
-}
-
-void Consultation::setStudentId(oid studentId) {
-    Consultation::studentId = studentId;
 }
 
 ConsultationStatus Consultation::getConsultationStatus() const {
@@ -60,61 +44,119 @@ void Consultation::free() {
 }
 
 
-const b_date &Consultation::getConsultationDate() const {
-    return consultationDate;
+const b_date &Consultation::getConsultationDateStart() const {
+    return consultationDateStart;
 }
 
-void Consultation::setConsultationDate(const b_date &consultationDate) {
-    Consultation::consultationDate = consultationDate;
+void Consultation::setConsultationDateStart(const b_date &consultationDate) {
+    Consultation::consultationDateStart = consultationDate;
 }
 
 bsoncxx::document::view_or_value Consultation::getDocumentFormat() {
     auto builder = bsoncxx::builder::stream::document{};
     bsoncxx::document::value docValue = builder
             << "_id" << this->id
-            << "lecturerId" << this->lecturerId
+            << "lecturer" << this->lecturer.getDocumentFormat()
             << "room" << this->room
-            << "studentId" << this->studentId
+            << "student" << this->student.getDocumentFormat()
             << "consultationStatus" << this->consultationStatus
             << "consultationType" << this->consultationType
-            << "consultationDate" << this->consultationDate
+            << "consultationDateStart" << this->consultationDateStart
+            << "consultationDateEnd" << this->consultationDateEnd
             << bsoncxx::builder::stream::finalize;
     return docValue;
 }
 
-Consultation::Consultation(oid lecturerId, std::string room, oid studentId, ConsultationStatus consultationStatus,
-                           ConsultationType consultationType, b_date consultationDate) :
-        lecturerId(lecturerId), room(room), studentId(studentId), consultationStatus(consultationStatus),
-        consultationType(consultationType), consultationDate(consultationDate) {
+Consultation::Consultation(AccountInfoForClient lecturer, std::string room, AccountInfoForClient student,
+                           ConsultationStatus consultationStatus,
+                           ConsultationType consultationType, b_date consultationDateStart, b_date consultatinDateEnd) :
+        lecturer(lecturer), room(room), student(student), consultationStatus(consultationStatus),
+        consultationType(consultationType), consultationDateStart(consultationDateStart),
+        consultationDateEnd(consultatinDateEnd) {
 
 }
 
-Consultation::Consultation(document_view_or_value document) : consultationDate(std::chrono::system_clock::now()) {
+Consultation::Consultation(document_view_or_value document) : consultationDateStart(std::chrono::system_clock::now()),
+                                                              consultationDateEnd(std::chrono::system_clock::now()) {
     auto stringValue = bsoncxx::to_json(document);
     Json::Reader reader;
     Json::Value jsonValue;
     reader.parse(stringValue, jsonValue);
     this->id = oid(jsonValue["_id"]["$oid"].asString());
-    this->lecturerId = oid(jsonValue["lecturerId"]["$oid"].asString());
+    this->lecturer = AccountInfoForClient(jsonValue["lecturer"]);
     this->room = jsonValue["room"].asString();
-    this->studentId = oid(jsonValue["studentId"]["$oid"].asString());
+    this->student = AccountInfoForClient(jsonValue["student"]);
     this->consultationStatus = ConsultationStatus(jsonValue["consultationStatus"].asInt());
     this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
-    this->consultationDate = b_date(std::chrono::milliseconds(jsonValue["consultationDate"]["$date"].asLargestUInt()));
+    this->consultationDateStart = b_date(
+            std::chrono::milliseconds(jsonValue["consultationDateStart"]["$date"].asLargestUInt()));
+    this->consultationDateEnd = b_date(
+            std::chrono::milliseconds(jsonValue["consultationDateEnd"]["$date"].asLargestUInt()));
+}
+
+Consultation::Consultation(Json::Value jsonValue) : consultationDateStart(std::chrono::system_clock::now()),
+                                                    consultationDateEnd(std::chrono::system_clock::now()) {
+
+    try {
+        this->id = oid(jsonValue["_id"].asString());
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+    this->lecturer = AccountInfoForClient(jsonValue["lecturer"]);
+    this->room = jsonValue["room"].asString();
+    this->student = AccountInfoForClient(jsonValue["student"]);
+    this->consultationStatus = ConsultationStatus(jsonValue["consultationStatus"].asInt());
+    this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
+    std::cout << jsonValue["consultationDateStart"].asString() << std::endl;
+    this->consultationDateStart = b_date(std::chrono::milliseconds(jsonValue["consultationDateStart"].asLargestUInt()));
+    this->consultationDateEnd = b_date(std::chrono::milliseconds(jsonValue["consultationDateEnd"].asLargestUInt()));
 }
 
 Json::Value Consultation::getJson() {
 
     Json::Value value;
-    value["_id"] = this->id.to_string();
-    value["lecturerId"] = this->lecturerId.to_string();
+    try {
+        value["_id"] = this->id.to_string();
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+    value["lecturer"] = this->lecturer.getJson();
     value["room"] = this->room;
-    value["studentId"] = this->studentId.to_string();
+    value["student"] = this->student.getJson();
     value["consultationStatus"] = this->consultationStatus;
     value["consultationType"] = this->consultationType;
-    value["consultationDate"] = static_cast<unsigned long long>(this->consultationDate.value.count());
+    value["consultationDateStart"] = static_cast<unsigned long long>(this->consultationDateStart.value.count());
+    value["consultationDateEnd"] = static_cast<unsigned long long>(this->consultationDateEnd.value.count());
 
     return value;
+}
+
+std::ostream &operator<<(std::ostream &os, const Consultation &consultation) {
+    os << " id: "
+       << consultation.id.to_string() << " lecturer: " << consultation.lecturer << " room: "
+       << consultation.room
+       << " student: " << consultation.student << " consultationStatus: "
+       << consultation.consultationStatus
+       << " consultationType: " << consultation.consultationType << " consultationDateStart: "
+       << consultation.consultationDateStart << "consultationDateEnd" << consultation.consultationDateEnd;
+    return os;
+}
+
+Consultation::Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status)
+        : consultationStatus(status), id(consultationClientInfo.getId()),
+          lecturer(consultationClientInfo.getConsultationCreator()), room(consultationClientInfo.getRoom()), student(),
+          consultationType(consultationClientInfo.getConsultationType()),
+          consultationDateStart(consultationClientInfo.getConsultationDateStart()),
+          consultationDateEnd(consultationClientInfo.getConsultationDateEnd()) {
+
+}
+
+const AccountInfoForClient &Consultation::getLecturer() const {
+    return lecturer;
+}
+
+const b_date &Consultation::getConsultationDateEnd() const {
+    return consultationDateEnd;
 }
 
 

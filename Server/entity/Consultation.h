@@ -7,28 +7,34 @@
 
 #include <ctime>
 #include <string>
+#include <ostream>
 #include "enums/ConsultationStatus.h"
 #include "enums/ConsultationType.h"
 #include "Account.h"
 #include "../serialization/Serializable.h"
+#include "AccountInfoForClient.h"
+#include "ConsultationInfoForClient.h"
 
 
 class Consultation : public Entity, public Serializable {
 private:
 
     oid id;
-    oid lecturerId;
+    AccountInfoForClient lecturer;
     std::string room;
-    oid studentId;
+    AccountInfoForClient student;
     ConsultationStatus consultationStatus;
     ConsultationType consultationType;
-    b_date consultationDate;
+    b_date consultationDateStart;
+    b_date consultationDateEnd;
 
 public:
 
-    Consultation(oid, std::string, oid, ConsultationStatus, ConsultationType, b_date);
+    Consultation(AccountInfoForClient, std::string, AccountInfoForClient, ConsultationStatus, ConsultationType, b_date, b_date);
 
     Consultation(document_view_or_value);
+    Consultation(Json::Value);
+    Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status);
 
     Json::Value getJson() override;
 
@@ -36,17 +42,9 @@ public:
 
     oid getId() const;
 
-    oid getLecturerId() const;
-
-    void setLecturerId(oid lecturerId);
-
     const std::string &getRoom() const;
 
     void setRoom(const std::string &room);
-
-    oid getStudentId() const;
-
-    void setStudentId(oid studentId);
 
     ConsultationStatus getConsultationStatus() const;
 
@@ -54,15 +52,21 @@ public:
 
     ConsultationType getConsultationType() const;
 
+    const AccountInfoForClient &getLecturer() const;
+
+    const b_date &getConsultationDateEnd() const;
+
     void setConsultationType(ConsultationType consultationType);
 
-    const b_date &getConsultationDate() const;
+    const b_date &getConsultationDateStart() const;
 
-    void setConsultationDate(const b_date &consultationDate);
+    void setConsultationDateStart(const b_date &consultationDate);
 
     void book(Account);
 
     void free();
+
+    friend std::ostream &operator<<(std::ostream &os, const Consultation &consultation);
 };
 
 

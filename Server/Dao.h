@@ -12,11 +12,15 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include "entity/enums/AccountStatus.h"
 #include "entity/Account.h"
+#include "entity/Consultation.h"
 
 using bsoncxx::builder::stream::close_array;
 using s_document = bsoncxx::builder::stream::document;
 using document_view_or_value = bsoncxx::document::view_or_value;
 using bsoncxx::builder::stream::open_array;
+using bsoncxx::builder::basic::make_document;
+using bsoncxx::builder::basic::kvp;
+using bsoncxx::builder::basic::make_array;
 
 class Dao {
 private:
@@ -45,6 +49,8 @@ public:
     std::vector<Account> getAccountsByStatusAndRole(AccountStatus, AccountRole);
 
     Account getAccountByLogin(std::string login);
+
+    std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
 };
 
 template<typename T>

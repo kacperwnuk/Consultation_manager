@@ -7,11 +7,13 @@
 
 
 #include "enums/StatusType.h"
+#include "enums/ResponseType.h"
 #include "../serialization/Serializable.h"
 
 class LoginResponse : public Serializable {
 private:
     StatusType status;
+
 public:
     explicit LoginResponse(const StatusType &);
 

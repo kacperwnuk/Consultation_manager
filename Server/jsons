@@ -8,3 +8,10 @@
 
 //rejestracja full
 0098{"type":3,"login":"k","password":"w","email":"e","name":"Kacper","surname":"Wnuk","accountRole":2}
+
+//dodanie konsultacji
+0187{"consultationDateStart":1557482400000,"consultationDateEnd":1557483000000,"consultationType":0,"consultationCreator":{"login":"k","name":"Kacper","surname":"Wnuk"},"room":"315","type":5}
+
+//wyciagniecie konsultacji z 24h
+0043{"consultationDateStart":1557266400000,"type":4}
+
