@@ -19,120 +19,88 @@
 
 void TCPThread::run() {
     ServerSocket serverSocket(port);
-    MutualExclusiveHashMap<size_t> readDemands;
-    sockets.push_back(serverSocket.getServerSocket());
     bool isRunning = true;
     do {
-        auto numberOfSockets = sockets.size();
-        struct pollfd pollList[numberOfSockets];
 
-        executePoll(pollList);
-
-        if ((pollList[0].revents & POLLIN) == POLLIN) { // new connection
-            auto clientSocket = accept(pollList[0].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
-            if (clientSocket != -1) {
-                sockets.push_back(clientSocket);
-                prepareClientHandler(clientSocket, readDemands);
-            }
+        auto socketInitialized = serverSocket.initialize();
+        auto socketsToPoll = clients.size();
+        auto serverSocketPosition = clients.size();
+        auto *pollList = new pollfd[socketsToPoll + 1];
+        preparePoll(pollList);
+        if (socketInitialized) {
+            pollList[serverSocketPosition].fd = serverSocket.getServerSocket();
+            pollList[serverSocketPosition].events = POLLIN;
+            socketsToPoll++;
         }
+        executePoll(pollList, socketsToPoll, socketInitialized ? -1 : 60);
 
-        serveClient(pollList, readDemands);
+        acceptNewConnections(pollList, serverSocketPosition);
+
+        serveClients(pollList);
+
+        delete[] pollList;
 
     } while (isRunning);
 
 }
 
-TCPThread::TCPThread(in_port_t port, const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) : port(
-        port), messageQueue(messageQueue) {
+TCPThread::TCPThread(in_port_t port) : port(
+        port) {
 }
 
-void TCPThread::executePoll(pollfd pollList[]) {
-    auto numberOfSockets = sockets.size();
-    for (auto i = 0; i < numberOfSockets; ++i) {
-        pollList[i].fd = sockets[i];
-        pollList[i].events = POLLIN | POLLHUP;
-    }
-    auto retval = poll(pollList, numberOfSockets, -1);
+void TCPThread::executePoll(pollfd pollList[], nfds_t size, int timeout) {
+    auto retval = poll(pollList, size, timeout);
     if (retval < 0) {
         fprintf(stderr, "Error while polling: %s\n", strerror(errno));
         return;
     }
-    for (auto i = 0; i < numberOfSockets; ++i) {
-        if (((pollList[i].revents & POLLHUP) == POLLHUP) ||
-            ((pollList[i].revents & POLLERR) == POLLERR) ||
-            ((pollList[i].revents & POLLNVAL) == POLLNVAL))
-            return;
-    }
+//    for (auto i = 0; i < numberOfSockets; ++i) {
+//        if (((pollList[i].revents & POLLHUP) == POLLHUP) ||
+//            ((pollList[i].revents & POLLERR) == POLLERR) ||
+//            ((pollList[i].revents & POLLNVAL) == POLLNVAL))
+//            return;
+//    }
 }
 
+void TCPThread::serveClients(pollfd *pollList) {
 
-void TCPThread::serveClient(pollfd pollList[], MutualExclusiveHashMap<size_t> &readDemands) {
-
-    auto numberOfSockets = sockets.size();
-    for (auto i = 1; i < numberOfSockets; ++i) {
+    auto numberOfClients = clients.size();
+    for (auto i = 0; i < numberOfClients; ++i) {
         if ((pollList[i].revents & POLLHUP) == POLLHUP) { // client closed connection
-            closeSocket(pollList[i].fd);
+            clients[i]->stop();
         } else if ((pollList[i].revents & POLLIN) == POLLIN) { // client sent data
-            auto client = clients[pollList[i].fd]->getClientMessageBuilder();
-            char buf[BUFFER_SIZE];
-            ssize_t rval;
-            memset(buf, 0, sizeof buf);
-            pthread_mutex_lock(&(client->mutex));
-            auto demand = readDemands.get(pollList[i].fd);
-            if (demand > 0) {
-                if ((rval = read(pollList[i].fd, buf, demand < BUFFER_SIZE ? demand : BUFFER_SIZE)) == -1) {
-                    perror("reading stream message");
-                }
-                if (rval == 0) { // client closed connection
-                    printf("Ending connection\n");
-                    closeSocket(pollList[i].fd);
-                } else { //client sent something
-                    readDemands.put(pollList[i].fd, demand - rval);
-                    if (client->gettingHeader) {
-                        memcpy(client->header + client->size, buf, rval);
-                    } else {
-                        memcpy(client->payload + client->size, buf, rval);
-                    }
-                    client->size += rval;
-                    if (client->size == client->demand) {
-                        pthread_cond_signal(&client->readComplete);
-                    }
-                }
-                fflush(stdout);
-            }
-            pthread_mutex_unlock(&(client->mutex));
+            clients[i]->receive();
+        } else if ((pollList[i].revents & POLLOUT) == POLLOUT) {
+            clients[i]->send();
         }
     }
 }
 
-
-void TCPThread::closeSocket(int socket) {
-    auto position = std::find(sockets.begin(), sockets.end(), socket);
-    clients[socket]->cancel();
-    clients.erase(socket);
-    sockets.erase(position);
-    close(socket);
-}
-
 TCPThread::~TCPThread() {
-    for (auto &socket: sockets) {
-        close(socket);
+
+}
+
+void TCPThread::preparePoll(pollfd *pollList) {
+
+    for (int i = 0; i < clients.size(); ++i) {
+        pollList[i].fd = clients[i]->getFd();
+        pollList[i].events = POLLHUP;
+        if (clients[i]->isReadyToReceive()) {
+            pollList[i].events |= POLLIN;
+        }
+        if (clients[i]->isReadyToSend()) {
+            pollList[i].events |= POLLOUT;
+        }
     }
-    stopClientHandlers();
 }
 
-void TCPThread::prepareClientHandler(int socket, MutualExclusiveHashMap<size_t> &readDemands) {
-    readDemands.put(socket, 0);
-    auto *clientLogic = new ClientLogic(socket, readDemands, messageQueue);
-    clients[socket] = clientLogic;
-    clientLogic->start();
-}
-
-void TCPThread::stopClientHandlers() {
-    std::cout << "Stopping client threads..." << std::endl;
-    for (auto &client: clients) {
-        client.second->cancel();
-        client.second->join();
+void TCPThread::acceptNewConnections(pollfd *pollList, size_t serverSocketPosition) {
+    if ((pollList[serverSocketPosition].revents & POLLIN) == POLLIN) { // new connection
+        auto clientSocket = accept(pollList[serverSocketPosition].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
+        if (clientSocket != -1) {
+            auto *client = new Client(clientSocket);
+            clients.push_back(client);
+        }
     }
 }
 

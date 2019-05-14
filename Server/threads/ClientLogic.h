@@ -19,38 +19,17 @@
 #include "../entity/Consultation.h"
 #include "../dto/NewConsultationRequest.h"
 #include "../dto/DailyConsultationsListRequest.h"
+#include "../containers/synchronizedcontainers/SynchronizedQueue.h"
 
 class ClientLogic : public Thread {
-    int socket;
-    MutualExclusiveHashMap<size_t> &readDemands;
-    Dao dao;
-    std::shared_ptr<SynchronizedQueue<OutgoingMessage>> messageQueue;
-    std::unique_ptr<Serializer> serializer;
-    std::unique_ptr<Deserializer> deserializer;
-
+    SynchronizedQueue<Request*>& inQueue;
+    SynchronizedQueue<Serializable*>& outQueue;
+    bool &readyToSend;
 public:
-
-
-    ClientLogic(int socket, MutualExclusiveHashMap<size_t> &readDemands,
-                const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue);
+    ClientLogic(SynchronizedQueue<Request*>&, SynchronizedQueue<Serializable*>&, bool &);
 
     void run() override;
-
-    template<typename T>
-    void sendResponse(T);
-
-    std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
 };
-
-template<typename T>
-void ClientLogic::sendResponse(T response) {
-    auto output = serializer->serialize(response);
-    OutgoingMessage outgoingMessage(socket, output.c_str(), output.length());
-    messageQueue->put(outgoingMessage);
-
-}
-
-
 
 
 #endif //SERVER_PARSER_H

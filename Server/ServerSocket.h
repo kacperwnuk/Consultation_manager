@@ -15,16 +15,17 @@ private:
     in_port_t port;
     int serverSocket;
     struct sockaddr_in serverAddress;
+    bool isInitialized = false;
 
     void prepareServerAddress();
 
-    void bindSocket();
+    bool bindSocket();
 
-    void createSocket();
+    bool createSocket();
 
-    void getSocketName();
+    bool getSocketName();
 
-    void startListening();
+    bool startListening();
 
 public:
     explicit ServerSocket(in_port_t = 0);
@@ -34,6 +35,8 @@ public:
     in_port_t getPort();
 
     int getServerSocket();
+
+    bool initialize();
 };
 
 

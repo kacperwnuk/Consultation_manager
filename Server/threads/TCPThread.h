@@ -7,39 +7,28 @@
 
 #include <netinet/in.h>
 #include "Thread.h"
-#include <unordered_map>
-#include <memory>
-#include "../containers/synchronizedcontainers/SynchronizedQueue.h"
-#include "../Message.h"
-#include "../containers/synchronizedcontainers/MutualExclusiveHashMap.h"
-#include "../ClientMessageBuilder.h"
-#include "ClientLogic.h"
+#include "../Client.h"
 
 
 class TCPThread : public Thread {
 private:
     in_port_t port;
-    std::vector<int> sockets;
-    std::unordered_map<int, ClientLogic *> clients;
-    std::shared_ptr<SynchronizedQueue<OutgoingMessage>> messageQueue;
+    std::vector<Client*> clients;
 
-    void closeSocket(int);
+    void executePoll(pollfd[], nfds_t , int);
 
-    void prepareClientHandler(int socket, MutualExclusiveHashMap<size_t> &);
+    void serveClients(pollfd pollList[]);
 
-    void stopClientHandlers();
+    void preparePoll(pollfd*);
 
-    void executePoll(pollfd[]);
-
-    void serveClient(pollfd[], MutualExclusiveHashMap<size_t> &);
+    void acceptNewConnections(pollfd*, size_t);
 
 public:
-    TCPThread(in_port_t, const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &);
+    explicit TCPThread(in_port_t);
 
     ~TCPThread();
 
     void run() override;
-
 
 };
 

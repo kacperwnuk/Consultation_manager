@@ -9,25 +9,15 @@ void ClientLogic::run() {
     bool isRunning = true;
     while (isRunning) {
 
-        Request* request = deserializer->getDeserializedObject();
+        Request* request = inQueue.get();
         auto response = request->execute();
-        std::cout<< response->getJson() << std::endl;
+        std::cout << response->getJson() << std::endl;
+        outQueue.put(response);
+        readyToSend = true;
     }
 }
 
-ClientLogic::ClientLogic(int socket, MutualExclusiveHashMap<size_t> &readDemands,
-                         const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &messageQueue) :
-        socket(socket), readDemands(readDemands), messageQueue(messageQueue), dao("TIN") {
+ClientLogic::ClientLogic(SynchronizedQueue<Request*> &inQueue, SynchronizedQueue<Serializable*> &outQueue, bool &readyToSend): inQueue(inQueue), outQueue(outQueue), readyToSend(readyToSend) {
 
-    auto clientMessageBuilder = std::make_shared<ClientMessageBuilder>(socket, readDemands);
-    deserializer = std::make_unique<Deserializer>(clientMessageBuilder);
-    serializer = std::make_unique<Serializer>();
 }
-
-std::shared_ptr<ClientMessageBuilder> ClientLogic::getClientMessageBuilder() {
-    return deserializer->getClientMessageBuilder();
-}
-
-
-
 

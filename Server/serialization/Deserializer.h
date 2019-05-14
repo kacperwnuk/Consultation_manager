@@ -13,16 +13,8 @@
 #include "../dto/Request.h"
 
 class Deserializer {
-
 public:
-    std::shared_ptr<ClientMessageBuilder> clientMessageBuilder;
-
-    Deserializer(std::shared_ptr<ClientMessageBuilder>);
-
-    Request* getDeserializedObject();
-
-    std::shared_ptr<ClientMessageBuilder> getClientMessageBuilder();
-
+    Request* getDeserializedObject(const std::string &message);
 };
 
 

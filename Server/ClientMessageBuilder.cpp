@@ -8,40 +8,35 @@ std::string ClientMessageBuilder::getMessage() {
     return getPayload(getHeader());
 }
 
-ClientMessageBuilder::ClientMessageBuilder(int socket,
-                                           MutualExclusiveHashMap<size_t> &readDemands) : readDemands(readDemands) {
+ClientMessageBuilder::ClientMessageBuilder(int socket) {
     this->socket = socket;
-    pthread_mutex_init(&mutex, nullptr);
-    pthread_cond_init(&readComplete, nullptr);
-    size = 0;
 }
 
 size_t ClientMessageBuilder::getHeader() {
-    gettingHeader = true;
-    demand = 4;
-    readDemands.put(socket, demand);
-    pthread_mutex_lock(&mutex);
-    if (size < demand) {
-        pthread_cond_wait(&readComplete, &mutex);
-    }
-    demand = static_cast<size_t>(atoi(header));
-    payload = new char[demand];
-    readDemands.put(socket, demand);
-    size = 0;
-    pthread_mutex_unlock(&mutex);
 
-    return demand;
+    auto header = readBytes(4);
+    return static_cast<size_t>(atoi(header.c_str()));
 }
 
-std::string ClientMessageBuilder::getPayload(size_t) {
-    gettingHeader = false;
-    pthread_mutex_lock(&mutex);
-    if (size < demand) {
-        pthread_cond_wait(&readComplete, &mutex);
+std::string ClientMessageBuilder::getPayload(size_t payloadSize) {
+    return readBytes(payloadSize);
+}
+
+std::string ClientMessageBuilder::readBytes(size_t bytesToRead) {
+    size_t bytesRead = 0;
+    char payload[bytesToRead];
+    while (bytesRead != bytesToRead) {
+        auto readStatus = read(socket, payload + bytesRead, bytesToRead - bytesRead);
+        if (readStatus != -1) {
+            bytesRead += readStatus;
+        } else {
+            throw ReadException();
+        }
     }
-    std::string messagePayload = payload;
-    delete[] payload;
-    size = 0;
-    pthread_mutex_unlock(&mutex);
-    return messagePayload;
+    return payload;
+}
+
+
+const char *ClientMessageBuilder::ReadException::what() const noexcept {
+    return "read exception";
 }
