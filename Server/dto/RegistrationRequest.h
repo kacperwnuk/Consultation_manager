@@ -10,8 +10,16 @@
 #include <jsoncpp/json/value.h>
 #include <ostream>
 #include "../entity/enums/AccountRole.h"
+#include "Request.h"
 
-class RegistrationRequest {
+class RegistrationRequest : public Request {
+
+    struct RegistrationHelper{
+        RegistrationHelper(){
+            Request::addToMap("RegistrationRequest", new RegistrationRequest());
+        }
+    };
+    static RegistrationHelper registrationHelper;
 
     std::string email;
     std::string login;
@@ -34,7 +42,12 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const RegistrationRequest &request);
 
+    RegistrationRequest() = default;
     RegistrationRequest(Json::Value);
+
+    Request *create(Json::Value) override;
+
+    Serializable *execute() override;
 };
 
 

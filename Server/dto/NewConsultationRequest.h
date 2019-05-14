@@ -9,19 +9,31 @@
 #include <ostream>
 #include "../entity/Consultation.h"
 #include "../entity/ConsultationInfoForClient.h"
+#include "Request.h"
 
-class NewConsultationRequest {
-private:
+class NewConsultationRequest : public Request{
+
+    struct NewConsultationHelper{
+        NewConsultationHelper(){
+            Request::addToMap("NewConsultationRequest", new NewConsultationRequest());
+        }
+    };
+    static NewConsultationHelper newConsultationHelper;
+
     ConsultationInfoForClient consultationInfo;
+
 public:
     const ConsultationInfoForClient &getConsultationInfo() const;
-
-public:
     friend std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request);
     b_date getConsultationDateStart();
+    NewConsultationRequest() = default;
     NewConsultationRequest(Json::Value);
 
     b_date getConsultationDateEnd();
+
+    Request *create(Json::Value value) override;
+
+    Serializable *execute() override;
 };
 
 

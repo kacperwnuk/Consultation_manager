@@ -2,7 +2,12 @@
 // Created by kacper on 19.04.2019.
 //
 
+#include <iostream>
 #include "RegistrationRequest.h"
+#include "enums/StatusType.h"
+#include "RegistrationResponse.h"
+
+RegistrationRequest::RegistrationHelper RegistrationRequest::registrationHelper;
 
 RegistrationRequest::RegistrationRequest(Json::Value value) {
     this->email = value["email"].asString();
@@ -40,4 +45,27 @@ const std::string &RegistrationRequest::getSurname() const {
 
 AccountRole RegistrationRequest::getAccountRole() const {
     return accountRole;
+}
+
+Request *RegistrationRequest::create(Json::Value value) {
+    return new RegistrationRequest(value);
+}
+
+Serializable *RegistrationRequest::execute() {
+    auto account = Account(getEmail(), getLogin(), getPassword(), getName(),
+                           getSurname(), getAccountRole(), AccountStatus::INACTIVE);
+    auto document = account.getDocumentFormat();
+    auto dao = Dao::getDaoCollection("TIN", "account");
+
+    try {
+        dao->insertDocument(document);
+    }
+    catch (std::exception &e) {
+        std::cout << e.what();
+        return new RegistrationResponse(ERROR);
+    }
+    std::cout << "Rejestracja pomyślna" << std::endl;
+    return new RegistrationResponse(OK);
+
+
 }

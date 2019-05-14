@@ -68,3 +68,7 @@ const std::string &ConsultationInfoForClient::getRoom() const {
 ConsultationType ConsultationInfoForClient::getConsultationType() const {
     return consultationType;
 }
+
+ConsultationInfoForClient::ConsultationInfoForClient() : consultationDateStart(std::chrono::system_clock::now()), consultationDateEnd(std::chrono::system_clock::now()) {
+
+}

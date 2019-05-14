@@ -28,18 +28,6 @@ class ClientLogic : public Thread {
     std::unique_ptr<Serializer> serializer;
     std::unique_ptr<Deserializer> deserializer;
 
-    std::vector<Consultation> tryToGetConsultations(DailyConsultationsListRequest dailyConsultationsListRequest);
-
-    StatusType tryToRegister(RegistrationRequest);
-
-    StatusType tryToLogin(LoginRequest);
-
-    StatusType tryToAddConsultation(NewConsultationRequest);
-
-    template<typename Request, typename ReturnType, typename Response>
-    void handleRequest(std::function<ReturnType(ClientLogic*, Request)>);
-
-
 public:
 
 
@@ -63,12 +51,6 @@ void ClientLogic::sendResponse(T response) {
 }
 
 
-template<typename Request, typename ReturnType, typename Response>
-void ClientLogic::handleRequest(std::function<ReturnType(ClientLogic*, Request)> tryHandleRequest) {
-    Request request = deserializer->getDeserializedObject<Request>();
-    Response response(tryHandleRequest(this, request));
-    sendResponse(response);
-}
 
 
 #endif //SERVER_PARSER_H

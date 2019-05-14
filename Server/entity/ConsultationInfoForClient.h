@@ -25,6 +25,7 @@ public:
     ConsultationInfoForClient(std::string, const AccountInfoForClient &consultationCreator, const b_date &consultationDateStart,
                               const b_date &consultationDateEnd, const std::string &room,
                               ConsultationType consultationType);
+    ConsultationInfoForClient();
     ConsultationInfoForClient(Json::Value);
 
     Json::Value getJson() override;

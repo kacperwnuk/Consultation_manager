@@ -31,6 +31,8 @@ private:
     mongocxx::collection coll;
 public:
 
+    static Dao* getDaoCollection(std::string, std::string);
+
     const mongocxx::collection &getCollection() const;
 
     explicit Dao(const std::string &);
@@ -59,5 +61,7 @@ void Dao::updateDocument(const document_view_or_value &prevDocument, const std::
                                                << attribute << value << bsoncxx::builder::stream::close_document
                                                << bsoncxx::builder::stream::finalize);
 }
+
+
 
 #endif //SERVER_DAO_H
