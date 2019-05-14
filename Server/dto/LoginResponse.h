@@ -7,7 +7,6 @@
 
 
 #include "enums/StatusType.h"
-#include "enums/ResponseType.h"
 #include "../serialization/Serializable.h"
 
 class LoginResponse : public Serializable {

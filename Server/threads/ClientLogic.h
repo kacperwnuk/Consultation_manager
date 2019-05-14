@@ -8,18 +8,9 @@
 
 #include <string>
 #include "Thread.h"
-#include "../ClientMessageBuilder.h"
-#include "../serialization/Deserializer.h"
-#include "../dto/enums/StatusType.h"
-#include "../dto/RegistrationRequest.h"
-#include "../containers/OutgoingMessage.h"
-#include "../serialization/Serializer.h"
-#include "../Dao.h"
-#include "../dto/LoginRequest.h"
-#include "../entity/Consultation.h"
-#include "../dto/NewConsultationRequest.h"
-#include "../dto/DailyConsultationsListRequest.h"
 #include "../containers/synchronizedcontainers/SynchronizedQueue.h"
+#include "../dto/Request.h"
+#include "../serialization/Serializable.h"
 
 class ClientLogic : public Thread {
     SynchronizedQueue<Request*>& inQueue;

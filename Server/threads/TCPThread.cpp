@@ -68,6 +68,7 @@ void TCPThread::serveClients(pollfd *pollList) {
     for (auto i = 0; i < numberOfClients; ++i) {
         if ((pollList[i].revents & POLLHUP) == POLLHUP) { // client closed connection
             clients[i]->stop();
+            clients.erase(clients.begin() + i);
         } else if ((pollList[i].revents & POLLIN) == POLLIN) { // client sent data
             clients[i]->receive();
         } else if ((pollList[i].revents & POLLOUT) == POLLOUT) {

@@ -3,7 +3,6 @@
 //
 
 #include "DailyConsultationsListResponse.h"
-#include "enums/ResponseType.h"
 
 DailyConsultationsListResponse::DailyConsultationsListResponse(std::vector<Consultation> consultations) :
         consultations(std::move(consultations)) {
@@ -20,6 +19,6 @@ Json::Value DailyConsultationsListResponse::getJson() {
         }
     }
 
-    value["type"] = ResponseType::DailyConsultationsListResp;
+    value["type"] = "DailyConsultationListResponse";
     return value;
 }

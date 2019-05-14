@@ -4,13 +4,12 @@
 
 #include <iostream>
 #include "RegistrationResponse.h"
-#include "enums/ResponseType.h"
 
 Json::Value RegistrationResponse::getJson() {
 
     Json::Value value;
     value["status"] = this->status;
-    value["type"] = ResponseType::RegistrationResp;
+    value["type"] = "RegistrationResponse";
     return value;
 }
 

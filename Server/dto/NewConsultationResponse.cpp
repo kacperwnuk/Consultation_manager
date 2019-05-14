@@ -3,14 +3,13 @@
 //
 
 #include "NewConsultationResponse.h"
-#include "enums/ResponseType.h"
 
 NewConsultationResponse::NewConsultationResponse(StatusType statusType) : statusType(statusType) {}
 
 Json::Value NewConsultationResponse::getJson() {
     Json::Value value;
     value["status"] = this->statusType;
-    value["type"] = ResponseType::NewConsultationLecturerResp;
+    value["type"] = "NewConsultationResponse";
 
     return value;
 }

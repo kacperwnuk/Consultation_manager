@@ -3,6 +3,7 @@
 // Created by Marcin on 17.04.2019.
 
 #include <sys/socket.h>
+#include <iostream>
 #include "ClientLogic.h"
 
 void ClientLogic::run() {

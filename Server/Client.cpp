@@ -15,7 +15,8 @@ bool Client::isReadyToReceive() {
 }
 
 void Client::stop() {
-
+    clientLogic.cancel();
+    clientInOutAction.cancel();
 }
 
 void Client::receive() {
