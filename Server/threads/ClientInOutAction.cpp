@@ -50,7 +50,5 @@ void ClientInOutAction::handleOutMessage() {
     auto *response = outQueue.get();
     auto message = serializer.serialize(response);
     messageSender.send(message);
-    if (outQueue.getSize() == 0) {
-        readyToSend = false;
-    }
+
 }

@@ -58,7 +58,14 @@ Serializable *RegistrationRequest::execute() {
     auto dao = Dao::getDaoCollection("TIN", "account");
 
     try {
-        dao->insertDocument(document);
+        try{
+            auto otherAccountWithSameLogin = dao->getAccountByLogin(getLogin());
+            return new RegistrationResponse(ERROR);
+        }catch(std::exception &e){
+            //no user
+            dao->insertDocument(document);
+        }
+
     }
     catch (std::exception &e) {
         std::cout << e.what();

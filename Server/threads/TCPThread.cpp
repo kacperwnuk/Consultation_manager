@@ -34,9 +34,9 @@ void TCPThread::run() {
         }
         executePoll(pollList, socketsToPoll, socketInitialized ? -1 : 60);
 
-        acceptNewConnections(pollList, serverSocketPosition);
-
         serveClients(pollList);
+
+        acceptNewConnections(pollList, serverSocketPosition);
 
         delete[] pollList;
 

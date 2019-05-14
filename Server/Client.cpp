@@ -20,11 +20,13 @@ void Client::stop() {
 
 void Client::receive() {
     readyToReceive = false;
+    readyToSend = true;
     clientInOutAction.receive();
 }
 
 void Client::send() {
     readyToReceive = true;
+    readyToSend = false;
     clientInOutAction.send();
 }
 
