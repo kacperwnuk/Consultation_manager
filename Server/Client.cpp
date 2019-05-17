@@ -32,7 +32,7 @@ void Client::registerActions(pollfd *pollListEntry) {
     if (wantsToRead) {
         pollListEntry->events |= POLLIN;
     }
-    if (wantsToWrite) {
+    if (outQueue.getSize() > 0) {
         pollListEntry->events |= POLLOUT;
     }
 }

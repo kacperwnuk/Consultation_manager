@@ -25,7 +25,7 @@ void TCPThread::run() {
         auto socketInitialized = serverSocket.initialize();
         auto socketsToPoll = clients.size();
         auto serverSocketPosition = clients.size();
-        pollfd pollList[socketsToPoll + 2]; //clients fds, pipe fd and server fd
+        pollfd pollList[socketsToPoll + 1]; //clients fds
         preparePoll(pollList);
         if (socketInitialized) {
             pollList[serverSocketPosition].fd = serverSocket.getServerSocket();
@@ -65,9 +65,8 @@ void TCPThread::executePoll(pollfd pollList[], nfds_t size, int timeout) {
 void TCPThread::serveClients(pollfd *pollList) {
 
     auto numberOfClients = clients.size();
-    for (auto i = 1; i < numberOfClients; ++i) {
+    for (auto i = 0; i < numberOfClients; ++i) {
         if ((pollList[i].revents & POLLHUP) == POLLHUP) { // client closed connection
-            close(pollList[i].fd);
             clients[i]->stop();
             delete clients[i];
             clients.erase(clients.begin() + i);
@@ -85,8 +84,6 @@ TCPThread::~TCPThread() {
 }
 
 void TCPThread::preparePoll(pollfd *pollList) {
-    pollList[0].fd = pipefd[0];
-    pollList[0].events = POLLIN;
     for (int i = 0; i < clients.size(); ++i) {
         if (clients[i]->isConnected()) {
             clients[i]->registerActions(&pollList[i]);

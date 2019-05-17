@@ -7,7 +7,9 @@
 void ClientInOutAction::send() {
 
     if (!writing) {
+        std::cout << "getting ittem" << std::endl;
         auto *response = outQueue.get();
+        std::cout << "got item" << std::endl;
         message = serializer.serialize(response);
 //        delete response;
         bytesToWrite = message.size();
@@ -22,9 +24,8 @@ void ClientInOutAction::send() {
 
     if (bytesWritten == bytesToWrite) {
         writing = !writing;
-        if (outQueue.getSize() == 0) {
-            wantsToWrite =  false;
-        }
+//        wantsToWrite =  false;
+
     }
 }
 
