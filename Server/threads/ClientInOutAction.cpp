@@ -4,51 +4,63 @@
 
 #include "ClientInOutAction.h"
 
-void ClientInOutAction::run() {
-    while (isRunning) {
-        pthread_mutex_lock(&mutex);
-        pthread_cond_wait(&condition, &mutex);
-        if (readyToRead) {
-            readyToRead = false;
-            handleInMessage();
+void ClientInOutAction::send() {
+
+    if (!writing) {
+        auto *response = outQueue.get();
+        message = serializer.serialize(response);
+//        delete response;
+        bytesToWrite = message.size();
+        bytesWritten = 0;
+        writing = !writing;
+    }
+
+    auto status = write(fd, message.c_str() + bytesWritten, bytesToWrite);
+    if (status != -1) {
+        bytesWritten += status;
+    }
+
+    if (bytesWritten == bytesToWrite) {
+        writing = !writing;
+        if (outQueue.getSize() == 0) {
+            wantsToWrite =  false;
         }
-        if (readyToWrite) {
-            readyToWrite = false;
-            handleOutMessage();
-        }
-        pthread_mutex_unlock(&mutex);
     }
 }
 
-
-void ClientInOutAction::send() {
-    readyToWrite = true;
-    std::cout << pthread_cond_signal(&condition) << std::endl;
-}
-
 void ClientInOutAction::receive() {
-    readyToRead = true;
-    std::cout << pthread_cond_signal(&condition) << std::endl;
+
+    if (!readingHeader && !payloadAllocated) {
+        payloadAllocated = true;
+        payload = new char[bytesToRead];
+    }
+
+    auto status = read(fd, readingHeader? header + bytesRead : payload + bytesRead, bytesToRead - bytesRead);
+    if (status != -1) {
+        bytesRead += status;
+    }
+
+    if (readingHeader && bytesToRead == bytesRead) {
+        readingHeader = false;
+        bytesRead = 0;
+        bytesToRead = atoi(header);
+    }
+
+    if (!readingHeader && bytesToRead == bytesRead) {
+        readingHeader = true;
+        auto *request = deserializer.getDeserializedObject(payload);
+        inQueue.put(request);
+        bytesToRead = 4;
+        bytesRead = 0;
+//        delete[] payload;
+    }
+
 }
 
 
-ClientInOutAction::ClientInOutAction(int socket, SynchronizedQueue<Request *> &inQueue,
-                                     SynchronizedQueue<Serializable *> &outQueue, bool &readyToSend, bool &readyToReceive)
-        : clientMessageBuilder(socket),
-          inQueue(inQueue), outQueue(outQueue), messageSender(socket), readyToSend(readyToSend), readyToReceive(readyToReceive) {
-    pthread_mutex_init(&mutex, nullptr);
-    pthread_cond_init(&condition, nullptr);
+ClientInOutAction::ClientInOutAction(int fd, SynchronizedQueue<Request *> &inQueue,
+                                     SynchronizedQueue<Serializable *> &outQueue, bool& wantsToWrite, bool &connected)
+        : inQueue(inQueue), outQueue(outQueue), wantsToWrite(wantsToWrite), connected(connected) {
+    this->fd = fd;
 }
 
-void ClientInOutAction::handleInMessage() {
-    auto message = clientMessageBuilder.getMessage();
-    auto *request = deserializer.getDeserializedObject(message);
-    inQueue.put(request);
-}
-
-void ClientInOutAction::handleOutMessage() {
-    auto *response = outQueue.get();
-    auto message = serializer.serialize(response);
-    messageSender.send(message);
-
-}

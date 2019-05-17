@@ -14,6 +14,7 @@ void ClientLogic::run() {
         auto response = request->execute();
         std::cout << response->getJson() << std::endl;
         outQueue.put(response);
+        readyToSend = true;
     }
 }
 

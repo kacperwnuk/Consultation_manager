@@ -14,34 +14,34 @@
 #include "../containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "MessageSender.h"
 
-class ClientInOutAction : public Thread {
+class ClientInOutAction {
 private:
+    int fd;
+    bool &connected;
     SynchronizedQueue<Request *> &inQueue;
     SynchronizedQueue<Serializable *> &outQueue;
     Serializer serializer;
     Deserializer deserializer;
-    ClientMessageBuilder clientMessageBuilder;
-    MessageSender messageSender;
-    pthread_mutex_t mutex;
-    pthread_cond_t condition;
-    bool isRunning = true;
-    bool readyToRead = false;
-    bool readyToWrite = false;
-    // from Client
-    bool &readyToSend;
-    bool &readyToReceive;
 
+    char header[4];
+    char *payload;
+    bool readingHeader = true;
+    bool payloadAllocated = false;
+    size_t bytesRead = 0;
+    size_t bytesToRead = 4;
 
-    void handleInMessage();
+    bool writing;
+    std::string message;
+    size_t bytesToWrite;
+    size_t bytesWritten;
 
-    void handleOutMessage();
+    bool &wantsToWrite;
+
 
 public:
 
     explicit ClientInOutAction(int, SynchronizedQueue<Request *> &,
-                               SynchronizedQueue<Serializable *> &, bool &, bool &);
-
-    void run() override;
+                               SynchronizedQueue<Serializable *> &, bool&, bool &);
 
     void send();
 

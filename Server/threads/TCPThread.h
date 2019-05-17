@@ -12,6 +12,9 @@
 
 class TCPThread : public Thread {
 private:
+
+    int pipefd[2];
+
     in_port_t port;
     std::vector<Client*> clients;
 

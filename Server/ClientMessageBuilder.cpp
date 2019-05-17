@@ -27,9 +27,10 @@ std::string ClientMessageBuilder::readBytes(size_t bytesToRead) {
     char payload[bytesToRead];
     while (bytesRead != bytesToRead) {
         auto readStatus = read(socket, payload + bytesRead, bytesToRead - bytesRead);
-        if (readStatus != -1) {
+        if (readStatus > 0) {
             bytesRead += readStatus;
         } else {
+            std::cout << "read exception" << std::endl;
             throw ReadException();
         }
     }

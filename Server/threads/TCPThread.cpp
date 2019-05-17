@@ -19,13 +19,13 @@
 
 void TCPThread::run() {
     ServerSocket serverSocket(port);
+
     bool isRunning = true;
     do {
-
         auto socketInitialized = serverSocket.initialize();
         auto socketsToPoll = clients.size();
         auto serverSocketPosition = clients.size();
-        auto *pollList = new pollfd[socketsToPoll + 1];
+        pollfd pollList[socketsToPoll + 2]; //clients fds, pipe fd and server fd
         preparePoll(pollList);
         if (socketInitialized) {
             pollList[serverSocketPosition].fd = serverSocket.getServerSocket();
@@ -38,7 +38,6 @@ void TCPThread::run() {
 
         acceptNewConnections(pollList, serverSocketPosition);
 
-        delete[] pollList;
 
     } while (isRunning);
 
@@ -46,6 +45,7 @@ void TCPThread::run() {
 
 TCPThread::TCPThread(in_port_t port) : port(
         port) {
+    pipe(pipefd);
 }
 
 void TCPThread::executePoll(pollfd pollList[], nfds_t size, int timeout) {
@@ -65,14 +65,17 @@ void TCPThread::executePoll(pollfd pollList[], nfds_t size, int timeout) {
 void TCPThread::serveClients(pollfd *pollList) {
 
     auto numberOfClients = clients.size();
-    for (auto i = 0; i < numberOfClients; ++i) {
+    for (auto i = 1; i < numberOfClients; ++i) {
         if ((pollList[i].revents & POLLHUP) == POLLHUP) { // client closed connection
+            close(pollList[i].fd);
             clients[i]->stop();
+            delete clients[i];
             clients.erase(clients.begin() + i);
+            std::cout << "disconnect client" << std::endl;
         } else if ((pollList[i].revents & POLLIN) == POLLIN) { // client sent data
-            clients[i]->receive();
+                clients[i]->receive();
         } else if ((pollList[i].revents & POLLOUT) == POLLOUT) {
-            clients[i]->send();
+                clients[i]->send();
         }
     }
 }
@@ -82,15 +85,16 @@ TCPThread::~TCPThread() {
 }
 
 void TCPThread::preparePoll(pollfd *pollList) {
-
+    pollList[0].fd = pipefd[0];
+    pollList[0].events = POLLIN;
     for (int i = 0; i < clients.size(); ++i) {
-        pollList[i].fd = clients[i]->getFd();
-        pollList[i].events = POLLHUP;
-        if (clients[i]->isReadyToReceive()) {
-            pollList[i].events |= POLLIN;
-        }
-        if (clients[i]->isReadyToSend()) {
-            pollList[i].events |= POLLOUT;
+        if (clients[i]->isConnected()) {
+            clients[i]->registerActions(&pollList[i]);
+        } else {
+            clients[i]->stop();
+            delete clients[i];
+            clients.erase(clients.begin() + i);
+            std::cout << "disconnect client" << std::endl;
         }
     }
 }
@@ -99,6 +103,7 @@ void TCPThread::acceptNewConnections(pollfd *pollList, size_t serverSocketPositi
     if ((pollList[serverSocketPosition].revents & POLLIN) == POLLIN) { // new connection
         auto clientSocket = accept(pollList[serverSocketPosition].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
         if (clientSocket != -1) {
+            std::cout << "accept client" << std::endl;
             auto *client = new Client(clientSocket);
             clients.push_back(client);
         }

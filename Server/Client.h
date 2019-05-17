@@ -6,6 +6,7 @@
 #define SERVER_CLIENT_H
 
 
+#include <sys/poll.h>
 #include "threads/ClientLogic.h"
 #include "threads/MessageSender.h"
 #include "threads/ClientInOutAction.h"
@@ -22,9 +23,10 @@
  */
 class Client {
 private:
+    bool connected = true;
     int fd;
-    bool readyToReceive = true;
-    bool readyToSend;
+    bool wantsToRead = true;
+    bool wantsToWrite;
     SynchronizedQueue<Request*> inQueue;
     SynchronizedQueue<Serializable*> outQueue;
     ClientLogic clientLogic;
@@ -34,17 +36,16 @@ public:
 
     explicit Client(int);
 
-    bool isReadyToReceive();
-
-    bool isReadyToSend();
-
-    int getFd() const;
+    void registerActions(pollfd *);
 
     void stop();
 
     void receive();
 
     void send();
+
+    bool isConnected();
+
 };
 
 

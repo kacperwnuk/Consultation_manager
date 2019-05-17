@@ -4,37 +4,35 @@
 
 #include "Client.h"
 
-Client::Client(int fd): clientLogic(inQueue, outQueue, readyToSend), clientInOutAction(fd, inQueue, outQueue, readyToSend, readyToReceive) {
+Client::Client(int fd): clientLogic(inQueue, outQueue, wantsToWrite), clientInOutAction(fd, inQueue, outQueue, wantsToWrite, connected) {
     this->fd = fd;
     clientLogic.start();
-    clientInOutAction.start();
-}
-
-bool Client::isReadyToReceive() {
-    return readyToReceive;
 }
 
 void Client::stop() {
+    close(fd);
     clientLogic.cancel();
-    clientInOutAction.cancel();
 }
 
 void Client::receive() {
-    readyToReceive = false;
-    readyToSend = true;
     clientInOutAction.receive();
 }
 
 void Client::send() {
-    readyToReceive = true;
-    readyToSend = false;
     clientInOutAction.send();
 }
 
-bool Client::isReadyToSend() {
-    return readyToSend;
+bool Client::isConnected() {
+    return connected;
 }
 
-int Client::getFd() const {
-    return fd;
+void Client::registerActions(pollfd *pollListEntry) {
+    pollListEntry->fd = fd;
+    pollListEntry->events = POLLHUP;
+    if (wantsToRead) {
+        pollListEntry->events |= POLLIN;
+    }
+    if (wantsToWrite) {
+        pollListEntry->events |= POLLOUT;
+    }
 }
