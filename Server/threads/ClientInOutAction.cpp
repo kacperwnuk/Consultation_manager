@@ -11,7 +11,7 @@ void ClientInOutAction::send() {
         auto *response = outQueue.get();
         std::cout << "got item" << std::endl;
         message = serializer.serialize(response);
-//        delete response;
+        delete response;
         bytesToWrite = message.size();
         bytesWritten = 0;
         writing = !writing;
@@ -33,12 +33,17 @@ void ClientInOutAction::receive() {
 
     if (!readingHeader && !payloadAllocated) {
         payloadAllocated = true;
-        payload = new char[bytesToRead];
+        payload = std::make_unique<char[]>(bytesToRead);
     }
 
-    auto status = read(fd, readingHeader? header + bytesRead : payload + bytesRead, bytesToRead - bytesRead);
-    if (status != -1) {
+    auto status = read(fd, readingHeader ? header + bytesRead : payload.get() + bytesRead, bytesToRead - bytesRead);
+    if (status > 0) {
         bytesRead += status;
+    } else if (status == 0) {
+        std::cout << "Disconnected user ;<" << std::endl;
+        connected = false;
+    } else if (status == -1) {
+        std::cout << "Error!" << std::endl;
     }
 
     if (readingHeader && bytesToRead == bytesRead) {
@@ -49,18 +54,17 @@ void ClientInOutAction::receive() {
 
     if (!readingHeader && bytesToRead == bytesRead) {
         readingHeader = true;
-        auto *request = deserializer.getDeserializedObject(payload);
+        auto *request = deserializer.getDeserializedObject(payload.get());
         inQueue.put(request);
         bytesToRead = 4;
         bytesRead = 0;
-//        delete[] payload;
     }
 
 }
 
 
 ClientInOutAction::ClientInOutAction(int fd, SynchronizedQueue<Request *> &inQueue,
-                                     SynchronizedQueue<Serializable *> &outQueue, bool& wantsToWrite, bool &connected)
+                                     SynchronizedQueue<Serializable *> &outQueue, bool &wantsToWrite, bool &connected)
         : inQueue(inQueue), outQueue(outQueue), wantsToWrite(wantsToWrite), connected(connected) {
     this->fd = fd;
 }

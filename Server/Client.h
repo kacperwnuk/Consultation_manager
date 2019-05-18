@@ -34,7 +34,7 @@ private:
 
 public:
 
-    explicit Client(int);
+    Client(int, int);
 
     void registerActions(pollfd *);
 

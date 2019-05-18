@@ -14,11 +14,12 @@ void ClientLogic::run() {
         auto response = request->execute();
         std::cout << response->getJson() << std::endl;
         outQueue.put(response);
-//        readyToSend = true;
+        std::cout<<write(pipe, "a", 1)<<std::endl;
+        delete request;
     }
 }
 
-ClientLogic::ClientLogic(SynchronizedQueue<Request*> &inQueue, SynchronizedQueue<Serializable*> &outQueue, bool &readyToSend): inQueue(inQueue), outQueue(outQueue), readyToSend(readyToSend) {
+ClientLogic::ClientLogic(SynchronizedQueue<Request*> &inQueue, SynchronizedQueue<Serializable*> &outQueue, bool &readyToSend, int pipefd): inQueue(inQueue), outQueue(outQueue), readyToSend(readyToSend), pipe(pipefd) {
 
 }
 

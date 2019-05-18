@@ -4,7 +4,7 @@
 
 #include "Client.h"
 
-Client::Client(int fd): clientLogic(inQueue, outQueue, wantsToWrite), clientInOutAction(fd, inQueue, outQueue, wantsToWrite, connected) {
+Client::Client(int fd, int pipefd): clientLogic(inQueue, outQueue, wantsToWrite, pipefd), clientInOutAction(fd, inQueue, outQueue, wantsToWrite, connected) {
     this->fd = fd;
     clientLogic.start();
 }
@@ -33,6 +33,7 @@ void Client::registerActions(pollfd *pollListEntry) {
         pollListEntry->events |= POLLIN;
     }
     if (outQueue.getSize() > 0) {
+        std::cout<<"Mam wiadomosc do wyslania"<<std::endl;
         pollListEntry->events |= POLLOUT;
     }
 }

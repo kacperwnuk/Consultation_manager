@@ -16,8 +16,9 @@ class ClientLogic : public Thread {
     SynchronizedQueue<Request*>& inQueue;
     SynchronizedQueue<Serializable*>& outQueue;
     bool &readyToSend;
+    int pipe;
 public:
-    ClientLogic(SynchronizedQueue<Request*>&, SynchronizedQueue<Serializable*>&, bool &);
+    ClientLogic(SynchronizedQueue<Request*>&, SynchronizedQueue<Serializable*>&, bool &, int);
 
     void run() override;
 };

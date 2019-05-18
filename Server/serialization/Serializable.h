@@ -11,6 +11,7 @@
 class Serializable {
 public:
     virtual Json::Value getJson() = 0;
+    virtual ~Serializable(){}
 };
 
 

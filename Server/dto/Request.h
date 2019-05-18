@@ -23,6 +23,7 @@ protected:
 public:
     virtual Request* create(Json::Value) = 0;
     virtual Serializable* execute() = 0;
+    virtual ~Request(){}
 
     static Request* unserialize(std::string classType, Json::Value payload){
         if (requestMap().count(classType) != 0){

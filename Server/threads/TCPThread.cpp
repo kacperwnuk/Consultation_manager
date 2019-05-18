@@ -24,18 +24,25 @@ void TCPThread::run() {
     do {
         auto socketInitialized = serverSocket.initialize();
         auto socketsToPoll = clients.size();
-        auto serverSocketPosition = clients.size();
-        pollfd pollList[socketsToPoll + 1]; //clients fds
+        pollfd pollList[socketsToPoll + 2]; //clients fds
         preparePoll(pollList);
+
+        pollList[socketsToPoll].fd = pipefd[0];
+        pollList[socketsToPoll].events = POLLIN;
+        auto pipePosition = socketsToPoll;
+        socketsToPoll++;
+
+        auto serverSocketPosition = socketsToPoll;
         if (socketInitialized) {
             pollList[serverSocketPosition].fd = serverSocket.getServerSocket();
             pollList[serverSocketPosition].events = POLLIN;
             socketsToPoll++;
         }
+
         executePoll(pollList, socketsToPoll, socketInitialized ? -1 : 60);
-
+        std::cout<<"Wychodze z polla"<<std::endl;
         serveClients(pollList);
-
+        servePipe(pollList, pipePosition);
         acceptNewConnections(pollList, serverSocketPosition);
 
 
@@ -79,6 +86,17 @@ void TCPThread::serveClients(pollfd *pollList) {
     }
 }
 
+
+void TCPThread::servePipe(pollfd *pollList, int pipePosition) {
+
+    if ((pollList[pipePosition].revents & POLLIN) == POLLIN){
+        char buf[1];
+        read(pollList[pipePosition].fd, buf, 1);
+    }
+}
+
+
+
 TCPThread::~TCPThread() {
 
 }
@@ -101,7 +119,7 @@ void TCPThread::acceptNewConnections(pollfd *pollList, size_t serverSocketPositi
         auto clientSocket = accept(pollList[serverSocketPosition].fd, (struct sockaddr *) nullptr, (socklen_t *) nullptr);
         if (clientSocket != -1) {
             std::cout << "accept client" << std::endl;
-            auto *client = new Client(clientSocket);
+            auto *client = new Client(clientSocket, pipefd[1]);
             clients.push_back(client);
         }
     }

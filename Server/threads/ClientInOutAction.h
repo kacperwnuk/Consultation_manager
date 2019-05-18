@@ -24,7 +24,7 @@ private:
     Deserializer deserializer;
 
     char header[4];
-    char *payload;
+    std::unique_ptr<char[]> payload;
     bool readingHeader = true;
     bool payloadAllocated = false;
     size_t bytesRead = 0;

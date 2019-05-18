@@ -22,6 +22,8 @@ private:
 
     void serveClients(pollfd pollList[]);
 
+    void servePipe(pollfd pollList[], int);
+
     void preparePoll(pollfd*);
 
     void acceptNewConnections(pollfd*, size_t);

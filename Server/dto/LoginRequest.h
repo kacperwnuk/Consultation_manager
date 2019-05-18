@@ -31,7 +31,9 @@ public:
 
     LoginRequest() = default;
     LoginRequest(Json::Value);
-
+    ~LoginRequest(){
+        std::cout<<"destruktor login"<<std::endl;
+    }
     Request *create(Json::Value) override;
 
     Serializable *execute() override;
