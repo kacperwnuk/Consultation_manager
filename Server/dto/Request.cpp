@@ -4,6 +4,6 @@
 
 #include "Request.h"
 
-void Request::addToMap(std::string s, Request* request) {
-    requestMap()[s] = request;
+void Request::addToMap(std::string s, std::unique_ptr<Request> request) {
+    requestMap()[s] = std::move(request);
 }

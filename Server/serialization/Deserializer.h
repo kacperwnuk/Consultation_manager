@@ -12,7 +12,7 @@
 
 class Deserializer {
 public:
-    Request* getDeserializedObject(const std::string &message);
+    std::unique_ptr<Request> getDeserializedObject(const std::string &message);
 };
 
 

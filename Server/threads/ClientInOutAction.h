@@ -18,13 +18,13 @@ class ClientInOutAction {
 private:
     int fd;
     bool &connected;
-    SynchronizedQueue<Request *> &inQueue;
-    SynchronizedQueue<Serializable *> &outQueue;
+    SynchronizedQueue<std::unique_ptr<Request>> &inQueue;
+    SynchronizedQueue<std::unique_ptr<Serializable>> &outQueue;
     Serializer serializer;
     Deserializer deserializer;
 
     char header[4];
-    std::unique_ptr<char[]> payload;
+    char* payload;
     bool readingHeader = true;
     bool payloadAllocated = false;
     size_t bytesRead = 0;
@@ -40,8 +40,8 @@ private:
 
 public:
 
-    explicit ClientInOutAction(int, SynchronizedQueue<Request *> &,
-                               SynchronizedQueue<Serializable *> &, bool&, bool &);
+    explicit ClientInOutAction(int, SynchronizedQueue<std::unique_ptr<Request>> &,
+                               SynchronizedQueue<std::unique_ptr<Serializable>> &, bool&, bool &);
 
     void send();
 

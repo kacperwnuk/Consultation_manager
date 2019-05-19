@@ -33,7 +33,7 @@ SynchronizedQueue<T>::SynchronizedQueue() {
 template<typename T>
 void SynchronizedQueue<T>::put(T value) {
     enter();
-    values.push(value);
+    values.push(std::move(value));
     if (values.size() == 1) {
         signal(isEmpty);
     }
@@ -46,7 +46,7 @@ T SynchronizedQueue<T>::get() {
     enter();
     if (values.size() == 0)
         Monitor::wait(isEmpty);
-    value = values.front();
+    value = std::move(values.front());
     values.pop();
     leave();
     return value;

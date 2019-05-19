@@ -32,11 +32,12 @@ b_date NewConsultationRequest::getConsultationDateEnd() {
 
 
 
-Request *NewConsultationRequest::create(Json::Value value) {
-    return new NewConsultationRequest(value);
+std::unique_ptr<Request> NewConsultationRequest::create(Json::Value value) {
+    std::unique_ptr<Request> request (new NewConsultationRequest(value));
+    return std::move(request);
 }
 
-Serializable *NewConsultationRequest::execute() {
+std::unique_ptr<Serializable> NewConsultationRequest::execute() {
 
     auto dao = Dao::getDaoCollection("TIN", "consultation");
     auto consultationStart = getConsultationDateStart();
@@ -44,12 +45,14 @@ Serializable *NewConsultationRequest::execute() {
 
     if (consultationStart >= consultationEnd){
         //Consultaton start after end!
-        return new NewConsultationResponse(ERROR);
+        std::unique_ptr<Serializable> response(new NewConsultationResponse(ERROR));
+        return std::move(response);
     }
     auto consultations = dao->getConsultationsByDate(consultationStart, consultationEnd);
     if (!consultations.empty()){
         //There is another consultation in this time!
-        return new NewConsultationResponse(ERROR);
+        std::unique_ptr<Serializable> response(new NewConsultationResponse(ERROR));
+        return std::move(response);
     }
     Consultation consultation = Consultation(getConsultationInfo(), ConsultationStatus::FREE);
     auto document = consultation.getDocumentFormat();
@@ -57,8 +60,10 @@ Serializable *NewConsultationRequest::execute() {
         dao->insertDocument(document);
     } catch (std::exception &e) {
         std::cout << e.what();
-        return new NewConsultationResponse(ERROR);
+        std::unique_ptr<Serializable> response(new NewConsultationResponse(ERROR));
+        return std::move(response);
     }
-    return new NewConsultationResponse(OK);
+    std::unique_ptr<Serializable> response(new NewConsultationResponse(OK));
+    return std::move(response);
 }
 

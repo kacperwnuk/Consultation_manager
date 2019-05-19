@@ -10,16 +10,15 @@ void ClientLogic::run() {
     bool isRunning = true;
     while (isRunning) {
 
-        Request* request = inQueue.get();
+        auto request = inQueue.get();
         auto response = request->execute();
         std::cout << response->getJson() << std::endl;
-        outQueue.put(response);
+        outQueue.put(std::move(response));
         std::cout<<write(pipe, "a", 1)<<std::endl;
-        delete request;
     }
 }
 
-ClientLogic::ClientLogic(SynchronizedQueue<Request*> &inQueue, SynchronizedQueue<Serializable*> &outQueue, bool &readyToSend, int pipefd): inQueue(inQueue), outQueue(outQueue), readyToSend(readyToSend), pipe(pipefd) {
+ClientLogic::ClientLogic(SynchronizedQueue<std::unique_ptr<Request>> &inQueue, SynchronizedQueue<std::unique_ptr<Serializable>> &outQueue, bool &readyToSend, int pipefd): inQueue(inQueue), outQueue(outQueue), readyToSend(readyToSend), pipe(pipefd) {
 
 }
 

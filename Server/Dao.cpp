@@ -14,10 +14,10 @@
 #include "MongoInstanceContainer.h"
 
 
-Dao* Dao::getDaoCollection(std::string dbName, std::string collName) {
-    auto dao = new Dao(dbName);
+std::unique_ptr<Dao> Dao::getDaoCollection(std::string dbName, std::string collName) {
+    auto dao = std::make_unique<Dao>(dbName);
     dao->setCollection(collName);
-    return dao;
+    return std::move(dao);
 }
 
 Dao::Dao(const std::string &databaseName) : instance(

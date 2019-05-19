@@ -14,11 +14,13 @@
 
 class RegistrationRequest : public Request {
 
-    struct RegistrationHelper{
-        RegistrationHelper(){
-            Request::addToMap("RegistrationRequest", new RegistrationRequest());
+    struct RegistrationHelper {
+        RegistrationHelper() {
+            std::cout << "Dodaje Registration" << std::endl;
+            Request::addToMap("RegistrationRequest", std::make_unique<RegistrationRequest>());
         }
     };
+
     static RegistrationHelper registrationHelper;
 
     std::string email;
@@ -43,11 +45,16 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const RegistrationRequest &request);
 
     RegistrationRequest() = default;
-    RegistrationRequest(Json::Value);
 
-    Request *create(Json::Value) override;
+    explicit RegistrationRequest(Json::Value);
 
-    Serializable *execute() override;
+    ~RegistrationRequest() override {
+        std::cout << "Zamykam registration" << std::endl;
+    }
+
+    std::unique_ptr<Request> create(Json::Value) override;
+
+    std::unique_ptr<Serializable> execute() override;
 };
 
 

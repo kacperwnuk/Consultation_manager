@@ -10,29 +10,30 @@
 
 #include <string>
 #include <map>
+#include <iostream>
 #include "../serialization/Serializable.h"
 #include "../Dao.h"
 
 class Request {
 protected:
-    static std::map<std::string, Request*>& requestMap(){
-        static std::map<std::string, Request*> _rm;
-        return _rm;
+    static std::map<std::string, std::unique_ptr<Request>>& requestMap(){
+        static std::map<std::string, std::unique_ptr<Request>> _rm;
+         return _rm;
     }
 
 public:
-    virtual Request* create(Json::Value) = 0;
-    virtual Serializable* execute() = 0;
+    virtual std::unique_ptr<Request> create(Json::Value) = 0;
+    virtual std::unique_ptr<Serializable> execute() = 0;
     virtual ~Request(){}
 
-    static Request* unserialize(std::string classType, Json::Value payload){
+    static std::unique_ptr<Request> unserialize(std::string classType, Json::Value payload){
         if (requestMap().count(classType) != 0){
-            return requestMap()[classType]->create(std::move(payload));
+            return std::move(requestMap()[classType]->create(payload));
         }
         return nullptr;
     }
 
-    static void addToMap(std::string, Request*);
+    static void addToMap(std::string, std::unique_ptr<Request>);
 
 };
 

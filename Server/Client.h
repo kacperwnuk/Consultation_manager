@@ -27,8 +27,8 @@ private:
     int fd;
     bool wantsToRead = true;
     bool wantsToWrite;
-    SynchronizedQueue<Request*> inQueue;
-    SynchronizedQueue<Serializable*> outQueue;
+    SynchronizedQueue<std::unique_ptr<Request>> inQueue;
+    SynchronizedQueue<std::unique_ptr<Serializable>> outQueue;
     ClientLogic clientLogic;
     ClientInOutAction clientInOutAction;
 

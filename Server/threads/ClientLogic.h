@@ -13,12 +13,12 @@
 #include "../serialization/Serializable.h"
 
 class ClientLogic : public Thread {
-    SynchronizedQueue<Request*>& inQueue;
-    SynchronizedQueue<Serializable*>& outQueue;
+    SynchronizedQueue<std::unique_ptr<Request>>& inQueue;
+    SynchronizedQueue<std::unique_ptr<Serializable>>& outQueue;
     bool &readyToSend;
     int pipe;
 public:
-    ClientLogic(SynchronizedQueue<Request*>&, SynchronizedQueue<Serializable*>&, bool &, int);
+    ClientLogic(SynchronizedQueue<std::unique_ptr<Request>>&, SynchronizedQueue<std::unique_ptr<Serializable>>&, bool &, int);
 
     void run() override;
 };

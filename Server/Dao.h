@@ -31,7 +31,7 @@ private:
     mongocxx::collection coll;
 public:
 
-    static Dao* getDaoCollection(std::string, std::string);
+    static std::unique_ptr<Dao> getDaoCollection(std::string, std::string);
 
     const mongocxx::collection &getCollection() const;
 

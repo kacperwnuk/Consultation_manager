@@ -5,12 +5,12 @@
 #include "Deserializer.h"
 
 
-Request* Deserializer::getDeserializedObject(const std::string &message) {
+std::unique_ptr<Request> Deserializer::getDeserializedObject(const std::string &message) {
     Json::Value jsonValue;
     Json::Reader reader;
     reader.parse(message, jsonValue);
     auto type = jsonValue["type"].asString();
-    Request* request = Request::unserialize(type, jsonValue);
-    return request;
+    std::unique_ptr<Request> request = Request::unserialize(type, jsonValue);
+    return std::move(request);
 }
 

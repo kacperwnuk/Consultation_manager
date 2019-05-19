@@ -11,29 +11,39 @@
 #include "../entity/ConsultationInfoForClient.h"
 #include "Request.h"
 
-class NewConsultationRequest : public Request{
+class NewConsultationRequest : public Request {
 
-    struct NewConsultationHelper{
-        NewConsultationHelper(){
-            Request::addToMap("NewConsultationRequest", new NewConsultationRequest());
+    struct NewConsultationHelper {
+        NewConsultationHelper() {
+            std::cout << "Dodaje NewRegistration" << std::endl;
+            Request::addToMap("NewConsultationRequest", std::make_unique<NewConsultationRequest>());
         }
     };
+
     static NewConsultationHelper newConsultationHelper;
 
     ConsultationInfoForClient consultationInfo;
 
 public:
     const ConsultationInfoForClient &getConsultationInfo() const;
+
     friend std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request);
+
     b_date getConsultationDateStart();
+
     NewConsultationRequest() = default;
+
     NewConsultationRequest(Json::Value);
+
+    ~NewConsultationRequest() override {
+        std::cout << "Zamykam New" << std::endl;
+    }
 
     b_date getConsultationDateEnd();
 
-    Request *create(Json::Value value) override;
+    std::unique_ptr<Request> create(Json::Value value) override;
 
-    Serializable *execute() override;
+    std::unique_ptr<Serializable> execute() override;
 };
 
 

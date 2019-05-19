@@ -47,11 +47,12 @@ AccountRole RegistrationRequest::getAccountRole() const {
     return accountRole;
 }
 
-Request *RegistrationRequest::create(Json::Value value) {
-    return new RegistrationRequest(value);
+std::unique_ptr<Request> RegistrationRequest::create(Json::Value value) {
+    std::unique_ptr<Request> request (new RegistrationRequest(value));
+    return std::move(request);
 }
 
-Serializable *RegistrationRequest::execute() {
+std::unique_ptr<Serializable> RegistrationRequest::execute() {
     auto account = Account(getEmail(), getLogin(), getPassword(), getName(),
                            getSurname(), getAccountRole(), AccountStatus::INACTIVE);
     auto document = account.getDocumentFormat();
@@ -60,7 +61,8 @@ Serializable *RegistrationRequest::execute() {
     try {
         try{
             auto otherAccountWithSameLogin = dao->getAccountByLogin(getLogin());
-            return new RegistrationResponse(ERROR);
+            std::unique_ptr<Serializable> response(new RegistrationResponse(ERROR));
+            return std::move(response);
         }catch(std::exception &e){
             //no user
             dao->insertDocument(document);
@@ -69,10 +71,12 @@ Serializable *RegistrationRequest::execute() {
     }
     catch (std::exception &e) {
         std::cout << e.what();
-        return new RegistrationResponse(ERROR);
+        std::unique_ptr<Serializable> response(new RegistrationResponse(ERROR));
+        return std::move(response);
     }
     std::cout << "Rejestracja pomyślna" << std::endl;
-    return new RegistrationResponse(OK);
+    std::unique_ptr<Serializable> response(new RegistrationResponse(OK));
+    return std::move(response);
 
 
 }

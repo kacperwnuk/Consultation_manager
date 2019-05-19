@@ -28,11 +28,12 @@ const std::string &LoginRequest::getPassword() const {
     return password;
 }
 
-Request *LoginRequest::create(Json::Value jsonValue) {
-    return new LoginRequest(jsonValue);
+std::unique_ptr<Request> LoginRequest::create(Json::Value jsonValue) {
+    std::unique_ptr<Request> request (new LoginRequest(jsonValue));
+    return std::move(request);
 }
 
-Serializable *LoginRequest::execute() {
+std::unique_ptr<Serializable> LoginRequest::execute() {
     std::cout<<"Proba logowania"<<std::endl;
     auto dao = Dao::getDaoCollection("TIN", "account");
     try {
@@ -40,12 +41,15 @@ Serializable *LoginRequest::execute() {
         if (account.getPasswordHash() != getPassword()) {
             std::cout<<account.getPasswordHash() << " " << getPassword() << std::endl;
             std::cout << "Bad passwd" << std::endl;
-            return new LoginResponse(ERROR);
+            std::unique_ptr<Serializable> response (new LoginResponse(ERROR));
+            return std::move(response);
         }
     } catch (std::exception &e) {
         std::cout << e.what();
-        return new LoginResponse(ERROR);
+        std::unique_ptr<Serializable> response (new LoginResponse(ERROR));
+        return std::move(response);
     }
     std::cout << "Logowanie pomyślne" << std::endl;
-    return new LoginResponse(OK);
+    std::unique_ptr<Serializable> response (new LoginResponse(OK));
+    return std::move(response);
 }
