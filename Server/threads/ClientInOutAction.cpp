@@ -58,7 +58,8 @@ void ClientInOutAction::receive() {
         inQueue.put(std::move(request));
         bytesToRead = 4;
         bytesRead = 0;
-        //delete[] payload;
+        delete[] payload;
+        payloadAllocated = false;
     }
 
 }
