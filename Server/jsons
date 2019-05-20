@@ -4,7 +4,8 @@
 0118{"type":"RegistrationRequest","login":"k","password":"w","email":"e","name":"Kacper","surname":"Wnuk","accountRole":2}
 
 //dodanie konsultacji
-0210{"consultationDateStart":1557828000000,"consultationDateEnd":1557829800000,"consultationType":0,"consultationCreator":{"login":"k","name":"Kacper","surname":"Wnuk"},"room":"515","type":"NewConsultationRequest"}
+0172{"consultationDateStart":1558351800000,"consultationDateEnd":1558355400000,"consultationType":1,"consultationCreatorLogin":"m","room":"519","type":"NewConsultationRequest"}
+ustawiać consultation Type w zależności od tego czy dodaje student czy wykladowca
 
 //wyciagniecie konsultacji z 24h
 0078{"consultationDateStart":1557439200000,"type":"DailyConsultationsListRequest"}

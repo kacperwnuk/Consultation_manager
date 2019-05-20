@@ -22,16 +22,20 @@ class NewConsultationRequest : public Request {
 
     static NewConsultationHelper newConsultationHelper;
 
-    ConsultationInfoForClient consultationInfo;
+    oid id;
+    std::string consultationCreatorLogin;
+    b_date consultationDateStart;
+    b_date consultationDateEnd;
+    std::string room;
+    ConsultationType consultationType;
 
 public:
-    const ConsultationInfoForClient &getConsultationInfo() const;
 
     friend std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request);
 
     b_date getConsultationDateStart();
 
-    NewConsultationRequest() = default;
+    NewConsultationRequest();
 
     NewConsultationRequest(Json::Value);
 
