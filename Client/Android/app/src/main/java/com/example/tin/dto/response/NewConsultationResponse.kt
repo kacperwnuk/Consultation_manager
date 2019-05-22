@@ -3,6 +3,6 @@ package com.example.tin.dto.response
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties("type")
-class LoginResponse {
+class NewConsultationResponse {
     var status = -1
 }

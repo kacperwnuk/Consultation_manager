@@ -4,5 +4,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties("type")
 class RegisterResponse {
-    val status = -1
+    var status = -1
 }

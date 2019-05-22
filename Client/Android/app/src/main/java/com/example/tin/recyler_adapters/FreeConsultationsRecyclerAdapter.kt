@@ -15,7 +15,10 @@ import com.example.tin.data.entity.enums.ConsultationType
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FreeConsultationsRecyclerAdapter(private val consultations: List<ConsultationInfo>, private val actionListener: ActionListener): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FreeConsultationsRecyclerAdapter(
+    private val consultations: List<ConsultationInfo>,
+    private val actionListener: ActionListener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private lateinit var context: Context
 
@@ -56,10 +59,11 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val consultation = consultations[position]
         holder.itemView.elevation = 20.0f
-        holder.itemView.findViewById<TextView>(R.id.person).text = "${consultation.consultationCreator.name} ${consultation.consultationCreator.surname}"
+        holder.itemView.findViewById<TextView>(R.id.person).text =
+            "${consultation.lecturer.name} ${consultation.lecturer.surname}"
         holder.itemView.findViewById<TextView>(R.id.room).text = consultation.room
         val (startDate, startTime) = dateToString(consultation.consultationDateStart)
-        val (endDate,  endTime) = dateToString(consultation.consultationDateEnd)
+        val (endDate, endTime) = dateToString(consultation.consultationDateEnd)
         var consultationDateEnd = endTime
         holder.itemView.findViewById<TextView>(R.id.day).text = startDate
         when (holder) {
@@ -70,24 +74,29 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
                 }
             }
             else -> { //student suggested item
-                var i = position + 1
-                var j = position
-                if (position > 0 && consultations[position - 1].consultationType == ConsultationType.STUDENT_SUGGESTED
-                    && consultations[position - 1].consultationCreator == consultation.consultationCreator && consultations[position - 1].consultationDateEnd == consultation.consultationDateStart) {
-                    holder.itemView.visibility = View.GONE
-                    holder.itemView.layoutParams = ViewGroup.LayoutParams(0, 0)
-                } else {
-                    while (consultations[i].consultationType == ConsultationType.STUDENT_SUGGESTED && i < itemCount) {
-                        if (consultations[i].consultationCreator == consultations[j].consultationCreator && consultations[i].consultationDateStart == consultations[j].consultationDateEnd) {
-                            consultationDateEnd = dateToString(consultations[i].consultationDateEnd).second
-                            i++
-                            j++
-                        } else {
-                            break
+                if (consultations.size > 1) {
+                    var i = position + 1
+                    var j = position
+                    if (position > 0 && consultations[position - 1].consultationType == ConsultationType.STUDENT_SUGGESTED
+                        && consultations[position - 1].lecturer == consultation.lecturer && consultations[position - 1].consultationDateEnd == consultation.consultationDateStart
+                    ) {
+                        holder.itemView.visibility = View.GONE
+                        holder.itemView.layoutParams = ViewGroup.LayoutParams(0, 0)
+                    } else {
+                        while (consultations[i].consultationType == ConsultationType.STUDENT_SUGGESTED && i < itemCount) {
+                            if (consultations[i].lecturer == consultations[j].lecturer && consultations[i].consultationDateStart == consultations[j].consultationDateEnd) {
+                                consultationDateEnd = dateToString(consultations[i].consultationDateEnd).second
+                                i++
+                                j++
+                            } else {
+                                break
+                            }
                         }
                     }
+                    holder.itemView.findViewById<TextView>(R.id.start_time).text = "$startTime - $consultationDateEnd"
+                } else {
+                    holder.itemView.findViewById<TextView>(R.id.start_time).text = "$startTime - $endTime"
                 }
-                holder.itemView.findViewById<TextView>(R.id.start_time).text = "$startTime - $consultationDateEnd"
                 holder.itemView.findViewById<Button>(R.id.add_after_button).setOnClickListener {
                     actionListener.addAfter(startDate, consultationDateEnd)
                 }
@@ -113,7 +122,7 @@ class FreeConsultationsRecyclerAdapter(private val consultations: List<Consultat
 
 }
 
-class LecturerSuggestedRecyclerViewHolder(item: ConstraintLayout): RecyclerView.ViewHolder(item)
-class StudentSuggestedRecyclerViewHolder(item: ConstraintLayout): RecyclerView.ViewHolder(item)
+class LecturerSuggestedRecyclerViewHolder(item: ConstraintLayout) : RecyclerView.ViewHolder(item)
+class StudentSuggestedRecyclerViewHolder(item: ConstraintLayout) : RecyclerView.ViewHolder(item)
 
 

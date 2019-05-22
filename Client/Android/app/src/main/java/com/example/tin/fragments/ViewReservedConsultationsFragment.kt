@@ -3,6 +3,7 @@ package com.example.tin.fragments
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -11,10 +12,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.tin.MainActivity
-import com.example.tin.recyler_adapters.MyBookedConsultationsRecyclerAdapter
-import com.example.tin.recyler_adapters.NoConsultationsRecyclerAdapter
 import com.example.tin.R
 import com.example.tin.data.DataService
+import com.example.tin.data.entity.ConsultationInfo
+import com.example.tin.recyler_adapters.MyBookedConsultationsRecyclerAdapter
+import com.example.tin.recyler_adapters.NoConsultationsRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.*
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.view.*
 import java.lang.ref.WeakReference
@@ -34,7 +36,10 @@ private const val CONSULTATIONS = "consultations"
  *
  */
 class ViewReservedConsultationsFragment : Fragment(),
-    MyBookedConsultationsRecyclerAdapter.ActionListener, SwipeRefreshLayout.OnRefreshListener {
+    MyBookedConsultationsRecyclerAdapter.ActionListener, SwipeRefreshLayout.OnRefreshListener,
+    DataService.MyConsultationsListener {
+
+    private val handler = Handler()
 
     override fun cancelConsultation(id: String) {
         (context as ActionListener).cancelConsultation(id)
@@ -64,33 +69,42 @@ class ViewReservedConsultationsFragment : Fragment(),
     }
 
     fun update() {
-        MyAsyncTask(context!!, this)
+        MyAsyncTask(context!!)
             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
-    private class MyAsyncTask internal constructor(context: Context, actionListener: ViewReservedConsultationsFragment): AsyncTask<Void, Void, RecyclerView.Adapter<RecyclerView.ViewHolder>>() {
-
-        private val context: WeakReference<Context> = WeakReference(context)
-        private val actionListener: WeakReference<ViewReservedConsultationsFragment> = WeakReference(actionListener)
-
-        override fun doInBackground(vararg params: Void): RecyclerView.Adapter<RecyclerView.ViewHolder> {
-            val dataService = DataService
-            val consultations = dataService.getReservedConsultations((context.get() as MainActivity).credential!!.id)
-            return if (consultations.isNotEmpty()) {
-                MyBookedConsultationsRecyclerAdapter(
-                    consultations.sortedWith(
-                        compareBy(
-                            { it.day },
-                            { it.startTime })
-                    ), actionListener.get()!!
+    override fun updateMyReservedConsultations(consultations: List<ConsultationInfo>) {
+        if (consultations.isNotEmpty()) {
+            handler.post {
+                updateView(
+                    MyBookedConsultationsRecyclerAdapter(
+                        consultations.sortedWith(
+                            compareBy { it.consultationDateStart }
+                        ), this
+                    )
                 )
-            } else {
-                NoConsultationsRecyclerAdapter()
+            }
+        } else {
+            handler.post {
+                updateView(NoConsultationsRecyclerAdapter())
             }
         }
+    }
 
-        override fun onPostExecute(result: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
-            actionListener.get()!!.updateView(result)
+    private class MyAsyncTask internal constructor(
+        context: Context
+    ) : AsyncTask<Void, Void, Void>() {
+
+        private val context: WeakReference<Context> = WeakReference(context)
+
+        override fun doInBackground(vararg params: Void): Void? {
+            val dataService = DataService
+            dataService.getReservedConsultations((context.get() as MainActivity).credential!!.id)
+            return null
+        }
+
+        override fun onPostExecute(void: Void?) {
+
         }
     }
 

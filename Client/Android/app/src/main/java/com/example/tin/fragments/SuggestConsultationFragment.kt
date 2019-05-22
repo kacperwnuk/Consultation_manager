@@ -9,13 +9,17 @@ import android.app.TimePickerDialog
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.tin.ConsultationSuggestionForm
+import android.widget.Toast
+import com.example.tin.MainActivity
 import com.example.tin.R
+import com.example.tin.data.DataService
+import com.example.tin.dto.request.NewConsultationRequest
 import kotlinx.android.synthetic.main.fragment_suggest_consultation.*
 import kotlinx.android.synthetic.main.fragment_suggest_consultation.view.*
 import java.text.SimpleDateFormat
@@ -38,7 +42,21 @@ private const val LECTURER = "lecturer"
  * create an instance of this fragment.
  *
  */
-class SuggestConsultationFragment : Fragment() {
+class SuggestConsultationFragment : Fragment(), DataService.SuggestConsultationListener {
+
+    private val handler = Handler()
+
+    override fun onSuggestFailure() {
+        handler.post {
+            Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onSuggestSuccess() {
+        handler.post {
+            Toast.makeText(context, "Consultation added successfully", Toast.LENGTH_LONG).show()
+        }
+    }
 
     interface ActionListener {
         fun suggestedConsultation()
@@ -58,6 +76,7 @@ class SuggestConsultationFragment : Fragment() {
             date = it.getString(DATE)
             lecturer = it.getString(LECTURER)
         }
+        DataService.setSuggestConsultationListener(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -85,6 +104,7 @@ class SuggestConsultationFragment : Fragment() {
                 endTimeHour = startTimeHour
                 endTimeMinute = startTimeMinute + 15
             }
+            endTime = "$endTimeHour:${String.format("%02d", endTimeMinute)}"
             disableView(view.start_time)
         } else if (endTime != null) {
             endTimeHour = endTime!!.split(":")[0].toInt()
@@ -100,38 +120,64 @@ class SuggestConsultationFragment : Fragment() {
                 startTimeHour = endTimeHour
                 startTimeMinute = endTimeMinute - 15
             }
+            startTime = "$startTimeHour:${String.format("%02d", startTimeMinute)}"
             disableView(view.end_time)
+        } else {
+            startTime = "13:00"
+            endTime = "14:00"
         }
-        if (date != null ) {
+        if (date != null) {
             view.date.text = SpannableStringBuilder(date)
             disableView(view.date)
         } else {
-            view.date.text = SpannableStringBuilder(SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Calendar.getInstance().time))
+            date = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Calendar.getInstance().time)
+            view.date.text = SpannableStringBuilder(date)
         }
         view.end_time.text = SpannableStringBuilder("$endTimeHour:${String.format("%02d", endTimeMinute)}")
         view.start_time.text = SpannableStringBuilder("$startTimeHour:${String.format("%02d", startTimeMinute)}")
         view.start_time.setOnClickListener {
-            val timePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
-                view.start_time.text = SpannableStringBuilder("$selectedHour:${String.format("%02d", selectedMinute)}")
-            }, startTimeHour, startTimeMinute, true)
+            val timePicker =
+                TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
+                    startTime = "$selectedHour:${String.format("%02d", selectedMinute)}"
+                    view.start_time.text = SpannableStringBuilder(startTime)
+                }, startTimeHour, startTimeMinute, true)
             timePicker.show()
         }
         view.end_time.setOnClickListener {
-            val timePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
-                view.end_time.text = SpannableStringBuilder("$selectedHour:${String.format("%02d", selectedMinute)}")
-            }, endTimeHour, endTimeMinute, true)
+            val timePicker =
+                TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
+                    endTime = "$selectedHour:${String.format("%02d", selectedMinute)}"
+                    view.end_time.text = SpannableStringBuilder(endTime)
+                }, endTimeHour, endTimeMinute, true)
             timePicker.show()
         }
         view.suggest_button.setOnClickListener {
             showProgress(true)
-            mConsultationSuggestTask = ConsultationSuggestTask(ConsultationSuggestionForm())
+            val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.US)
+            val startDate = simpleDateFormat.parse("$date $startTime")
+            val endTime = simpleDateFormat.parse("$date $endTime")
+            mConsultationSuggestTask = ConsultationSuggestTask(
+                NewConsultationRequest(
+                    (context as MainActivity).credential!!.id,
+                    startDate.time,
+                    endTime.time,
+                    ""
+                )
+            )
             mConsultationSuggestTask!!.execute(null as Void?)
         }
         view.date.setOnClickListener {
             val currentDate = Calendar.getInstance()
-            val datePicker = DatePickerDialog(context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-                view.date.text = SpannableStringBuilder("$year-$month-$dayOfMonth")
-            }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH))
+            val datePicker = DatePickerDialog(
+                context,
+                DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                    date = "$year-${String.format("%02d", month + 1)}-${String.format("%02d", dayOfMonth)}"
+                    view.date.text = SpannableStringBuilder(date)
+                },
+                currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH)
+            )
             datePicker.show()
         }
         return view
@@ -147,18 +193,14 @@ class SuggestConsultationFragment : Fragment() {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    inner class ConsultationSuggestTask internal constructor(private val consultationSuggestionForm: ConsultationSuggestionForm) :
+    inner class ConsultationSuggestTask internal constructor(private val newConsultationRequest: NewConsultationRequest) :
         AsyncTask<Void, Void, Boolean>() {
 
-        override fun doInBackground(vararg params: Void): Boolean? {
-            // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000)
-            } catch (e: InterruptedException) {
-                return false
-            }
+        override fun doInBackground(vararg params: Void): Boolean? {
+            val dataService = DataService
+            dataService.newConsultation(newConsultationRequest)
+
 
             return true
         }

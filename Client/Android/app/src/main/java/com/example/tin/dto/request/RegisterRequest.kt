@@ -7,6 +7,6 @@ class RegisterRequest(
     val name: String,
     val surname: String,
     val accountRole: Int = 2,
-    val type: Int = 3
+    val type: String = "RegistrationRequest"
 ) {
 }

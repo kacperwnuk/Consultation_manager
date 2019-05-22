@@ -5,6 +5,7 @@ import com.example.tin.data.entity.ConsultationInfo
 import com.example.tin.dto.request.*
 import com.example.tin.dto.response.ConsultationList
 import com.example.tin.dto.response.LoginResponse
+import com.example.tin.dto.response.NewConsultationResponse
 import com.example.tin.dto.response.RegisterResponse
 import com.example.tin.network.Connection
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -26,10 +27,21 @@ object DataService : Connection.NetworkEventListener {
         fun updateFreeConsultations(consultations: List<ConsultationInfo>)
     }
 
+    interface MyConsultationsListener {
+        fun updateMyReservedConsultations(consultations: List<ConsultationInfo>)
+    }
+
+    interface SuggestConsultationListener {
+        fun onSuggestSuccess()
+        fun onSuggestFailure()
+    }
+
     private val objectMapper = ObjectMapper()
     private var loginListener: WeakReference<LoginListener>? = null
     private var registerListener: WeakReference<RegisterListener>? = null
     private var consultationsListener: WeakReference<ConsultationsListener>? = null
+    private var myConsultationsListener: WeakReference<MyConsultationsListener>? = null
+    private var suggestConsultationListener: WeakReference<SuggestConsultationListener>? = null
 
     fun setLoginListener(loginListener: LoginListener) {
         this.loginListener = WeakReference(loginListener)
@@ -43,17 +55,28 @@ object DataService : Connection.NetworkEventListener {
         this.consultationsListener = WeakReference(consultationsListener)
     }
 
+    fun setMyConsultationsListener(myConsultationsListener: MyConsultationsListener) {
+        this.myConsultationsListener = WeakReference(myConsultationsListener)
+    }
+
+    fun setSuggestConsultationListener(suggestConsultationListener: SuggestConsultationListener) {
+        this.suggestConsultationListener = WeakReference(suggestConsultationListener)
+    }
+
     override fun incomingMessage(message: String) {
         val rootNode = objectMapper.readTree(message)
-        when (rootNode.path("type").asInt()) {
-            1 -> {
+        when (rootNode.path("type").asText()) {
+            "LoginResponse" -> {
                 processLoginResponse(message)
             }
-            3 -> {
+            "RegistrationResponse" -> {
                 processRegisterResponse(message)
             }
-            4 -> {
+            "DailyConsultationListResponse" -> {
                 processConsultationsForDay(message)
+            }
+            "NewConsultationResponse" -> {
+                processSuggestConsultation(message)
             }
         }
 
@@ -90,10 +113,23 @@ object DataService : Connection.NetworkEventListener {
     }
 
     private fun processConsultationsForDay(message: String) {
-        var consultationsResponse = objectMapper.readValue(message, ConsultationList::class.java)
+        val consultationsResponse = objectMapper.readValue(message, ConsultationList::class.java)
 
         try {
             consultationsListener!!.get()!!.updateFreeConsultations(consultationsResponse.consultations)
+        } catch (e: NullPointerException) {
+
+        }
+    }
+
+    private fun processSuggestConsultation(message: String) {
+        val suggestionResponse = objectMapper.readValue(message, NewConsultationResponse::class.java)
+        try {
+            if (suggestionResponse.status == 0) {
+                suggestConsultationListener!!.get()!!.onSuggestSuccess()
+            } else {
+                suggestConsultationListener!!.get()!!.onSuggestFailure()
+            }
         } catch (e: NullPointerException) {
 
         }
@@ -132,11 +168,12 @@ object DataService : Connection.NetworkEventListener {
         )
     }
 
-    fun getReservedConsultations(username: String): List<Consultation> {
-        return listOf(
-//            Consultation("1","Dr. inż. Kozdrowski", "12.00", "12.15", "21.03.2019", ConsultationType.LECTURER_SUGGESTED),
-//            Consultation("2","Dr. inż. Kozdrowski", "12.15", "12.30", "21.03.2019", ConsultationType.LECTURER_SUGGESTED)
-        )
+    fun newConsultation(newConsultationRequest: NewConsultationRequest) {
+        connection.sendMessage(objectMapper.writeValueAsString(newConsultationRequest))
+    }
+
+    fun getReservedConsultations(username: String) {
+
     }
 
     fun register(account: Account) {
