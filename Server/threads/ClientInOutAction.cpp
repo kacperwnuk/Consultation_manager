@@ -7,10 +7,11 @@
 void ClientInOutAction::send() {
 
     if (!writing) {
-        std::cout << "getting ittem" << std::endl;
         auto response = outQueue.get();
-        std::cout << "got item" << std::endl;
         message = serializer.serialize(std::move(response));
+        char s[message.size() + 4];
+        sprintf(s, "%04lu%s", message.size(), message.c_str());
+        message = s;
         bytesToWrite = message.size();
         bytesWritten = 0;
         writing = !writing;
