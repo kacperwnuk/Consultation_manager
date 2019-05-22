@@ -4,11 +4,12 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLOutput;
 
 public class Connection {
 
-    String serverAddress = "192.168.0.94";
+    String serverAddress = "192.168.0.11";
     int portNumber = 9999;
     Socket socket;
     DataOutputStream outToServer;
@@ -59,8 +60,10 @@ public class Connection {
 
         try {
             System.out.println("Czekam na wiadomosc");
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            inFromServer.read(buffer.array());
+            ByteBuffer size = ByteBuffer.allocate(4);
+            inFromServer.readFully(size.array(), 0, 4);
+            ByteBuffer buffer = ByteBuffer.allocate(Integer.parseInt(new String(size.array(), StandardCharsets.UTF_8)));
+            inFromServer.readFully(buffer.array());
             String message = new String(buffer.array());
             System.out.println("Wiadomosc: " + message);
             return message;

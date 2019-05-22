@@ -13,10 +13,12 @@
 #include "../serialization/Serializable.h"
 
 class ClientLogic : public Thread {
+
     SynchronizedQueue<std::unique_ptr<Request>>& inQueue;
     SynchronizedQueue<std::unique_ptr<Serializable>>& outQueue;
     bool &readyToSend;
     int pipe;
+
 public:
     ClientLogic(SynchronizedQueue<std::unique_ptr<Request>>&, SynchronizedQueue<std::unique_ptr<Serializable>>&, bool &, int);
 

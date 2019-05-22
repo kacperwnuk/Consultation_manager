@@ -1,4 +1,4 @@
-package com.example.tin
+package com.example.tin.fragments
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -14,6 +14,8 @@ import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.tin.ConsultationSuggestionForm
+import com.example.tin.R
 import kotlinx.android.synthetic.main.fragment_suggest_consultation.*
 import kotlinx.android.synthetic.main.fragment_suggest_consultation.view.*
 import java.text.SimpleDateFormat
@@ -30,7 +32,7 @@ private const val LECTURER = "lecturer"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [SuggestConsultationFragment.OnFragmentInteractionListener] interface
+ * [SuggestConsultationFragment.ActionListener] interface
  * to handle interaction events.
  * Use the [SuggestConsultationFragment.newInstance] factory method to
  * create an instance of this fragment.
@@ -70,8 +72,8 @@ class SuggestConsultationFragment : Fragment() {
         var startTimeMinute = 0
         var endTimeMinute = 0
         if (startTime != null) {
-            startTimeHour = startTime!!.split(".")[0].toInt()
-            startTimeMinute = startTime!!.split(".")[1].toInt()
+            startTimeHour = startTime!!.split(":")[0].toInt()
+            startTimeMinute = startTime!!.split(":")[1].toInt()
             if (startTimeMinute >= 45) {
                 endTimeMinute = startTimeMinute - 45
                 endTimeHour = if (startTimeHour == 23) {
@@ -85,8 +87,8 @@ class SuggestConsultationFragment : Fragment() {
             }
             disableView(view.start_time)
         } else if (endTime != null) {
-            endTimeHour = endTime!!.split(".")[0].toInt()
-            endTimeMinute = endTime!!.split(".")[1].toInt()
+            endTimeHour = endTime!!.split(":")[0].toInt()
+            endTimeMinute = endTime!!.split(":")[1].toInt()
             if (endTimeMinute < 15) {
                 startTimeMinute = endTimeMinute + 45
                 startTimeHour = if (endTimeHour == 0) {
@@ -106,17 +108,17 @@ class SuggestConsultationFragment : Fragment() {
         } else {
             view.date.text = SpannableStringBuilder(SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Calendar.getInstance().time))
         }
-        view.end_time.text = SpannableStringBuilder("$endTimeHour:$endTimeMinute")
-        view.start_time.text = SpannableStringBuilder("$startTimeHour:$startTimeMinute")
+        view.end_time.text = SpannableStringBuilder("$endTimeHour:${String.format("%02d", endTimeMinute)}")
+        view.start_time.text = SpannableStringBuilder("$startTimeHour:${String.format("%02d", startTimeMinute)}")
         view.start_time.setOnClickListener {
             val timePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
-                view.start_time.text = SpannableStringBuilder("$selectedHour:$selectedMinute")
+                view.start_time.text = SpannableStringBuilder("$selectedHour:${String.format("%02d", selectedMinute)}")
             }, startTimeHour, startTimeMinute, true)
             timePicker.show()
         }
         view.end_time.setOnClickListener {
             val timePicker = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, selectedHour, selectedMinute ->
-                view.end_time.text = SpannableStringBuilder("$selectedHour:$selectedMinute")
+                view.end_time.text = SpannableStringBuilder("$selectedHour:${String.format("%02d", selectedMinute)}")
             }, endTimeHour, endTimeMinute, true)
             timePicker.show()
         }

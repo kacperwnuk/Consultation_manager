@@ -4,7 +4,7 @@
                                              xmlns:tools="http://schemas.android.com/tools"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
-                                             tools:context=".SuggestConsultationFragment" android:id="@+id/layout">
+                                             tools:context=".fragments.SuggestConsultationFragment" android:id="@+id/layout">
     <ProgressBar
             style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Large"
             android:layout_width="wrap_content"

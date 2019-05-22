@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
@@ -20,7 +21,26 @@ import kotlinx.android.synthetic.main.activity_register.*
 /**
  * A login screen that offers login via email/password.
  */
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity(), DataService.RegisterListener {
+
+    private val handler = Handler()
+
+    init {
+        DataService.setRegisterListener(this)
+    }
+
+    override fun onRegisterSuccess() {
+        handler.post {
+            showProgress(false)
+            finish()
+        }
+    }
+
+    override fun onRegisterFailure() {
+        handler.post {
+            showProgress(false)
+        }
+    }
 
     /**
      * Keep track of the registration task to ensure we can cancel it if requested.
@@ -158,20 +178,19 @@ class RegisterActivity : AppCompatActivity() {
         AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {
-            val dataService = DataService(context)
-            val account = Account(registrationForm.email, registrationForm.password)
-            return dataService.register(account)
+            val dataService = DataService
+            val account = Account(registrationForm.name, registrationForm.surname, registrationForm.email, registrationForm.email, registrationForm.password)
+            dataService.register(account)
+            return true
         }
 
         override fun onPostExecute(success: Boolean?) {
             mRegisterTask = null
-            showProgress(false)
 
             if (success!!) {
-                finish()
+
             } else {
-                password.error = getString(R.string.error_incorrect_password)
-                password.requestFocus()
+
             }
         }
 

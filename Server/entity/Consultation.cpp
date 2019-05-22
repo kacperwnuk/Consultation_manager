@@ -153,6 +153,12 @@ Consultation::Consultation(ConsultationInfoForClient consultationClientInfo, Con
 
 Consultation::Consultation(): consultationDateStart(std::chrono::system_clock::now()), consultationDateEnd(std::chrono::system_clock::now()) {
 
+const AccountInfoForClient &Consultation::getLecturer() const {
+    return lecturer;
+}
+
+const b_date &Consultation::getConsultationDateEnd() const {
+    return consultationDateEnd;
 }
 
 

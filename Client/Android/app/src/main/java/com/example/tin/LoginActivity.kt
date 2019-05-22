@@ -7,12 +7,14 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import com.example.tin.data.CredentialsManager
+import com.example.tin.data.DataService
 import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -20,7 +22,41 @@ import kotlinx.android.synthetic.main.activity_login.*
 /**
  * A login screen that offers login via email/password.
  */
-class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredentialsListener {
+class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredentialsListener, DataService.LoginListener {
+
+    private val handler = Handler()
+    private var progressing = false
+
+    init {
+        DataService.setLoginListener(this)
+    }
+
+    override fun onLoginSuccess() {
+        handler.post {
+            showProgress(false)
+            val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
+            mainActivityIntent.putExtra("Credential", credential)
+            mainActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(mainActivityIntent)
+            finish()
+        }
+    }
+
+    override fun onLoginFailure() {
+        handler.post {
+            showProgress(false)
+            password.error = getString(R.string.error_incorrect_password)
+            password.requestFocus()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (progressing) {
+            showProgress(false)
+        } else {
+            super.onBackPressed()
+        }
+    }
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -112,6 +148,7 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
+        progressing = show
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -158,8 +195,7 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
-                Thread.sleep(200)
+                DataService.login(mEmail, mPassword)
             } catch (e: InterruptedException) {
                 return false
             }
@@ -178,14 +214,9 @@ class LoginActivity : AppCompatActivity(), CredentialsManager.RetrieveCredential
 
         override fun onPostExecute(success: Boolean?) {
             mAuthTask = null
-            showProgress(false)
 
             if (success!!) {
-                val mainActivityIntent = Intent(applicationContext, MainActivity::class.java)
-                mainActivityIntent.putExtra("Credential", credential)
-                mainActivityIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                startActivity(mainActivityIntent)
-                finish()
+
             } else {
                 password.error = getString(R.string.error_incorrect_password)
                 password.requestFocus()

@@ -11,19 +11,24 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.example.tin.data.CredentialsManager
 import com.example.tin.data.DataService
+import com.example.tin.fragments.FindConsultationFragment
+import com.example.tin.fragments.ReserveConsultationFragment
+import com.example.tin.fragments.SuggestConsultationFragment
+import com.example.tin.fragments.ViewReservedConsultationsFragment
 import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     ReserveConsultationFragment.ActionListener, SuggestConsultationFragment.ActionListener,
-    ViewReservedConsultationsFragment.ActionListener {
+    ViewReservedConsultationsFragment.ActionListener, FindConsultationFragment.OnSearchListener {
 
     var credential: Credential? = null
     private lateinit var dataService: DataService
 
     private lateinit var reserveConsultationFragment: ReserveConsultationFragment
     private lateinit var viewReservedConsultationsFragment: ViewReservedConsultationsFragment
+    private lateinit var findConsultationFragment: FindConsultationFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +36,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
         supportActionBar!!.title = getString(R.string.consultation_reservation_title)
 
-        reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment).commit()
+        findConsultationFragment = FindConsultationFragment.newInstance()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, findConsultationFragment).commit()
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -44,7 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return
         }
         credential = intent.extras.get("Credential") as Credential?
-        dataService = DataService(this)
+        dataService = DataService
     }
 
     override fun onBackPressed() {
@@ -75,8 +80,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.find_consultation -> {
-                reserveConsultationFragment = ReserveConsultationFragment.newInstance("", "")
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
+                findConsultationFragment = FindConsultationFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, findConsultationFragment)
                     .addToBackStack(null).commit()
                 supportActionBar!!.title = getString(R.string.consultation_reservation_title)
             }
@@ -131,5 +136,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dataService.cancelConsultation(id, credential!!.id)
         viewReservedConsultationsFragment.update()
         Toast.makeText(this, "cancel", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onSearchConsultation(date: Long) {
+        reserveConsultationFragment = ReserveConsultationFragment.newInstance(date, "")
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
+            .addToBackStack(null).commit()
+        supportActionBar!!.title = getString(R.string.consultation_reservation_title)
     }
 }

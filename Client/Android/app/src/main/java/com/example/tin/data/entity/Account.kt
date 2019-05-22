@@ -14,5 +14,5 @@ class Account(
     val status: AccountStatus
 ) {
 
-    constructor(email: String, password: String) : this("", "", "", email, "", password, AccountRole.STUDENT, AccountStatus.INACTIVE)
+    constructor(name: String, surname: String, login: String, email: String, password: String) : this("", name, surname, email, login, password, AccountRole.STUDENT, AccountStatus.INACTIVE)
 }

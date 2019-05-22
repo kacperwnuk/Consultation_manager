@@ -10,9 +10,9 @@
 
 class DailyConsultationsListResponse : public Serializable {
 private:
-    std::vector<Consultation> consultations;
+    std::vector<ConsultationInfoForClient> consultations;
 public:
-    DailyConsultationsListResponse(std::vector<Consultation>);
+    DailyConsultationsListResponse(std::vector<ConsultationInfoForClient>);
 
     Json::Value getJson() override;
 };

@@ -14,7 +14,7 @@
     <string name="no_consultations_message">Nie masz żadnych zarezerwowanych konsultacji</string>
     <string name="add_before_button">Dodaj przed</string>
     <string name="add_after_button">Dodaj po</string>
-
+    <string name="search_consultations_button">Szukaj</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->
