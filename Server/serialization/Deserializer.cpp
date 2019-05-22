@@ -4,22 +4,13 @@
 
 #include "Deserializer.h"
 
-Deserializer::Deserializer(std::shared_ptr<ClientMessageBuilder> clientMessageBuilder) {
-    this->clientMessageBuilder = clientMessageBuilder;
-}
 
-RequestType Deserializer::getType() {
-    payload = clientMessageBuilder->getMessage();
+std::unique_ptr<Request> Deserializer::getDeserializedObject(const std::string &message) {
+    Json::Value jsonValue;
     Json::Reader reader;
-    reader.parse(payload, payloadValue);
-
-    auto requestType = RequestType(payloadValue["type"].asInt());
-    return requestType;
+    reader.parse(message, jsonValue);
+    auto type = jsonValue["type"].asString();
+    std::unique_ptr<Request> request = Request::unserialize(type, jsonValue);
+    return std::move(request);
 }
-
-std::shared_ptr<ClientMessageBuilder> Deserializer::getClientMessageBuilder() {
-    return clientMessageBuilder;
-}
-
-
 

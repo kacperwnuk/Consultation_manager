@@ -21,7 +21,6 @@
 #include "containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "serialization/Serializer.h"
 #include "dto/DailyConsultationsListResponse.h"
-#include "dto/ConsultationCancellationRequest.h"
 #include "serialization/Deserializer.h"
 #include "dto/enums/StatusType.h"
 #include "dto/LoginResponse.h"
@@ -86,9 +85,7 @@ int main(int argc, char *argv[]) {
         }
     }
     auto running = true;
-    MessageSender messageSender;
-    messageSender.start();
-    TCPThread tcpThread(port, messageSender.getMessageQueue());
+    TCPThread tcpThread(port);
     tcpThread.start();
 
     initialize();
@@ -100,7 +97,6 @@ int main(int argc, char *argv[]) {
             case stopCommand:
                 cout << "Stopping server..." << endl;
                 tcpThread.cancel();
-                messageSender.cancel();
                 running = false;
                 break;
             case changePortCommand:
@@ -114,7 +110,6 @@ int main(int argc, char *argv[]) {
         }
     }
     tcpThread.join();
-    messageSender.join();
     cout << "Server stopped." << endl;
     return 0;
 }

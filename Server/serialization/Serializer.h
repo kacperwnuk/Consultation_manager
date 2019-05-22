@@ -20,10 +20,10 @@ public:
 template<typename T>
 std::string Serializer::serialize(T element) {
 
-    Json::Value value = element.getJson();
+    Json::Value value = element->getJson();
     Json::FastWriter writer;
     std::string jsonMessage = writer.write(value);
-    std::cout << jsonMessage << std::endl;
+    std::cout << "Zserializowana wiadomosc: " << jsonMessage << std::endl;
 
     return jsonMessage;
 }

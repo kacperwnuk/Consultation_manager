@@ -144,12 +144,14 @@ std::ostream &operator<<(std::ostream &os, const Consultation &consultation) {
 
 Consultation::Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status)
         : consultationStatus(status), id(consultationClientInfo.getId()),
-          lecturer(consultationClientInfo.getConsultationCreator()), room(consultationClientInfo.getRoom()), student(),
+          lecturer(consultationClientInfo.getLecturer()), room(consultationClientInfo.getRoom()), student(consultationClientInfo.getStudent()),
           consultationType(consultationClientInfo.getConsultationType()),
           consultationDateStart(consultationClientInfo.getConsultationDateStart()),
           consultationDateEnd(consultationClientInfo.getConsultationDateEnd()) {
 
 }
+
+Consultation::Consultation(): consultationDateStart(std::chrono::system_clock::now()), consultationDateEnd(std::chrono::system_clock::now()) {
 
 const AccountInfoForClient &Consultation::getLecturer() const {
     return lecturer;

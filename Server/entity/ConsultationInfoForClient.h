@@ -14,26 +14,28 @@
 class ConsultationInfoForClient: Serializable {
 
     oid id;
-    AccountInfoForClient consultationCreator;
+    AccountInfoForClient lecturer;
     b_date consultationDateStart;
     b_date consultationDateEnd;
+    AccountInfoForClient student;
     std::string room;
     ConsultationType consultationType;
 
 public:
+    const AccountInfoForClient &getLecturer() const;
 
-    ConsultationInfoForClient(std::string, const AccountInfoForClient &consultationCreator, const b_date &consultationDateStart,
+    const AccountInfoForClient &getStudent() const;
+
+    ConsultationInfoForClient(std::string, const AccountInfoForClient&, const b_date &consultationDateStart,
                               const b_date &consultationDateEnd, const std::string &room,
                               ConsultationType consultationType);
-    ConsultationInfoForClient(Json::Value);
+    ConsultationInfoForClient();
 
     Json::Value getJson() override;
 
     friend std::ostream &operator<<(std::ostream &os, const ConsultationInfoForClient &client);
 
     const oid &getId() const;
-
-    const AccountInfoForClient &getConsultationCreator() const;
 
     const b_date &getConsultationDateStart() const;
 

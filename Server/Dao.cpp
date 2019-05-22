@@ -13,6 +13,13 @@
 #include "Dao.h"
 #include "MongoInstanceContainer.h"
 
+
+std::unique_ptr<Dao> Dao::getDaoCollection(std::string dbName, std::string collName) {
+    auto dao = std::make_unique<Dao>(dbName);
+    dao->setCollection(collName);
+    return std::move(dao);
+}
+
 Dao::Dao(const std::string &databaseName) : instance(
         MongoInstanceContainer::getMongoInstanceContainer().getMongoInstance()) {
     db = client[databaseName];
@@ -69,10 +76,11 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateSt
 //                                          << bsoncxx::builder::stream::finalize);
     auto results = coll.find(
             make_document(kvp("$or",
-                              make_array( make_document(kvp("consultationDateStart",
-                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd)))),
-                                          make_document(kvp("consultatoinDateEnd",
-                                                            make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd))))
+                              make_array(make_document(kvp("consultationDateStart",
+                                                           make_document(kvp("$gte", dateStart),
+                                                                         kvp("$lte", dateEnd)))),
+                                         make_document(kvp("consultatoinDateEnd",
+                                                           make_document(kvp("$gte", dateStart), kvp("$lte", dateEnd))))
                               )
                           )
             ));
@@ -80,6 +88,7 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateSt
 
 
     std::vector<ConsultationInfoForClient> consultations;
+
     for (auto consultationDoc : results) {
         Consultation consultation = Consultation(consultationDoc);
         std::cout << consultation << std::endl;

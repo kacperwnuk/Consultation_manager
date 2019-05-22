@@ -9,9 +9,19 @@
 #include <string>
 #include <jsoncpp/json/value.h>
 #include <ostream>
+#include "Request.h"
 
-class LoginRequest {
-private:
+class LoginRequest : public Request {
+
+    struct LoginHelper {
+        LoginHelper() {
+            std::cout << "Dodaje Login" << std::endl;
+            Request::addToMap("LoginRequest", std::make_unique<LoginRequest>());
+        }
+    };
+
+    static LoginHelper loginHelper;
+
     std::string login;
     std::string password;
 public:
@@ -21,7 +31,17 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const LoginRequest &request);
 
+    LoginRequest() = default;
+
     LoginRequest(Json::Value);
+
+    ~LoginRequest() override {
+        std::cout << "destruktor login" << std::endl;
+    }
+
+    std::unique_ptr<Request> create(Json::Value) override;
+
+    std::unique_ptr<Serializable> execute() override;
 };
 
 

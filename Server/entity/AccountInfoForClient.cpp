@@ -37,3 +37,9 @@ bsoncxx::document::view_or_value AccountInfoForClient::getDocumentFormat() {
             << bsoncxx::builder::stream::finalize;
     return docValue;
 }
+
+AccountInfoForClient::AccountInfoForClient(Account account) {
+    this->name = account.getName();
+    this->surname = account.getSurname();
+    this->login = account.getLogin();
+}

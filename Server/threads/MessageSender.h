@@ -11,15 +11,12 @@
 #include "Thread.h"
 #include <memory>
 
-class MessageSender : public Thread {
-    std::shared_ptr<SynchronizedQueue<OutgoingMessage>> messageQueue;
+class MessageSender {
+    int socket;
 public:
-    const std::shared_ptr<SynchronizedQueue<OutgoingMessage>> &getMessageQueue() const;
 
-public:
-    MessageSender();
-
-    void run() override;
+    explicit MessageSender(int);
+    void send(std::string);
 };
 
 

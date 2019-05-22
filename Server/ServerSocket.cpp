@@ -12,12 +12,6 @@
 
 ServerSocket::ServerSocket(in_port_t port) {
     this->port = port;
-    createSocket();
-    prepareServerAddress();
-    bindSocket();
-    getSocketName();
-    startListening();
-    this->port = ntohs(serverAddress.sin_port);
 }
 
 ServerSocket::~ServerSocket() {
@@ -38,35 +32,48 @@ void ServerSocket::prepareServerAddress() {
     serverAddress.sin_port = htons(port);
 }
 
-void ServerSocket::bindSocket() {
-    while (bind(serverSocket, (struct sockaddr *) &serverAddress, sizeof serverAddress) == -1) {
+bool ServerSocket::bindSocket() {
+    if (bind(serverSocket, (struct sockaddr *) &serverAddress, sizeof serverAddress) == -1) {
         perror("binding stream serverSocket");
         printf("%s", "Retrying in 60 seconds...");
-        sleep(60000);
+        return false;
     }
+    return true;
 }
 
-void ServerSocket::createSocket() {
-    while ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+bool ServerSocket::createSocket() {
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("opening stream serverSocket");
         printf("%s", "Retrying in 60 seconds...");
-        sleep(60000);
+        return false;
     }
+    return true;
 }
 
-void ServerSocket::startListening() {
-    while (listen(serverSocket, 5) == -1) {
+bool ServerSocket::startListening() {
+    if (listen(serverSocket, 5) == -1) {
         perror("error preparing to listen");
         printf("%s", "Retrying in 60 seconds...");
-        sleep(60000);
+        return false;
     }
+    return true;
 }
 
-void ServerSocket::getSocketName() {
+bool ServerSocket::getSocketName() {
     socklen_t length = sizeof serverAddress;
-    while (getsockname(serverSocket, (struct sockaddr *) &serverAddress, &length) == -1) {
+    if (getsockname(serverSocket, (struct sockaddr *) &serverAddress, &length) == -1) {
         perror("getting serverSocket name");
         printf("%s", "Retrying in 60 seconds...");
-        sleep(60000);
+        return false;
     }
+    return true;
+}
+
+bool ServerSocket::initialize() {
+    if (!isInitialized) {
+        prepareServerAddress();
+        isInitialized = createSocket() && bindSocket() && getSocketName() && startListening();
+        this->port = ntohs(serverAddress.sin_port);
+    }
+    return isInitialized;
 }

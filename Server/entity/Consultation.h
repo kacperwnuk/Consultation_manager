@@ -34,6 +34,7 @@ public:
 
     Consultation(document_view_or_value);
     Consultation(Json::Value);
+    Consultation();
     Consultation(ConsultationInfoForClient consultationClientInfo, ConsultationStatus status);
 
     Json::Value getJson() override;

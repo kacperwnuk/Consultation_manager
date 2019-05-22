@@ -10,6 +10,7 @@
 #include <ostream>
 #include <bsoncxx/document/view_or_value.hpp>
 #include "../serialization/Serializable.h"
+#include "Account.h"
 
 class AccountInfoForClient: Serializable {
 
@@ -21,6 +22,7 @@ private:
 public:
     AccountInfoForClient(const std::string &name, const std::string &surname, const std::string &login);
     AccountInfoForClient(Json::Value);
+    explicit AccountInfoForClient(Account);
     AccountInfoForClient() = default;
     Json::Value getJson() override;
     bsoncxx::document::view_or_value getDocumentFormat();

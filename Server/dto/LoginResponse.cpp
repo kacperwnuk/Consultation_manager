@@ -12,7 +12,7 @@ Json::Value LoginResponse::getJson() {
 
     Json::Value value;
     value["status"] = this->status;
-    value["type"] = ResponseType::LoginResp;
+    value["type"] = "LoginResponse";
 
     return value;
 }
