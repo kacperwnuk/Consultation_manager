@@ -69,14 +69,14 @@ public class LoginWindow {
 
     private void showMainWindow() {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main.fxml"));
             AnchorPane root = fxmlLoader.load();
-            final MainWindow controller = fxmlLoader.getController();
+            final MainPage controller = fxmlLoader.getController();
             controller.setSerializer(serializer);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
-            stage.setTitle("TIN Main Window");
+            stage.setTitle("TIN Main menu");
             stage.setOnHidden(e -> controller.disconnect());
             stage.show();
             Stage oldstage = (Stage) loginButton.getScene().getWindow();

@@ -1,7 +1,7 @@
 package com.example.tin.dto;
 
 public class LoginRequest {
-    private int type = 1;
+    private String type = "LoginRequest";
     private String login;
     private String password;
 
@@ -18,7 +18,7 @@ public class LoginRequest {
         return password;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 }

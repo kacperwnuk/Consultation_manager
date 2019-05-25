@@ -1,7 +1,7 @@
 package com.example.tin.dto;
 
 public class RegisterRequest {
-    int type = 3;
+    String type = "RegistrationRequest";
     String login;
     String password;
     String email;
@@ -18,11 +18,11 @@ public class RegisterRequest {
         this.accountRole = accountRole;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(String type) {
         this.type = type;
     }
 
