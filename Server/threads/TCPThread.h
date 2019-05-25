@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include "Thread.h"
 #include "../Client.h"
+#include "../ServerSocket.h"
 
 
 class TCPThread : public Thread {
@@ -16,6 +17,7 @@ private:
     int pipefd[2];
 
     in_port_t port;
+    ServerSocket serverSocket;
     std::vector<Client*> clients;
 
     void executePoll(pollfd[], nfds_t , int);
@@ -34,6 +36,8 @@ public:
     ~TCPThread();
 
     void run() override;
+
+    void changePort(in_port_t);
 
 };
 

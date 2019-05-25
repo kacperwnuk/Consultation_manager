@@ -26,10 +26,18 @@ std::unique_ptr<Serializable> DailyConsultationsListRequest::execute() {
     auto dao = Dao::getDaoCollection("TIN", "consultation");
     auto today = getDate();
     auto tomorrow = b_date(std::chrono::milliseconds(today.value.count() + std::chrono::milliseconds(std::chrono::hours(24)).count()));
-    auto consultations = dao->getConsultationsByDate(today, tomorrow);
 
-    std::unique_ptr<Serializable> response(new DailyConsultationsListResponse(consultations));
-    return std::move(response);
+    try {
+        auto consultations = dao->getConsultationsByDate(today, tomorrow);
+        std::unique_ptr<Serializable> response(new DailyConsultationsListResponse(consultations));
+        return std::move(response);
+    } catch (std::exception &e) {
+        std::cout << e.what();
+        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<ConsultationInfoForClient>()));
+        return std::move(response);
+    }
+
+
 }
 
 DailyConsultationsListRequest::DailyConsultationsListRequest() : date(std::chrono::system_clock::now()) {

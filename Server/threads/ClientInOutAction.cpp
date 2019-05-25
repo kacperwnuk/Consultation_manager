@@ -9,10 +9,12 @@ void ClientInOutAction::send() {
     if (!writing) {
         auto response = outQueue.get();
         message = serializer.serialize(std::move(response));
+        std::cout << message.size() << std::endl;
         char s[message.size() + 4];
         sprintf(s, "%04lu%s", message.size(), message.c_str());
         message = s;
-        bytesToWrite = message.size();
+        bytesToWrite = sizeof(s);
+        std::cout << sizeof(s) << std::endl;
         bytesWritten = 0;
         writing = !writing;
     }
@@ -57,9 +59,9 @@ void ClientInOutAction::receive() {
         readingHeader = true;
         auto request = deserializer.getDeserializedObject(payload);
         inQueue.put(std::move(request));
+//        delete[] payload;
         bytesToRead = 4;
         bytesRead = 0;
-        delete[] payload;
         payloadAllocated = false;
     }
 

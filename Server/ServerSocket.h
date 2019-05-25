@@ -37,6 +37,8 @@ public:
     int getServerSocket();
 
     bool initialize();
+
+    void changePort(in_port_t);
 };
 
 

@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
                 running = false;
                 break;
             case changePortCommand:
+//                tcpThread.changePort(9998);
                 break;
             case restartCommand:
                 break;

@@ -77,3 +77,9 @@ bool ServerSocket::initialize() {
     }
     return isInitialized;
 }
+
+void ServerSocket::changePort(in_port_t newPort) {
+    close(port);
+    port = newPort;
+    isInitialized = false;
+}

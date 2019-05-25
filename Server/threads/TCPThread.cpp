@@ -17,8 +17,9 @@
 #include "../containers/synchronizedcontainers/MutualExclusiveHashMap.h"
 #include "ClientLogic.h"
 
+
 void TCPThread::run() {
-    ServerSocket serverSocket(port);
+
 
     bool isRunning = true;
     do {
@@ -53,6 +54,7 @@ void TCPThread::run() {
 TCPThread::TCPThread(in_port_t port) : port(
         port) {
     pipe(pipefd);
+    serverSocket = ServerSocket(port);
 }
 
 void TCPThread::executePoll(pollfd pollList[], nfds_t size, int timeout) {
@@ -123,6 +125,11 @@ void TCPThread::acceptNewConnections(pollfd *pollList, size_t serverSocketPositi
             clients.push_back(client);
         }
     }
+}
+
+void TCPThread::changePort(in_port_t newPort) {
+    serverSocket.changePort(newPort);
+    write(pipefd[1], "a", 1);
 }
 
 
