@@ -100,7 +100,9 @@ void TCPThread::servePipe(pollfd *pollList, int pipePosition) {
 
 
 TCPThread::~TCPThread() {
-
+    for (auto &client: clients) {
+        delete client;
+    }
 }
 
 void TCPThread::preparePoll(pollfd *pollList) {
