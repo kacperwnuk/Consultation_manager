@@ -1,8 +1,8 @@
 package com.example.tin.network
 
 import java.io.DataInputStream
-import java.io.DataOutputStream
 import java.io.IOException
+import java.io.OutputStreamWriter
 import java.net.Socket
 import java.net.UnknownHostException
 import java.nio.charset.StandardCharsets
@@ -16,7 +16,7 @@ object Connection : Runnable {
     private var serverAddress = "192.168.0.11"
     private var portNumber = 9999
     private lateinit var socket: Socket
-    private lateinit var outToServer: DataOutputStream
+    private lateinit var outToServer: OutputStreamWriter
     private lateinit var inFromServer: DataInputStream
     private var isRunning = true
     private var isConnected = false
@@ -35,7 +35,7 @@ object Connection : Runnable {
     private fun tryConnect(): Boolean {
         try {
             socket = Socket(serverAddress, portNumber)
-            outToServer = DataOutputStream(socket.getOutputStream())
+            outToServer = OutputStreamWriter(socket.getOutputStream())
             inFromServer = DataInputStream(socket.getInputStream())
         } catch (e: UnknownHostException) {
             return false
@@ -124,7 +124,8 @@ object Connection : Runnable {
             connect()
         }
         val seizedMessage = String.format("%04d$message", message.length)
-        outToServer.write(seizedMessage.toByteArray())
+        outToServer.write(seizedMessage)
+        outToServer.flush()
     }
 
     fun reconnect() {
