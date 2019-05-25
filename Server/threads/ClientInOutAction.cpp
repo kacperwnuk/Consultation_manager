@@ -58,7 +58,9 @@ void ClientInOutAction::receive() {
     if (!readingHeader && bytesToRead == bytesRead) {
         readingHeader = true;
         auto request = deserializer.getDeserializedObject(payload);
-        inQueue.put(std::move(request));
+        if (request != nullptr) {
+            inQueue.put(std::move(request));
+        }
 //        delete[] payload;
         bytesToRead = 4;
         bytesRead = 0;
