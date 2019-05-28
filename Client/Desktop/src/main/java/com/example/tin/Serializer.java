@@ -41,6 +41,7 @@ public class Serializer {
             for (int  i=0; i < array.length(); ++i){
                 JSONObject ob = array.getJSONObject(i);
                 Consultation con = new Consultation();
+                con.setId(ob.getString("id"));
                 con.setConsultationDateStart(ob.getLong("consultationDateStart"));
                 con.setConsultationDateEnd(ob.getLong("consultationDateEnd"));
                 con.setConsultationType(ob.getInt("consultationType"));

@@ -5,9 +5,19 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 public class Consultation {
+    String id;
     long consultationDateStart;
     long consultationDateEnd;
     int consultationType;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     int room;
     Participant lecturer;
     Participant student;

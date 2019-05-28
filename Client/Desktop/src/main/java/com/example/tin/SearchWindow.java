@@ -1,6 +1,7 @@
 package com.example.tin;
 
 import com.example.tin.dto.Consultation;
+import com.example.tin.dto.ConsultationReservationRequest;
 import com.example.tin.dto.ConsultationsRequest;
 import com.example.tin.dto.ConsultationsResponse;
 import javafx.collections.FXCollections;
@@ -55,6 +56,12 @@ public class SearchWindow {
     }
 
     public void reserveButtonClicked(ActionEvent actionEvent) {
+        Consultation con = consultationList.getSelectionModel().getSelectedItem();
+        try{
+            serializer.serializeAndSend(new ConsultationReservationRequest(con.getId(), "testuser"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void backButtonClicked(ActionEvent actionEvent) {
