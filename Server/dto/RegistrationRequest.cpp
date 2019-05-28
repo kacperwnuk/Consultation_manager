@@ -77,6 +77,4 @@ std::unique_ptr<Serializable> RegistrationRequest::execute() {
     std::cout << "Rejestracja pomyślna" << std::endl;
     std::unique_ptr<Serializable> response(new RegistrationResponse(OK));
     return std::move(response);
-
-
 }

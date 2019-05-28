@@ -45,6 +45,12 @@ public:
 
     const std::string &getRoom() const;
 
+    const ConsultationStatus getStatus() {return consultationStatus;}
+
+    const ConsultationType  getType() { return consultationType; }
+
+    void setStatus(ConsultationStatus newStatus) {consultationStatus = newStatus;}
+
     void setRoom(const std::string &room);
 
     ConsultationStatus getConsultationStatus() const;

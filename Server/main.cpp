@@ -5,7 +5,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <cstring>
-#include <zconf.h>
+//#include <zconf.h>
 #include <pthread.h>
 #include <vector>
 #include <poll.h>
@@ -75,7 +75,7 @@ in_port_t getPortFromArgument(char *arg) {
 }
 
 int main(int argc, char *argv[]) {
-    in_port_t port = 9999; // default port
+    in_port_t port = 9997; // default port
     if (argc > 1) {
         try {
             port = getPortFromArgument(argv[1]);
@@ -89,6 +89,17 @@ int main(int argc, char *argv[]) {
     tcpThread.start();
 
     initialize();
+
+
+
+    /*
+    std::cout<<"Proba logowania"<<std::endl;
+    auto dao = Dao::getDaoCollection("TIN", "consultation");
+    auto result = dao->getConsultationById("5ced676418cdd14b0579fb19");
+    std::cout << result.getConsultationDateStart();
+    */
+
+
     char value[256];
     while (running) {
         string message;

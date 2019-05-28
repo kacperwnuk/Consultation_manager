@@ -6,6 +6,7 @@
 
 Json::Value ConsultationInfoForClient::getJson() {
     Json::Value value;
+    value["id"] = this->id.to_string();
     value["lecturer"] = this->lecturer.getJson();
     value["student"] = this->student.getJson();
     value["consultationDateStart"] = static_cast<unsigned long long>(this->consultationDateStart.value.count());

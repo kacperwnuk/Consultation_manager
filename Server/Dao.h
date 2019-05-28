@@ -52,6 +52,10 @@ public:
 
     Account getAccountByLogin(std::string login);
 
+    Consultation getConsultationById(std::string id);
+
+    void reserveConsultation(Consultation cons, std::string username);
+
     std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
 };
 

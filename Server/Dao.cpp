@@ -67,6 +67,17 @@ Account Dao::getAccountByLogin(std::string login) {
     throw std::runtime_error(std::string("No user with this login!"));
 }
 
+Consultation Dao::getConsultationById(std::string id) {
+    oid * searchId = new oid(id);
+    std::cout << searchId->to_string() << std::endl;
+    auto results = coll.find(s_document{} << "_id" << *searchId << bsoncxx::builder::stream::finalize);
+    for (auto result : results) {
+        return Consultation(result);
+    }
+    throw std::runtime_error(std::string("No consultation with this id!"));
+
+}
+
 std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
 
 //    auto result = coll.find(s_document{} << "consultationDateStart" << bsoncxx::builder::stream::open_document <<
@@ -106,6 +117,9 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateSt
     return consultations;
 }
 
+void Dao::reserveConsultation(Consultation cons, std::string username)
+{
+}
 
 
 
