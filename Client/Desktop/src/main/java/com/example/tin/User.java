@@ -25,14 +25,4 @@ public class User {
         role = toRole;
     }
 
-    private boolean register(String json) {
-        //kod rejestracji na serwerze
-        return true;
-    }
-
-    private String parseToJson()
-    {
-        //kod parsowania do JSON
-        return "TODO";
-    }
 }

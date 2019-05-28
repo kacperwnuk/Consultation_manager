@@ -73,6 +73,7 @@ public class LoginWindow {
             AnchorPane root = fxmlLoader.load();
             final MainPage controller = fxmlLoader.getController();
             controller.setSerializer(serializer);
+            controller.setLogin(login);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
