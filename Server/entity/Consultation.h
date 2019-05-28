@@ -43,6 +43,11 @@ public:
 
     oid getId() const;
 
+    void setID(std::string toid) {
+        oid newID(toid);
+        this->id = newID;
+    }
+
     const std::string &getRoom() const;
 
     const ConsultationStatus getStatus() {return consultationStatus;}
