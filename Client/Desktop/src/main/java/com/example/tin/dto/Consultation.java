@@ -1,0 +1,78 @@
+package com.example.tin.dto;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+public class Consultation {
+    long consultationDateStart;
+    long consultationDateEnd;
+    int consultationType;
+    int room;
+    Participant lecturer;
+    Participant student;
+
+    public long getConsultationDateStart() {
+        return consultationDateStart;
+    }
+
+    public void setConsultationDateStart(long consultationDateStart) {
+        this.consultationDateStart = consultationDateStart;
+    }
+
+    public long getConsultationDateEnd() {
+        return consultationDateEnd;
+    }
+
+    public void setConsultationDateEnd(long consultationDateEnd) {
+        this.consultationDateEnd = consultationDateEnd;
+    }
+
+    public int getConsultationType() {
+        return consultationType;
+    }
+
+    public void setConsultationType(int consultationType) {
+        this.consultationType = consultationType;
+    }
+
+    public int getRoom() {
+        return room;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
+
+    public Participant getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(Participant lecturer) {
+        this.lecturer = lecturer;
+    }
+
+    public Participant getStudent() {
+        return student;
+    }
+
+    public void setStudent(Participant student) {
+        this.student = student;
+    }
+
+    public LocalDateTime getStartDate(){
+        return LocalDateTime.ofEpochSecond(consultationDateStart/1000,0, ZoneOffset.UTC);
+    }
+
+    public LocalDateTime getEndDate(){
+        return LocalDateTime.ofEpochSecond(consultationDateEnd/1000,0, ZoneOffset.UTC);
+    }
+
+    @Override
+    public String toString() {
+        return "od: " + getStartDate().getHour() + ":" + String.format("%02d", getStartDate().getMinute())+
+                " do: " + getEndDate().getHour() + ":" + String.format("%02d", getEndDate().getMinute())+
+                ", tutor: " + lecturer.getName() + " " + lecturer.getSurname() +
+                ", pokój: " + room;
+    }
+}

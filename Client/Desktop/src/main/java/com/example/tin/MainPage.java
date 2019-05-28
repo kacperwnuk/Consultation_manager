@@ -24,12 +24,21 @@ public class MainPage {
     TextArea console;
 
 
-    private Connection connection = new Connection();
     private Serializer serializer;
 
     @FXML
     private void initialize() {
-        if (!connection.connect()) {
+    }
+
+    public void disconnect() {
+        System.out.println("MW: Disconnecting...");
+        if (serializer.isConnected())
+            serializer.disconnect();
+    }
+
+    public void setSerializer(Serializer serializer){
+        this.serializer = serializer;
+        if (!serializer.isConnected()) {
             searchButton.setDisable(true);
             logoutButton.setDisable(true);
             yourConsultationsButton.setDisable(true);
@@ -37,16 +46,6 @@ public class MainPage {
         }
         else
             console.appendText("Połączono pomyślnie");
-    }
-
-    public void disconnect() {
-        System.out.println("MW: Disconnecting...");
-        if (connection.getConnected())
-            connection.disconnect();
-    }
-
-    public void setSerializer(Serializer serializer){
-        this.serializer = serializer;
     }
 
     public void btnSearchClicked(ActionEvent actionEvent) {

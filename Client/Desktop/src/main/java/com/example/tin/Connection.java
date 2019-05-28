@@ -9,8 +9,8 @@ import java.sql.SQLOutput;
 
 public class Connection {
 
-    String serverAddress = "192.168.0.164";
-    int portNumber = 9995;
+    String serverAddress = "192.168.0.95";
+    int portNumber = 9999;
     Socket socket;
     DataOutputStream outToServer;
     DataInputStream inFromServer;
@@ -23,20 +23,23 @@ public class Connection {
     }
 
     public boolean connect() {
-        try {
-            System.out.println("Lacze z serwerem...");
-            socket = new Socket(serverAddress, portNumber);
-            //socket.connect(new InetSocketAddress(serverAddress, portNumber));
-            System.out.println("Polaczono");
-            isConnected = true;
-            outToServer = new DataOutputStream(socket.getOutputStream());
-            inFromServer = new DataInputStream(socket.getInputStream());
-            return true;
-        } catch (Exception ex) {
-            System.out.println("Unable to connect with server!");
-            isConnected = false;
-            return false;
+        if (!isConnected){
+            try {
+                System.out.println("Lacze z serwerem...");
+                socket = new Socket(serverAddress, portNumber);
+                //socket.connect(new InetSocketAddress(serverAddress, portNumber));
+                System.out.println("Polaczono");
+                isConnected = true;
+                outToServer = new DataOutputStream(socket.getOutputStream());
+                inFromServer = new DataInputStream(socket.getInputStream());
+                return true;
+            } catch (Exception ex) {
+                System.out.println("Unable to connect with server!");
+                isConnected = false;
+                return false;
+            }
         }
+        return true;
     }
 
     public void disconnect() {
