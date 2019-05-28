@@ -22,6 +22,8 @@ public class MainPage {
     Button reconnectButton;
     @FXML
     TextArea console;
+    @FXML
+    Button cancelConsultationButton;
 
 
     private Serializer serializer;
@@ -86,6 +88,7 @@ public class MainPage {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/login.fxml"));
             AnchorPane root = fxmlLoader.load();
             final LoginWindow controller = fxmlLoader.getController();
+
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -108,5 +111,23 @@ public class MainPage {
         logoutButton.setDisable(false);
         yourConsultationsButton.setDisable(false);
         initialize();
+    }
+
+    public void btnCancelConsultationClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/yourconsultations.fxml"));
+            AnchorPane root = fxmlLoader.load();
+            final YourConsultationsWindow controller = fxmlLoader.getController();
+            controller.setSerializer(serializer);
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Twoje konsultacje");
+            stage.show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

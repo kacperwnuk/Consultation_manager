@@ -38,6 +38,9 @@ public class SearchWindow {
 
     @FXML
     private void initialize() {
+        dateBox.valueProperty().addListener((ov, oldValue, newValue) -> {
+            setConsultations();
+        });
 
     }
 

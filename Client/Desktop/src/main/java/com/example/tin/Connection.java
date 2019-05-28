@@ -9,8 +9,8 @@ import java.sql.SQLOutput;
 
 public class Connection {
 
-    String serverAddress = "192.168.0.95";
-    int portNumber = 9999;
+    String serverAddress = "192.168.0.164";
+    int portNumber = 9997;
     Socket socket;
     DataOutputStream outToServer;
     DataInputStream inFromServer;
