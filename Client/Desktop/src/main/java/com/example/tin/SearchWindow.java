@@ -15,6 +15,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class SearchWindow {
     @FXML
@@ -33,15 +34,17 @@ public class SearchWindow {
     DatePicker dateBox;
 
     private Serializer serializer;
+    private ObservableList<Consultation> observableList;
 
     @FXML
     private void initialize() {
-        dateBox.setValue(LocalDate.now());
 
     }
 
     public void setSerializer(Serializer serializer){
         this.serializer = serializer;
+        dateBox.setValue(LocalDate.now());
+        setConsultations();
     }
 
     public void filterButtonClicked(ActionEvent actionEvent) {
@@ -61,8 +64,18 @@ public class SearchWindow {
         try{
             serializer.serializeAndSend(new ConsultationsRequest(dateBox.getValue().toEpochDay()*86400000));
             ConsultationsResponse response = serializer.deserializeConsultations();
-            ObservableList<Consultation> observableList = FXCollections.observableList(response.getConsultations());
-            consultationList.setItems(observableList);
+            if (response != null){
+                List<Consultation> consList = response.getConsultations();
+                if (consList != null && consList.size() != 0) {
+                    observableList = FXCollections.observableList(consList);
+                    consultationList.setItems(observableList);
+                }
+                else{
+                    observableList.clear();
+                }
+            }
+            else
+                observableList.clear();
         }
         catch(Exception e){
             e.printStackTrace();
