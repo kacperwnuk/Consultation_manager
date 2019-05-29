@@ -12,7 +12,7 @@ void ClientLogic::run() {
 
         auto request = inQueue.get();
         auto response = request->execute(context);
-        std::cout << response->getJson() << std::endl;
+        //std::cout << response->getJson() << std::endl;
         outQueue.put(std::move(response));
         write(pipe, "a", 1);
     }
