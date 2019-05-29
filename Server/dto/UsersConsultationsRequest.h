@@ -35,7 +35,7 @@ public:
     explicit UsersConsultationsRequest(Json::Value);
 
     ~UsersConsultationsRequest() override {
-        std::cout << "Zamykam registration" << std::endl;
+        std::cout << "Zamykam User Consultation" << std::endl;
     }
 
     std::unique_ptr<Request> create(Json::Value) override;

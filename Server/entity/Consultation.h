@@ -66,6 +66,8 @@ public:
 
     const AccountInfoForClient &getLecturer() const;
 
+    const AccountInfoForClient &getStudent() const;
+
     const b_date &getConsultationDateEnd() const;
 
     void setConsultationType(ConsultationType consultationType);

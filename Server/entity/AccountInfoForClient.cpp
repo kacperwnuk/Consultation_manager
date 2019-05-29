@@ -43,3 +43,11 @@ AccountInfoForClient::AccountInfoForClient(Account account) {
     this->surname = account.getSurname();
     this->login = account.getLogin();
 }
+
+const bool AccountInfoForClient::operator==(const AccountInfoForClient& other) const{
+    return this->login == other.login && this->name == other.name && this->surname == other.surname;
+}
+
+const bool AccountInfoForClient::operator!=(const AccountInfoForClient& other) const{
+    return !(*this == other);
+}

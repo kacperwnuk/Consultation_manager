@@ -158,6 +158,10 @@ const AccountInfoForClient &Consultation::getLecturer() const {
     return lecturer;
 }
 
+const AccountInfoForClient &Consultation::getStudent() const {
+    return student;
+}
+
 const b_date &Consultation::getConsultationDateEnd() const {
     return consultationDateEnd;
 }

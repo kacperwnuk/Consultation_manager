@@ -26,6 +26,8 @@ public:
     AccountInfoForClient() = default;
     Json::Value getJson() override;
     bsoncxx::document::view_or_value getDocumentFormat();
+    const bool operator==(const AccountInfoForClient& other) const;
+    const bool operator!=(const AccountInfoForClient& other) const;
 
     friend std::ostream &operator<<(std::ostream &os, const AccountInfoForClient &client);
 
