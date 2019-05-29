@@ -12,7 +12,7 @@ class CancelConsultationRequest  : public Request {
 
     struct CancelConsultationHelper {
         CancelConsultationHelper() {
-            std::cout << "Dodaje Reservation" << std::endl;
+            std::cout << "Dodaje Cancel" << std::endl;
             Request::addToMap("CancelConsultationRequest", std::make_unique<CancelConsultationRequest>());
         }
     };

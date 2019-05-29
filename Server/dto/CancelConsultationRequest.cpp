@@ -40,12 +40,12 @@ std::unique_ptr<Request> CancelConsultationRequest::create(Json::Value value) {
 
 
 std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& context) {
+    std::cout << "zaczynam anulowac konsultacje" << std::endl;
 
     if (!context.isLogged()){
         std::unique_ptr<Serializable> response (new CancelConsultationResponse(ERROR));
         return std::move(response);
     }
-
     auto dao = Dao::getDaoCollection("TIN", "consultation");
     auto dao2 = Dao::getDaoCollection("TIN", "account");
     try {
@@ -60,7 +60,7 @@ std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& contex
               return std::move(response);
           }
 
-        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(), info, FREE,
+        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(), oldConsultation.getLecturer(), FREE,
                                      oldConsultation.getType(), oldConsultation.getConsultationDateStart(),
                                      oldConsultation.getConsultationDateEnd());
 

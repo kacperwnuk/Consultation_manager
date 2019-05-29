@@ -38,7 +38,9 @@ std::unique_ptr<Serializable> LoginRequest::execute(Context& context) {
     auto dao = Dao::getDaoCollection("TIN", "account");
     try {
         auto account = dao->getAccountByLogin(getLogin());
-        if (account.getPasswordHash() != getPassword() || account.getAccountStatus() == AccountStatus::INACTIVE) {
+        //if (account.getPasswordHash() != getPassword() || account.getAccountStatus() == AccountStatus::INACTIVE) {
+        if (account.getPasswordHash() != getPassword()) {
+
             std::cout<<account.getPasswordHash() << " " << getPassword() << std::endl;
             std::cout << "Bad passwd lub niezatwierdzony" << std::endl;
             std::unique_ptr<Serializable> response (new LoginResponse(ERROR));

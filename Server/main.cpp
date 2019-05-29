@@ -75,7 +75,7 @@ in_port_t getPortFromArgument(char *arg) {
 }
 
 int main(int argc, char *argv[]) {
-    in_port_t port = 9999; // default port
+    in_port_t port = 9998; // default port
     if (argc > 1) {
         try {
             port = getPortFromArgument(argv[1]);
@@ -91,24 +91,15 @@ int main(int argc, char *argv[]) {
     initialize();
 
 
-
-    /*
-    std::cout<<"Proba logowania"<<std::endl;
-    auto dao = Dao::getDaoCollection("TIN", "consultation");
-    auto result = dao->getConsultationById("5ced676418cdd14b0579fb19");
-    std::cout << result.getConsultationDateStart();
-    */
-
-
     char value[256];
     while (running) {
         string message;
         cin >> value;
         switch (mapStringCommands[value]) {
             case stopCommand:
-//                cout << "Stopping server..." << endl;
-//                tcpThread.cancel();
-//                running = false;
+                cout << "Stopping server..." << endl;
+                tcpThread.cancel();
+                running = false;
                 break;
             case changePortCommand:
 //                tcpThread.changePort(9998);
