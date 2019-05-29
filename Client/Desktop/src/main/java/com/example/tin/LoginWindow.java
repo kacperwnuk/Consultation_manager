@@ -1,7 +1,6 @@
 package com.example.tin;
 
-import com.example.tin.dto.LoginRequest;
-import com.example.tin.dto.LoginResponse;
+import com.example.tin.dto.*;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -10,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.List;
 
 public class LoginWindow {
     @FXML
@@ -93,6 +93,8 @@ public class LoginWindow {
     }
     private void showTutorMainWindow(){
         System.out.println("TODO: Wyświetlenie okna tutora");
+
+        TESTDEBUG(); // TO REMOVE, JUST FOR TESTS
         //TODO
     }
 
@@ -101,6 +103,21 @@ public class LoginWindow {
         alert.setTitle("Błąd");
         alert.setHeaderText("Błąd logowania");
         alert.showAndWait();
+    }
+
+    private void TESTDEBUG(){
+        try {
+            serializer.serializeAndSend(new InactiveUsersRequest());
+            InactiveUsersResponse list = serializer.deserializeInactiveUsersResponse();
+            for (Participant user : list.getInactiveAccounts()){
+                System.out.print(user.getName() + "" + user.getSurname());
+            }
+        }
+        catch (Exception e){
+            System.out.print("COŚ SIĘ ZJEBAŁO:  ");
+            e.printStackTrace();
+        }
+
     }
 
 }

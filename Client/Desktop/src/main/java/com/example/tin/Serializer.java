@@ -1,9 +1,6 @@
 package com.example.tin;
 
-import com.example.tin.dto.Consultation;
-import com.example.tin.dto.ConsultationsResponse;
-import com.example.tin.dto.LoginResponse;
-import com.example.tin.dto.Participant;
+import com.example.tin.dto.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +55,26 @@ public class Serializer {
                 con.setLecturer(new Participant(ob.getJSONObject("lecturer")));
                 con.setStudent(new Participant(ob.getJSONObject("student")));
                 response.getConsultations().add(con);
+            }
+            return response;
+        }
+        catch(Exception e){
+            return null;
+        }
+    }
+
+    public InactiveUsersResponse deserializeInactiveUsersResponse() throws IOException, JSONException {
+        JSONObject obj = new JSONObject(connectionController.receive());
+        try{
+            InactiveUsersResponse response = new InactiveUsersResponse();
+            JSONArray array = obj.getJSONArray("inactiveUsers");
+            for (int  i=0; i < array.length(); ++i){
+                JSONObject ob = array.getJSONObject(i);
+                Participant user = new Participant();
+                user.setLogin(ob.getString("login"));
+                user.setName(ob.getString("name"));
+                user.setSurname(ob.getString("surname"));
+                response.getInactiveAccounts().add(user);
             }
             return response;
         }

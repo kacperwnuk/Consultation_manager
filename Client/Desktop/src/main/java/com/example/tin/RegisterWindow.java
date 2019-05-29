@@ -51,7 +51,7 @@ public class RegisterWindow {
     private void btnRegisterClicked() throws IOException, JSONException {
         readValuesFromIputs();
         if(studentRadioButton.isSelected())
-            role = 0;
+            role = 2;
         else if(lecturerRadioButton.isSelected())
             role = 1;
         int validationResult = validate();
@@ -66,7 +66,7 @@ public class RegisterWindow {
         else
             handleRegisterError(validationResult);
         if (studentRadioButton.isPressed())
-            role = 0;
+            role = 2;
         else if (lecturerRadioButton.isPressed())
             role = 1;
     }
