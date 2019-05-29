@@ -5,7 +5,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <cstring>
-//#include <zconf.h>
+#include <zconf.h>
 #include <pthread.h>
 #include <vector>
 #include <poll.h>

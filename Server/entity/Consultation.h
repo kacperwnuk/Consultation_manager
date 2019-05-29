@@ -30,7 +30,7 @@ private:
 
 public:
 
-    Consultation(AccountInfoForClient, std::string, AccountInfoForClient, ConsultationStatus, ConsultationType, b_date, b_date);
+    Consultation(AccountInfoForClient lecturer, std::string, AccountInfoForClient student, ConsultationStatus, ConsultationType, b_date, b_date);
 
     Consultation(document_view_or_value);
     Consultation(Json::Value);

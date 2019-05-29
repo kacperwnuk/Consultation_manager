@@ -38,7 +38,7 @@ std::unique_ptr<Serializable> LoginRequest::execute(Context& context) {
     auto dao = Dao::getDaoCollection("TIN", "account");
     try {
         auto account = dao->getAccountByLogin(getLogin());
-        //if (account.getPasswordHash() != getPassword() || account.getAccountStatus() == AccountStatus::INACTIVE) {
+        //if (account.getPasswordHash() != getPassword() || account.getAccountStatus() == AccountStatus::INACTIVE) { //w final version to odkomentowac a wywalic to ponizej
         if (account.getPasswordHash() != getPassword()) {
 
             std::cout<<account.getPasswordHash() << " " << getPassword() << std::endl;
@@ -55,6 +55,6 @@ std::unique_ptr<Serializable> LoginRequest::execute(Context& context) {
         return std::move(response);
     }
     std::cout << "Logowanie pomyślne" << std::endl;
-    std::unique_ptr<Serializable> response (new LoginResponse(OK));
+    std::unique_ptr<Serializable> response (new LoginResponse(OK, context.getAccountRole()));
     return std::move(response);
 }

@@ -59,8 +59,8 @@ std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& contex
               std::unique_ptr<Serializable> response(new CancelConsultationResponse(ERROR));
               return std::move(response);
           }
-
-        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(), oldConsultation.getLecturer(), FREE,
+        AccountInfoForClient undefined;
+        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(),undefined, FREE,
                                      oldConsultation.getType(), oldConsultation.getConsultationDateStart(),
                                      oldConsultation.getConsultationDateEnd());
 
