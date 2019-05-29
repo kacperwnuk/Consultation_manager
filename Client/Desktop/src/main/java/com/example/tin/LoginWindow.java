@@ -112,6 +112,12 @@ public class LoginWindow {
             for (Participant user : list.getInactiveAccounts()){
                 System.out.print(user.getName() + "" + user.getSurname());
             }
+            AcceptAccountsRequest acceptRequest = new AcceptAccountsRequest();
+
+            acceptRequest.getLogins().add(new Login(list.getInactiveAccounts().get(/*przykladowy index*/0).getLogin()));
+            serializer.serializeAndSend(acceptRequest);
+            if (serializer.deserialize())
+                System.out.println("Udało się akceptować");
         }
         catch (Exception e){
             System.out.print("COŚ SIĘ ZJEBAŁO:  ");
