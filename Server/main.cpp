@@ -106,9 +106,9 @@ int main(int argc, char *argv[]) {
         cin >> value;
         switch (mapStringCommands[value]) {
             case stopCommand:
-                cout << "Stopping server..." << endl;
-                tcpThread.cancel();
-                running = false;
+//                cout << "Stopping server..." << endl;
+//                tcpThread.cancel();
+//                running = false;
                 break;
             case changePortCommand:
 //                tcpThread.changePort(9998);

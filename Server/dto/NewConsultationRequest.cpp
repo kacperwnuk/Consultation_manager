@@ -28,7 +28,12 @@ std::unique_ptr<Request> NewConsultationRequest::create(Json::Value value) {
     return std::move(request);
 }
 
-std::unique_ptr<Serializable> NewConsultationRequest::execute() {
+std::unique_ptr<Serializable> NewConsultationRequest::execute(Context& context) {
+
+    if (!context.isLogged()){
+        std::unique_ptr<Serializable> response (new NewConsultationResponse(ERROR));
+        return std::move(response);
+    }
 
     auto accountDao = Dao::getDaoCollection("TIN", "account");
 

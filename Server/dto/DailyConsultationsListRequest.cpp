@@ -22,7 +22,13 @@ std::unique_ptr<Request> DailyConsultationsListRequest::create(Json::Value value
     return std::move(request);
 }
 
-std::unique_ptr<Serializable> DailyConsultationsListRequest::execute() {
+std::unique_ptr<Serializable> DailyConsultationsListRequest::execute(Context& context) {
+
+    if (!context.isLogged()){
+        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<ConsultationInfoForClient>()));
+        return std::move(response);
+    }
+
     auto dao = Dao::getDaoCollection("TIN", "consultation");
     auto today = getDate();
     auto tomorrow = b_date(std::chrono::milliseconds(today.value.count() + std::chrono::milliseconds(std::chrono::hours(24)).count()));

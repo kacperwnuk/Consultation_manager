@@ -13,6 +13,7 @@
 #include <iostream>
 #include "../serialization/Serializable.h"
 #include "../Dao.h"
+#include "../Context.h"
 
 class Request {
 protected:
@@ -23,7 +24,7 @@ protected:
 
 public:
     virtual std::unique_ptr<Request> create(Json::Value) = 0;
-    virtual std::unique_ptr<Serializable> execute() = 0;
+    virtual std::unique_ptr<Serializable> execute(Context&) = 0;
     virtual ~Request(){}
 
     static std::unique_ptr<Request> unserialize(std::string classType, Json::Value payload){

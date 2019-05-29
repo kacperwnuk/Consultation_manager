@@ -41,7 +41,6 @@ void TCPThread::run() {
         }
 
         executePoll(pollList, socketsToPoll, socketInitialized ? -1 : 60);
-        std::cout<<"Wychodze z polla"<<std::endl;
         serveClients(pollList);
         servePipe(pollList, pipePosition);
         acceptNewConnections(pollList, serverSocketPosition);

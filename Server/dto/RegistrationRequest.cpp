@@ -52,7 +52,7 @@ std::unique_ptr<Request> RegistrationRequest::create(Json::Value value) {
     return std::move(request);
 }
 
-std::unique_ptr<Serializable> RegistrationRequest::execute() {
+std::unique_ptr<Serializable> RegistrationRequest::execute(Context& context) {
     auto account = Account(getEmail(), getLogin(), getPassword(), getName(),
                            getSurname(), getAccountRole(), AccountStatus::INACTIVE);
     auto document = account.getDocumentFormat();

@@ -47,7 +47,7 @@ public:
 
     std::unique_ptr<Request> create(Json::Value value) override;
 
-    std::unique_ptr<Serializable> execute() override;
+    std::unique_ptr<Serializable> execute(Context&) override;
 };
 
 

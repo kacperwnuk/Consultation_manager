@@ -26,7 +26,14 @@ std::unique_ptr<Request> UsersConsultationsRequest::create(Json::Value value) {
     return std::move(request);
 }
 
-std::unique_ptr<Serializable> UsersConsultationsRequest::execute() {
+std::unique_ptr<Serializable> UsersConsultationsRequest::execute(Context& context) {
+
+    if (!context.isLogged()){
+        std::vector<ConsultationInfoForClient> vector;
+        std::unique_ptr<Serializable> response (new UsersConsultationsResponse(vector));
+        return std::move(response);
+    }
+
     auto daoCon = Dao::getDaoCollection("TIN", "consultation");
     auto daoUser = Dao::getDaoCollection("TIN", "account");
     Account user = daoUser->getAccountByLogin(login);
@@ -36,7 +43,7 @@ std::unique_ptr<Serializable> UsersConsultationsRequest::execute() {
         std::unique_ptr<Serializable> response(new UsersConsultationsResponse(consultations));
         return std::move(response);
     }
-    catch (std::exception e){
+    catch (std::exception &e){
         std::cout<<e.what();
         std::vector<ConsultationInfoForClient> vector;
         std::unique_ptr<Serializable> response(new UsersConsultationsResponse(vector));

@@ -9,12 +9,10 @@ void ClientInOutAction::send() {
     if (!writing) {
         auto response = outQueue.get();
         message = serializer.serialize(std::move(response));
-        std::cout << message.size() << std::endl;
         char s[message.size() + 4];
         sprintf(s, "%04lu%s", message.size(), message.c_str());
         message = s;
         bytesToWrite = sizeof(s);
-        std::cout << sizeof(s) << std::endl;
         bytesWritten = 0;
         writing = !writing;
     }
@@ -41,7 +39,6 @@ void ClientInOutAction::receive() {
     auto status = read(fd, readingHeader ? header + bytesRead : payload + bytesRead, bytesToRead - bytesRead);
     if (status > 0) {
         bytesRead += status;
-        std::cout<<bytesToRead<<" " <<bytesRead << " "<<status<<std::endl;
     } else if (status == 0) {
         std::cout << "Disconnected user ;<" << std::endl;
         connected = false;
