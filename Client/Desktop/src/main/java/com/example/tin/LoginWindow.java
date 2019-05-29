@@ -1,6 +1,7 @@
 package com.example.tin;
 
 import com.example.tin.dto.LoginRequest;
+import com.example.tin.dto.LoginResponse;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -32,8 +33,12 @@ public class LoginWindow {
         System.out.println("Password: " + password);
         try {
             serializer.serializeAndSend(new LoginRequest(login, password));
-            if (serializer.deserialize())
-                showMainWindow();
+            LoginResponse response = serializer.deserializeLoginResponse();
+            if (response.isValid())
+                if (response.isLecturer())
+                    showTutorMainWindow();
+                else
+                    showMainWindow();
             else
                 showDialog();
         }
@@ -85,6 +90,10 @@ public class LoginWindow {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void showTutorMainWindow(){
+        System.out.println("TODO: Wyświetlenie okna tutora");
+        //TODO
     }
 
     private void showDialog(){

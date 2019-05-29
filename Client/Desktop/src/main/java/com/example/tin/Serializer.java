@@ -2,6 +2,7 @@ package com.example.tin;
 
 import com.example.tin.dto.Consultation;
 import com.example.tin.dto.ConsultationsResponse;
+import com.example.tin.dto.LoginResponse;
 import com.example.tin.dto.Participant;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,18 @@ public class Serializer {
             return false;
         }
         return false;
+    }
+
+    public LoginResponse deserializeLoginResponse() throws IOException, JSONException {
+        JSONObject obj = new JSONObject(connectionController.receive());
+        try{
+            if (obj.getInt("status") == 0)
+                return new LoginResponse(true, obj.getInt("role") == 1);
+        }
+        catch(Exception e){
+            return new LoginResponse(false);
+        }
+        return new LoginResponse(false);
     }
 
     public ConsultationsResponse deserializeConsultations() throws IOException, JSONException {

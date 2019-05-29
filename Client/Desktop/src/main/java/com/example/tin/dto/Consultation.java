@@ -80,9 +80,11 @@ public class Consultation {
 
     @Override
     public String toString() {
-        return "od: " + getStartDate().getHour() + ":" + String.format("%02d", getStartDate().getMinute())+
+        return getStartDate().getDayOfMonth() + "." + String.format("%02d", getStartDate().getMonth().getValue()) +
+                " od: " + getStartDate().getHour() + ":" + String.format("%02d", getStartDate().getMinute())+
                 " do: " + getEndDate().getHour() + ":" + String.format("%02d", getEndDate().getMinute())+
                 ", tutor: " + lecturer.getName() + " " + lecturer.getSurname() +
-                ", pokój: " + room ;
+                ", pokój: " + room  +
+                ", STATUS: ";
     }
 }
