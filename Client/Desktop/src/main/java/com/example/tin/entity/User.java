@@ -1,4 +1,4 @@
-package com.example.tin;
+package com.example.tin.entity;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

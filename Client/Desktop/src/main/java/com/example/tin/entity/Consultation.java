@@ -1,6 +1,5 @@
-package com.example.tin.dto;
+package com.example.tin.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 

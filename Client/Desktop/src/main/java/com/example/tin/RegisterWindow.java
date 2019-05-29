@@ -1,7 +1,7 @@
 package com.example.tin;
 
 import com.example.tin.dto.RegisterRequest;
-import javafx.collections.FXCollections;
+import com.example.tin.entity.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,6 +1,8 @@
 package com.example.tin;
 
 import com.example.tin.dto.*;
+import com.example.tin.entity.Consultation;
+import com.example.tin.entity.Participant;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

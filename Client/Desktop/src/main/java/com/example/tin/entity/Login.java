@@ -1,4 +1,4 @@
-package com.example.tin.dto;
+package com.example.tin.entity;
 
 public class Login {
     String login;

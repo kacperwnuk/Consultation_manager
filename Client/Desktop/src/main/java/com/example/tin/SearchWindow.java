@@ -1,6 +1,6 @@
 package com.example.tin;
 
-import com.example.tin.dto.Consultation;
+import com.example.tin.entity.Consultation;
 import com.example.tin.dto.ConsultationReservationRequest;
 import com.example.tin.dto.ConsultationsRequest;
 import com.example.tin.dto.ConsultationsResponse;
@@ -10,9 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 

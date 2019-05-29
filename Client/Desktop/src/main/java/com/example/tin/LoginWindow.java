@@ -1,6 +1,8 @@
 package com.example.tin;
 
 import com.example.tin.dto.*;
+import com.example.tin.entity.Login;
+import com.example.tin.entity.Participant;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -9,7 +11,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.List;
 
 public class LoginWindow {
     @FXML
