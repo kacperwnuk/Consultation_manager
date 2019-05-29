@@ -56,6 +56,8 @@ public:
 
     void reserveConsultation(Consultation cons, std::string username);
 
+    std::vector<ConsultationInfoForClient> getConsultationsByUser(AccountInfoForClient &user);
+
     std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
 };
 

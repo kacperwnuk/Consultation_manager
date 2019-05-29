@@ -78,6 +78,28 @@ Consultation Dao::getConsultationById(std::string id) {
 
 }
 
+std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoForClient &user) {
+
+    auto results = coll.find(s_document{} << "student" << user.getDocumentFormat() << bsoncxx::builder::stream::finalize);
+
+    std::vector<ConsultationInfoForClient> consultations;
+
+    for (auto consultationDoc : results) {
+        Consultation consultation = Consultation(consultationDoc);
+        std::cout << consultation << std::endl;
+        auto consultationInfo = ConsultationInfoForClient(
+                consultation.getId().to_string(),
+                consultation.getLecturer(),
+                consultation.getConsultationDateStart(),
+                consultation.getConsultationDateEnd(),
+                consultation.getRoom(),
+                consultation.getConsultationType()
+        );
+        consultations.push_back(consultationInfo);
+    }
+    return consultations;
+}
+
 std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
 
 //    auto result = coll.find(s_document{} << "consultationDateStart" << bsoncxx::builder::stream::open_document <<
