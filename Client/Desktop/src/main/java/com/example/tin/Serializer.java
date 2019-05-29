@@ -17,10 +17,6 @@ public class Serializer {
         connectionController.send(obj.toString());
     }
 
-    /*public String deserialize() throws IOException {
-        return connectionController.receive();
-    }
-    */
     public boolean deserialize() throws IOException, JSONException {
         JSONObject obj = new JSONObject(connectionController.receive());
         try{

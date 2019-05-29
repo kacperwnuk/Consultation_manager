@@ -9,10 +9,10 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="243.0" prefWidth="427.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.LoginWindow">
    <children>
       <TextField fx:id="loginTextField" layoutX="87.0" layoutY="50.0" prefHeight="25.0" prefWidth="253.0" />
+      <PasswordField fx:id="passwordTextField" layoutX="90.0" layoutY="122.0" prefHeight="25.0" prefWidth="253.0" />
       <Label layoutX="199.0" layoutY="25.0" text="Login" />
       <Label layoutX="198.0" layoutY="97.0" text="Hasło" />
       <Button fx:id="loginButton" layoutX="170.0" layoutY="158.0" mnemonicParsing="false" onAction="#btnLoginClicked" prefHeight="25.0" prefWidth="89.0" text="Zaloguj" />
       <Button fx:id="registerButton" layoutX="324.0" layoutY="204.0" mnemonicParsing="false" onAction="#btnRegisterClicked" prefHeight="25.0" prefWidth="89.0" text="Zarejestruj" />
-      <PasswordField fx:id="passwordTextField" layoutX="90.0" layoutY="122.0" prefHeight="25.0" prefWidth="253.0" />
    </children>
 </AnchorPane>

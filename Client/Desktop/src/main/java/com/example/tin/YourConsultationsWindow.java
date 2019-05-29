@@ -15,6 +15,11 @@ public class YourConsultationsWindow {
     Button cancelButton;
 
     private Serializer serializer;
+    private String login;
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public void setSerializer(Serializer serializer) {
         this.serializer = serializer;

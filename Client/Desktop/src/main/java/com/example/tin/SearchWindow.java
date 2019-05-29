@@ -8,10 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -36,15 +34,17 @@ public class SearchWindow {
 
     private Serializer serializer;
     private ObservableList<Consultation> observableList;
+    private String login;
 
     @FXML
     private void initialize() {
         dateBox.valueProperty().addListener((ov, oldValue, newValue) -> {
             setConsultations();
         });
-
     }
-
+    public void setLogin(String login){
+        this.login = login;
+    }
     public void setSerializer(Serializer serializer){
         this.serializer = serializer;
         dateBox.setValue(LocalDate.now());
@@ -61,13 +61,21 @@ public class SearchWindow {
     public void reserveButtonClicked(ActionEvent actionEvent) {
         Consultation con = consultationList.getSelectionModel().getSelectedItem();
         try{
-            serializer.serializeAndSend(new ConsultationReservationRequest(con.getId(), "testuser"));
+            serializer.serializeAndSend(new ConsultationReservationRequest(con.getId(), login));
+            if (!serializer.deserialize()){
+                showDialog();
+            }
+            else{
+                ((Stage)reserveButton.getScene().getWindow()).close();
+            }
         }catch (Exception e){
             e.printStackTrace();
+            showDialog();
         }
     }
 
     public void backButtonClicked(ActionEvent actionEvent) {
+        ((Stage)backButton.getScene().getWindow()).close();
     }
 
     private void setConsultations() {
@@ -90,6 +98,12 @@ public class SearchWindow {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
 
+    private void showDialog(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Błąd");
+        alert.setHeaderText("Rezerwacja konsultacji nie powiodła się!");
+        alert.showAndWait();
     }
 }

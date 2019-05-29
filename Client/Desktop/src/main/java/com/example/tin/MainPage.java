@@ -27,6 +27,11 @@ public class MainPage {
 
 
     private Serializer serializer;
+    private String login;
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     @FXML
     private void initialize() {
@@ -56,6 +61,7 @@ public class MainPage {
             AnchorPane root = fxmlLoader.load();
             final SearchWindow controller = fxmlLoader.getController();
             controller.setSerializer(serializer);
+            controller.setLogin(login);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -73,6 +79,7 @@ public class MainPage {
             AnchorPane root = fxmlLoader.load();
             final NewConsultationWindow controller = fxmlLoader.getController();
             controller.setSerializer(serializer);
+            controller.setLogin(login);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
@@ -119,6 +126,7 @@ public class MainPage {
             AnchorPane root = fxmlLoader.load();
             final YourConsultationsWindow controller = fxmlLoader.getController();
             controller.setSerializer(serializer);
+            controller.setLogin(login);
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setScene(scene);
