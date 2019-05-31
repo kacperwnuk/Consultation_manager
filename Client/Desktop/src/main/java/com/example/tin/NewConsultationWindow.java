@@ -24,6 +24,9 @@ public class NewConsultationWindow {
     TextField roomBox;
     @FXML
     Button addButton;
+    @FXML
+    ComboBox tutorPicker;
+
 
     private Serializer serializer;
     private String login;
@@ -36,6 +39,7 @@ public class NewConsultationWindow {
         startTimeBox.setPromptText("hh:mm");
         endTimeBox.setPromptText("hh:mm");
         this.serializer = serializer;
+        tutorPicker.getItems().add("testtutor");
     }
 
     public void addButtonClicked(ActionEvent actionEvent) throws IOException, JSONException {
@@ -44,7 +48,10 @@ public class NewConsultationWindow {
         System.out.println("" + start + "  " + end);
 
         int room = Integer.parseInt(roomBox.getText());
-        NewConsultationRequest consultation =  new NewConsultationRequest(start,end,1,login,room);
+        String tutor = tutorPicker.getValue().toString();
+
+
+        NewConsultationRequest consultation = new NewConsultationRequest(start, end, tutor, room);
         serializer.serializeAndSend(consultation);
         if (!serializer.deserialize()){
             showDialog("Dodanie konsultacji nie powiodło się!");

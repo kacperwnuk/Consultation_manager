@@ -84,6 +84,6 @@ public class Consultation {
                 " do: " + getEndDate().getHour() + ":" + String.format("%02d", getEndDate().getMinute())+
                 ", tutor: " + lecturer.getName() + " " + lecturer.getSurname() +
                 ", pokój: " + room  +
-                ", STATUS: ";
+                ", STATUS: " ;
     }
 }

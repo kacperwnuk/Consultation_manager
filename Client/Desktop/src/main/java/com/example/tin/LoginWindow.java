@@ -113,8 +113,8 @@ public class LoginWindow {
             for (Participant user : list.getInactiveAccounts()){
                 System.out.print(user.getName() + "" + user.getSurname());
             }
-            AcceptAccountsRequest acceptRequest = new AcceptAccountsRequest();
-
+            // w przypadku RejectAccountsRequest dokładnie tak samo jak w AcceptAccountRequest
+            RejectAccountsRequest acceptRequest = new RejectAccountsRequest();
             acceptRequest.getLogins().add(new Login(list.getInactiveAccounts().get(/*przykladowy index*/0).getLogin()));
             serializer.serializeAndSend(acceptRequest);
             if (serializer.deserialize())

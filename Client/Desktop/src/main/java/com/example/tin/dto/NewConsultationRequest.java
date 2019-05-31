@@ -3,17 +3,23 @@ package com.example.tin.dto;
 public class NewConsultationRequest {
     long consultationDateStart;
     long consultationDateEnd;
-    int consultationType = 1;
-    String consultationCreatorLogin;
     int room;
+    String tutor; //login Tutora
     String type = "NewConsultationRequest";
 
-    public NewConsultationRequest(long consultationDateStart, long consultationDateEnd, int consultationType, String consultationCreatorLogin, int room) {
+    public NewConsultationRequest(long consultationDateStart, long consultationDateEnd, String tutor, int room) {
         this.consultationDateStart = consultationDateStart;
         this.consultationDateEnd = consultationDateEnd;
-        this.consultationType = consultationType;
-        this.consultationCreatorLogin = consultationCreatorLogin;
         this.room = room;
+        this.tutor = tutor;
+    }
+
+    public String getTutor() {
+        return tutor;
+    }
+
+    public void setTutor(String tutor) {
+        this.tutor = tutor;
     }
 
     public long getConsultationDateStart() {
@@ -31,23 +37,6 @@ public class NewConsultationRequest {
     public void setConsultationDateEnd(long consultationDateEnd) {
         this.consultationDateEnd = consultationDateEnd;
     }
-
-    public int getConsultationType() {
-        return consultationType;
-    }
-
-    public void setConsultationType(int consultationType) {
-        this.consultationType = consultationType;
-    }
-
-    public String getConsultationCreatorLogin() {
-        return consultationCreatorLogin;
-    }
-
-    public void setConsultationCreatorLogin(String consultationCreatorLogin) {
-        this.consultationCreatorLogin = consultationCreatorLogin;
-    }
-
     public int getRoom() {
         return room;
     }
