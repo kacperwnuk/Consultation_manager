@@ -10,11 +10,10 @@ NewConsultationRequest::NewConsultationHelper NewConsultationRequest::newConsult
 
 NewConsultationRequest::NewConsultationRequest(Json::Value jsonValue) : consultationDateStart(
         std::chrono::system_clock::now()), consultationDateEnd(std::chrono::system_clock::now()) {
-    this->consultationCreatorLogin = jsonValue["consultationCreatorLogin"].asString();
     this->room = jsonValue["room"].asString();
+    this->consultationTutorLogin = jsonValue["tutor"].asString();
     this->consultationDateStart = b_date(std::chrono::milliseconds(jsonValue["consultationDateStart"].asLargestUInt()));
     this->consultationDateEnd = b_date(std::chrono::milliseconds(jsonValue["consultationDateEnd"].asLargestUInt()));
-    this->consultationType = ConsultationType(jsonValue["consultationType"].asInt());
 }
 
 std::ostream &operator<<(std::ostream &os, const NewConsultationRequest &request) {
@@ -34,6 +33,9 @@ std::unique_ptr<Serializable> NewConsultationRequest::execute(Context& context) 
         std::unique_ptr<Serializable> response (new NewConsultationResponse(ERROR));
         return std::move(response);
     }
+
+    this->consultationCreatorLogin = context.getLogin();
+    this->consultationType = context.getAccountRole() == LECTURER ? LECTURER_SUGGESTED : STUDENT_SUGGESTED;
 
     auto accountDao = Dao::getDaoCollection("TIN", "account");
 
@@ -58,12 +60,19 @@ std::unique_ptr<Serializable> NewConsultationRequest::execute(Context& context) 
             return std::move(response);
         }
 
-        ConsultationInfoForClient consultationInfo(this->id.to_string(), accountInfoForClient,
+        auto accountTutor = accountDao->getAccountByLogin(this->consultationTutorLogin);
+        AccountInfoForClient accountInfoForClientTutor(accountTutor);
+
+        auto accountStudent = accountDao->getAccountByLogin(this->consultationCreatorLogin);
+        AccountInfoForClient accountInfoForClientStudent(account);
+
+        ConsultationInfoForClient consultationInfo(this->id.to_string(), accountInfoForClientTutor, accountInfoForClientStudent,
                                                    this->consultationDateStart, this->consultationDateEnd, this->room,
                                                    this->consultationType);
 
+
         Consultation consultation;
-        if (account.getAccountRole() == AccountRole::LECTURER) {
+        if (context.getAccountRole() == AccountRole::LECTURER) {
             consultation = Consultation(consultationInfo, ConsultationStatus::FREE);
         } else {
             consultation = Consultation(consultationInfo, ConsultationStatus::AWAITING_LECTURER_CONFIRMATION);

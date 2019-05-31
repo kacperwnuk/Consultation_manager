@@ -26,7 +26,7 @@ public:
 
     const AccountInfoForClient &getStudent() const;
 
-    ConsultationInfoForClient(std::string, const AccountInfoForClient&, const b_date &consultationDateStart,
+    ConsultationInfoForClient(std::string, const AccountInfoForClient& lecturer, const AccountInfoForClient& student, const b_date &consultationDateStart,
                               const b_date &consultationDateEnd, const std::string &room,
                               ConsultationType consultationType);
     ConsultationInfoForClient();

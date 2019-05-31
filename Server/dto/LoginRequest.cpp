@@ -47,7 +47,7 @@ std::unique_ptr<Serializable> LoginRequest::execute(Context& context) {
             return std::move(response);
         } else {
             context.setLoginStatus(true);
-            context.setAccountRole(account.getAccountRole());
+            context.setAccount(account);
         }
     } catch (std::exception &e) {
         std::cout << e.what();

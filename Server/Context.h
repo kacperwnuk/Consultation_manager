@@ -8,18 +8,25 @@
 
 #include "entity/enums/AccountRole.h"
 #include "entity/enums/AccountStatus.h"
+#include "entity/Account.h"
 
 class Context {
 
     bool loggedIn;
-    AccountRole accountRole;
+    Account account;
 
 public:
     Context();
     bool isLogged(){return this->loggedIn;}
     void setLoginStatus(bool);
     AccountRole getAccountRole()const;
-    void setAccountRole(AccountRole);
+    AccountStatus getAccountStatus()const;
+    std::string getLogin() const;
+    std::string getName() const;
+    std::string getSurname() const;
+    std::string getEmail() const;
+    void setAccount(Account);
+    Account getAccount() const;
 
 };
 

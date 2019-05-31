@@ -16,17 +16,14 @@ Json::Value ConsultationInfoForClient::getJson() {
     return value;
 }
 
-ConsultationInfoForClient::ConsultationInfoForClient(std::string id, const AccountInfoForClient& consultationCreator,
+ConsultationInfoForClient::ConsultationInfoForClient(std::string id, const AccountInfoForClient& lecturer,
+                                                     const AccountInfoForClient& student,
                                                      const b_date &consultationDateStart,
                                                      const b_date &consultationDateEnd, const std::string &room,
                                                      ConsultationType consultationType) : id(id), consultationDateStart(consultationDateStart), consultationDateEnd(consultationDateEnd),
-                                                                                          room(room), consultationType(
-                consultationType) {
-    if (this->consultationType == ConsultationType::LECTURER_SUGGESTED){
-        this->lecturer = consultationCreator;
-    } else {
-        this->student = consultationCreator;
-    }
+                                                                                          room(room), consultationType(consultationType) {
+        this->lecturer = lecturer;
+        this->student = student;
 
 }
 

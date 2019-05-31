@@ -90,6 +90,7 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoFo
         auto consultationInfo = ConsultationInfoForClient(
                 consultation.getId().to_string(),
                 consultation.getLecturer(),
+                consultation.getStudent(),
                 consultation.getConsultationDateStart(),
                 consultation.getConsultationDateEnd(),
                 consultation.getRoom(),
@@ -128,6 +129,7 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateSt
         auto consultationInfo = ConsultationInfoForClient(
                 consultation.getId().to_string(),
                 consultation.getLecturer(),
+                consultation.getStudent() ,
                 consultation.getConsultationDateStart(),
                 consultation.getConsultationDateEnd(),
                 consultation.getRoom(),

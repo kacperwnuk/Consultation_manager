@@ -24,6 +24,7 @@ class NewConsultationRequest : public Request {
 
     oid id;
     std::string consultationCreatorLogin;
+    std::string consultationTutorLogin;
     b_date consultationDateStart;
     b_date consultationDateEnd;
     std::string room;
