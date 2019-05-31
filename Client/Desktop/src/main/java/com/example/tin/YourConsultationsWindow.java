@@ -30,8 +30,6 @@ public class YourConsultationsWindow {
         this.login = login;
         try{
             System.out.println(login);
-            serializer.serializeAndSend(new UsersConsultationsRequest(login));
-            ConsultationsResponse response = serializer.deserializeConsultations();
             setConsultations();
         }
         catch (Exception e){
@@ -46,7 +44,7 @@ public class YourConsultationsWindow {
     public void btnCancelClicked(ActionEvent actionEvent) {
         Consultation con = consultationList.getSelectionModel().getSelectedItem();
         try{
-            serializer.serializeAndSend(new CancelConsultationRequest(con.getId(), login));
+            serializer.serializeAndSend(new MenageConsultationRequest(con.getId(), "MenageConsultationRequest"));
             if (!serializer.deserialize()){
                 showDialog();
             }
@@ -62,7 +60,7 @@ public class YourConsultationsWindow {
 
     private void setConsultations() {
         try{
-            serializer.serializeAndSend(new UsersConsultationsRequest(login));
+            serializer.serializeAndSend(new UsersConsultationsRequest());
             ConsultationsResponse response = serializer.deserializeConsultations();
             if (response != null){
                 List<Consultation> consList = response.getConsultations();

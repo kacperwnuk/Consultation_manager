@@ -59,7 +59,7 @@ public class SearchWindow {
     public void reserveButtonClicked(ActionEvent actionEvent) {
         Consultation con = consultationList.getSelectionModel().getSelectedItem();
         try{
-            serializer.serializeAndSend(new ConsultationReservationRequest(con.getId(), login));
+            serializer.serializeAndSend(new ConsultationReservationRequest(con.getId()));
             if (!serializer.deserialize()){
                 showDialog();
             }

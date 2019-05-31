@@ -114,11 +114,16 @@ public class LoginWindow {
                 System.out.print(user.getName() + "" + user.getSurname());
             }
             // w przypadku RejectAccountsRequest dokładnie tak samo jak w AcceptAccountRequest
-            RejectAccountsRequest acceptRequest = new RejectAccountsRequest();
+            // w akcetacji i odrzucaniu kont mozliwe wysylanie kilku loginow na raz - w jednym zapytaniu
+            AcceptAccountsRequest acceptRequest = new AcceptAccountsRequest();
             acceptRequest.getLogins().add(new Login(list.getInactiveAccounts().get(/*przykladowy index*/0).getLogin()));
             serializer.serializeAndSend(acceptRequest);
             if (serializer.deserialize())
                 System.out.println("Udało się akceptować");
+
+            // "AcceptConsultationRequest" i "RejectConsultationRequest"
+            serializer.serializeAndSend(new MenageConsultationRequest("5cf181d6e695bf2295443083", "RejectConsultationRequest"));
+            serializer.serializeAndSend(new MenageConsultationRequest("to_jest_id_konsultacji", "AcceptConsultationRequest"));
         }
         catch (Exception e){
             System.out.print("COŚ SIĘ ZJEBAŁO:  ");

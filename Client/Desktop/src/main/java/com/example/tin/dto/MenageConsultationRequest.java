@@ -1,15 +1,23 @@
 package com.example.tin.dto;
 
-public class CancelConsultationRequest {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class MenageConsultationRequest {
     String id;
-    String login;
-    String type = "CancelConsultationRequest";
-    public CancelConsultationRequest(String id, String login) {
+    //"AcceptConsultationRequest" lub "RejectConsultationRequest" lub "CancelConsultationRequest"
+    String type;
+
+    public MenageConsultationRequest(String id, String type) throws Exception {
+        List<String> dopuszczalne = new ArrayList<>(Arrays.asList("AcceptConsultationRequest", "RejectConsultationRequest", "CancelConsultationRequest"));
         this.id = id;
-        this.login = login;
+        if (! dopuszczalne.contains(type))
+            throw new Exception("Nie można przypisać takiego typu");
+        this.type = type;
     }
 
-    public CancelConsultationRequest() {
+    public MenageConsultationRequest() {
     }
 
     public String getId() {
@@ -18,14 +26,6 @@ public class CancelConsultationRequest {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
     }
 
     public String getType() {
