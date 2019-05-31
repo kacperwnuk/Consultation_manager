@@ -28,7 +28,7 @@ public:
     explicit InactiveUsersRequest(Json::Value);
 
     ~InactiveUsersRequest() override {
-        std::cout << "destruktor login" << std::endl;
+        std::cout << "Zamykam inactiveUsers" << std::endl;
     }
 
     std::unique_ptr<Request> create(Json::Value) override;

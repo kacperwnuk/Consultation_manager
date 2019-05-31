@@ -19,7 +19,6 @@ class ReservationRequest: public Request {
     };
 
 private:
-    std::string login;
     std::string id;
     static ReservationHelper helper;
 
@@ -28,16 +27,12 @@ public:
 
     void setId(const std::string &id);
 
-    const std::string &getLogin() const;
-
-    void setLogin(const std::string &login);
-
     ReservationRequest() = default;
 
     explicit ReservationRequest(Json::Value);
 
     ~ReservationRequest() override {
-        std::cout << "Zamykam registration" << std::endl;
+        std::cout << "Zamykam reservation" << std::endl;
     }
 
     std::unique_ptr<Request> create(Json::Value) override;

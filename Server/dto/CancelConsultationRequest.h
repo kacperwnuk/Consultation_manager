@@ -18,7 +18,6 @@ class CancelConsultationRequest  : public Request {
     };
 
 private:
-    std::string login;
     std::string id;
     static CancelConsultationHelper helper;
 
@@ -26,10 +25,6 @@ public:
     const std::string &getId() const;
 
     void setId(const std::string &id);
-
-    const std::string &getLogin() const;
-
-    void setLogin(const std::string &login);
 
     CancelConsultationRequest() = default;
 

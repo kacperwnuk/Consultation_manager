@@ -9,7 +9,6 @@ ReservationRequest::ReservationHelper ReservationRequest::helper;
 
 
 ReservationRequest::ReservationRequest(Json::Value value) {
-    this->login = value["login"].asString();
     this->id = value["id"].asString();
 
 }
@@ -22,15 +21,6 @@ const std::string &ReservationRequest::getId() const {
 void ReservationRequest::setId(const std::string &id) {
     ReservationRequest::id = id;
 }
-
-const std::string &ReservationRequest::getLogin() const {
-    return login;
-}
-
-void ReservationRequest::setLogin(const std::string &login) {
-    ReservationRequest::login = login;
-}
-
 
 std::unique_ptr<Request> ReservationRequest::create(Json::Value value) {
     std::unique_ptr<Request> request (new ReservationRequest(value));
@@ -46,7 +36,6 @@ std::unique_ptr<Serializable> ReservationRequest::execute(Context& context) {
     }
 
     auto dao = Dao::getDaoCollection("TIN", "consultation");
-    auto dao2 = Dao::getDaoCollection("TIN", "account");
     try {
         auto oldConsultation = dao->getConsultationById(this->getId());
 
@@ -56,7 +45,7 @@ std::unique_ptr<Serializable> ReservationRequest::execute(Context& context) {
             return std::move(response);
         }*/
 
-        auto account = dao2->getAccountByLogin(getLogin());
+        auto account = context.getAccount();
 
         AccountInfoForClient info(account.getName(), account.getSurname(), account.getLogin());
 

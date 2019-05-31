@@ -7,17 +7,8 @@
 
 UsersConsultationsRequest::UsersConsultationsRequestHelper UsersConsultationsRequest::helper;
 
-const std::string &UsersConsultationsRequest::getLogin() const{
-    return login;
-}
-
-void UsersConsultationsRequest::setLogin(const std::string &login){
-    this->login = login;
-}
-
 
 UsersConsultationsRequest::UsersConsultationsRequest(Json::Value json){
-    this->login = json["login"].asString();
 }
 
 
@@ -36,7 +27,7 @@ std::unique_ptr<Serializable> UsersConsultationsRequest::execute(Context& contex
 
     auto daoCon = Dao::getDaoCollection("TIN", "consultation");
     auto daoUser = Dao::getDaoCollection("TIN", "account");
-    Account user = daoUser->getAccountByLogin(login);
+    Account user = context.getAccount();
     AccountInfoForClient userInfo(user.getName(), user.getSurname(), user.getLogin());
     try{
         std::vector<ConsultationInfoForClient> consultations = daoCon->getConsultationsByUser(userInfo);

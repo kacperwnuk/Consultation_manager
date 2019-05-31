@@ -28,7 +28,7 @@ public:
     explicit AcceptAccountsRequest(Json::Value);
 
     ~AcceptAccountsRequest() override {
-        std::cout << "Zamykam registration" << std::endl;
+        std::cout << "Zamykam AcceptAccountsRequest" << std::endl;
     }
 
     std::unique_ptr<Request> create(Json::Value) override;

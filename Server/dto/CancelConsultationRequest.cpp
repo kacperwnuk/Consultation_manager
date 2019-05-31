@@ -10,7 +10,6 @@ CancelConsultationRequest::CancelConsultationHelper CancelConsultationRequest::h
 
 
 CancelConsultationRequest::CancelConsultationRequest(Json::Value value) {
-    this->login = value["login"].asString();
     this->id = value["id"].asString();
 
 }
@@ -22,14 +21,6 @@ const std::string &CancelConsultationRequest::getId() const {
 
 void CancelConsultationRequest::setId(const std::string &id) {
     CancelConsultationRequest::id = id;
-}
-
-const std::string &CancelConsultationRequest::getLogin() const {
-    return login;
-}
-
-void CancelConsultationRequest::setLogin(const std::string &login) {
-    CancelConsultationRequest::login = login;
 }
 
 
@@ -51,7 +42,7 @@ std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& contex
     try {
         auto oldConsultation = dao->getConsultationById(this->getId());
 
-        auto account = dao2->getAccountByLogin(getLogin());
+        auto account = context.getAccount();
 
         AccountInfoForClient info(account.getName(), account.getSurname(), account.getLogin());
          if (oldConsultation.getStudent() != info) {

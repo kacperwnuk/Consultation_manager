@@ -18,17 +18,12 @@ class UsersConsultationsRequest : public Request {
     };
 
 private:
-    std::string login;
     static UsersConsultationsRequestHelper helper;
 
 public:
     const std::string &getId() const;
 
     void setId(const std::string &id);
-
-    const std::string &getLogin() const;
-
-    void setLogin(const std::string &login);
 
     UsersConsultationsRequest() = default;
 

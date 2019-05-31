@@ -28,7 +28,7 @@ public:
     explicit RejectAccountsRequest(Json::Value);
 
     ~RejectAccountsRequest() override {
-        std::cout << "Zamykam registration" << std::endl;
+        std::cout << "Zamykam reject accounts" << std::endl;
     }
 
     std::unique_ptr<Request> create(Json::Value) override;
