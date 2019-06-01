@@ -101,9 +101,10 @@ std::vector<ConsultationInfoForClient> Dao::getUnconfirmedConsultations() {
     return consultations;
 }
 
-std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoForClient &user) {
+std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoForClient &user, bool isStudent) {
 
-    auto results = coll.find(s_document{} << "student" << user.getDocumentFormat() << bsoncxx::builder::stream::finalize);
+    std::string who = isStudent ? "student" : "lecturer";
+    auto results = coll.find(s_document{} << who << user.getDocumentFormat() << bsoncxx::builder::stream::finalize);
 
     std::vector<ConsultationInfoForClient> consultations;
 

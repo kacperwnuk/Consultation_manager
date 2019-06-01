@@ -58,7 +58,7 @@ public:
 
     std::vector<ConsultationInfoForClient> getUnconfirmedConsultations();
 
-    std::vector<ConsultationInfoForClient> getConsultationsByUser(AccountInfoForClient &user);
+    std::vector<ConsultationInfoForClient> getConsultationsByUser(AccountInfoForClient &user, bool isStudent);
 
     std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
 };

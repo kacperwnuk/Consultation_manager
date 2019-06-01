@@ -30,7 +30,7 @@ std::unique_ptr<Serializable> UsersConsultationsRequest::execute(Context& contex
     Account user = context.getAccount();
     AccountInfoForClient userInfo(user.getName(), user.getSurname(), user.getLogin());
     try{
-        std::vector<ConsultationInfoForClient> consultations = daoCon->getConsultationsByUser(userInfo);
+        std::vector<ConsultationInfoForClient> consultations = daoCon->getConsultationsByUser(userInfo, user.getAccountRole() == STUDENT);
         std::unique_ptr<Serializable> response(new UsersConsultationsResponse(consultations));
         return std::move(response);
     }

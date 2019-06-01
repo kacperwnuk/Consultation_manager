@@ -60,7 +60,7 @@ std::unique_ptr<Serializable> NewConsultationRequest::execute(Context& context) 
             return std::move(response);
         }
 
-        auto accountTutor = accountDao->getAccountByLogin(this->consultationTutorLogin);
+        auto accountTutor = context.getAccountRole() == STUDENT ? accountDao->getAccountByLogin(this->consultationTutorLogin) : context.getAccount();
         AccountInfoForClient accountInfoForClientTutor(accountTutor);
 
         auto accountStudent = accountDao->getAccountByLogin(this->consultationCreatorLogin);
