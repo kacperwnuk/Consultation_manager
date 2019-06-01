@@ -19,6 +19,8 @@ class InactiveUsersRequest : public Request{
 
     static InactiveUsersHelper helper;
 
+    AccountRole role;
+
 public:
 
     friend std::ostream &operator<<(std::ostream &os, const InactiveUsersRequest &request);
