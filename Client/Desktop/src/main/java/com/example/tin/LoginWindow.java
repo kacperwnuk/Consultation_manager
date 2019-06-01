@@ -3,14 +3,21 @@ package com.example.tin;
 import com.example.tin.dto.*;
 import com.example.tin.entity.Login;
 import com.example.tin.entity.Participant;
+import com.example.tin.threads.LoginThread;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class LoginWindow {
     @FXML
@@ -21,6 +28,8 @@ public class LoginWindow {
     Button loginButton;
     @FXML
     Button registerButton;
+    @FXML
+    public ProgressIndicator indicator;
 
     private String login;
     private String password;
@@ -32,21 +41,11 @@ public class LoginWindow {
         password = passwordTextField.getText();
         System.out.println("Login: " + login);
         System.out.println("Password: " + password);
-        try {
-            serializer.serializeAndSend(new LoginRequest(login, password));
-            LoginResponse response = serializer.deserializeLoginResponse();
-            if (response.isValid())
-                if (response.isLecturer())
-                    showTutorMainWindow();
-                else
-                    showMainWindow();
-            else
-                showDialog();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
 
+        LoginThread thread = new LoginThread(serializer, (Stage) loginButton.getScene().getWindow(), login, password, this);
+        indicator.setVisible(true);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @FXML
@@ -72,64 +71,4 @@ public class LoginWindow {
             e.printStackTrace();
         }
     }
-
-    private void showMainWindow() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main.fxml"));
-            AnchorPane root = fxmlLoader.load();
-            final MainPage controller = fxmlLoader.getController();
-            controller.setSerializer(serializer);
-            controller.setLogin(login);
-            Scene scene = new Scene(root);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("TIN Main menu");
-            stage.setOnHidden(e -> controller.disconnect());
-            stage.show();
-            Stage oldstage = (Stage) loginButton.getScene().getWindow();
-            oldstage.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    private void showTutorMainWindow(){
-        System.out.println("TODO: Wyświetlenie okna tutora");
-
-        TESTDEBUG(); // TO REMOVE, JUST FOR TESTS
-        //TODO
-    }
-
-    private void showDialog(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Błąd");
-        alert.setHeaderText("Błąd logowania");
-        alert.showAndWait();
-    }
-
-    private void TESTDEBUG(){
-        try {
-            serializer.serializeAndSend(new InactiveUsersRequest());
-            InactiveUsersResponse list = serializer.deserializeInactiveUsersResponse();
-            for (Participant user : list.getInactiveAccounts()){
-                System.out.print(user.getName() + "" + user.getSurname());
-            }
-            // w przypadku RejectAccountsRequest dokładnie tak samo jak w AcceptAccountRequest
-            // w akcetacji i odrzucaniu kont mozliwe wysylanie kilku loginow na raz - w jednym zapytaniu
-            AcceptAccountsRequest acceptRequest = new AcceptAccountsRequest();
-            acceptRequest.getLogins().add(new Login(list.getInactiveAccounts().get(/*przykladowy index*/0).getLogin()));
-            serializer.serializeAndSend(acceptRequest);
-            if (serializer.deserialize())
-                System.out.println("Udało się akceptować");
-
-            // "AcceptConsultationRequest" i "RejectConsultationRequest"
-            serializer.serializeAndSend(new MenageConsultationRequest("5cf181d6e695bf2295443083", "RejectConsultationRequest"));
-            serializer.serializeAndSend(new MenageConsultationRequest("to_jest_id_konsultacji", "AcceptConsultationRequest"));
-        }
-        catch (Exception e){
-            System.out.print("COŚ SIĘ ZJEBAŁO:  ");
-            e.printStackTrace();
-        }
-
-    }
-
 }

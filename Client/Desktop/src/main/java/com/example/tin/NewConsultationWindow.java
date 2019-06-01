@@ -1,6 +1,12 @@
 package com.example.tin;
 
+import com.example.tin.dto.AllTutorsRequest;
+import com.example.tin.dto.AllTutorsResponse;
 import com.example.tin.dto.NewConsultationRequest;
+import com.example.tin.entity.Participant;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swt.FXCanvas;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -29,17 +35,21 @@ public class NewConsultationWindow {
 
 
     private Serializer serializer;
-    private String login;
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
 
     public void setSerializer(Serializer serializer) {
         startTimeBox.setPromptText("hh:mm");
         endTimeBox.setPromptText("hh:mm");
         this.serializer = serializer;
-        tutorPicker.getItems().add("testtutor");
+        try{
+            serializer.serializeAndSend(new AllTutorsRequest());
+            AllTutorsResponse response = serializer.deserializeAllTutorsResponse();
+            ObservableList<Participant> observableList = FXCollections.observableList(response.getTutorsAccounts());
+            tutorPicker.setItems(observableList);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void addButtonClicked(ActionEvent actionEvent) throws IOException, JSONException {

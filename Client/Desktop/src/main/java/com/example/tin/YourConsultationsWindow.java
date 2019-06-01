@@ -21,24 +21,17 @@ public class YourConsultationsWindow {
     Button cancelButton;
 
     private Serializer serializer;
-    private String login;
     private ObservableList<Consultation> observableList;
+    
 
-    @FXML
-    private void initialize(){}
-    public void setLogin(String login) {
-        this.login = login;
+    public void setSerializer(Serializer serializer) {
+        this.serializer = serializer;
         try{
-            System.out.println(login);
             setConsultations();
         }
         catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    public void setSerializer(Serializer serializer) {
-        this.serializer = serializer;
     }
 
     public void btnCancelClicked(ActionEvent actionEvent) {

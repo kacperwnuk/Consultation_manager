@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.List;
 
 public class Serializer {
 
@@ -70,18 +71,35 @@ public class Serializer {
         try{
             InactiveUsersResponse response = new InactiveUsersResponse();
             JSONArray array = obj.getJSONArray("inactiveUsers");
-            for (int  i=0; i < array.length(); ++i){
-                JSONObject ob = array.getJSONObject(i);
-                Participant user = new Participant();
-                user.setLogin(ob.getString("login"));
-                user.setName(ob.getString("name"));
-                user.setSurname(ob.getString("surname"));
-                response.getInactiveAccounts().add(user);
-            }
+            fillParticipantList(response.getInactiveAccounts(), array);
             return response;
         }
         catch(Exception e){
             return null;
+        }
+    }
+
+    public AllTutorsResponse deserializeAllTutorsResponse() throws IOException, JSONException {
+        JSONObject obj = new JSONObject(connectionController.receive());
+        try{
+            AllTutorsResponse response = new AllTutorsResponse();
+            JSONArray array = obj.getJSONArray("tutors");
+            fillParticipantList(response.getTutorsAccounts(), array);
+            return response;
+        }
+        catch(Exception e){
+            return null;
+        }
+    }
+
+    private void fillParticipantList(List<Participant> accountsList, JSONArray array) throws JSONException {
+        for (int  i=0; i < array.length(); ++i){
+            JSONObject ob = array.getJSONObject(i);
+            Participant user = new Participant();
+            user.setLogin(ob.getString("login"));
+            user.setName(ob.getString("name"));
+            user.setSurname(ob.getString("surname"));
+            accountsList.add(user);
         }
     }
 
@@ -90,6 +108,6 @@ public class Serializer {
     }
 
     public void disconnect(){
-        connectionController.disconnect();
+        System.out.println("disconnecting");connectionController.disconnect();
     }
 }

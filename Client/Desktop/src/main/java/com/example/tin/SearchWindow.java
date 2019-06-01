@@ -32,16 +32,12 @@ public class SearchWindow {
 
     private Serializer serializer;
     private ObservableList<Consultation> observableList;
-    private String login;
 
     @FXML
     private void initialize() {
         dateBox.valueProperty().addListener((ov, oldValue, newValue) -> {
             setConsultations();
         });
-    }
-    public void setLogin(String login){
-        this.login = login;
     }
     public void setSerializer(Serializer serializer){
         this.serializer = serializer;
