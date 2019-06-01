@@ -2,6 +2,7 @@ package com.example.tin.tutor;
 
 import com.example.tin.LoginWindow;
 import com.example.tin.Serializer;
+import com.example.tin.YourConsultationsWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -105,8 +106,39 @@ public class TutorMainWindow {
     }
 
     public void btnCancelConsultationClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/yourconsultations.fxml"));
+            AnchorPane root = fxmlLoader.load();
+            final YourConsultationsWindow controller = fxmlLoader.getController();
+            controller.setSerializer(serializer);
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Twoje konsultacje");
+            stage.show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+
     public void btnRequestsClicked(ActionEvent actionEvent) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/tutorrequests.fxml"));
+            AnchorPane root = fxmlLoader.load();
+            final TutorConsultationRequests controller = fxmlLoader.getController();
+            controller.setSerializer(serializer);
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Propozycje konsultacji");
+            stage.show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

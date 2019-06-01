@@ -5,7 +5,7 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <cstring>
-#include <zconf.h>
+//#include <zconf.h>
 #include <pthread.h>
 #include <vector>
 #include <poll.h>
@@ -75,7 +75,7 @@ in_port_t getPortFromArgument(char *arg) {
 }
 
 int main(int argc, char *argv[]) {
-    in_port_t port = 9990; // default port
+    in_port_t port = 9995; // default port
     if (argc > 1) {
         try {
             port = getPortFromArgument(argv[1]);

@@ -120,6 +120,7 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoFo
                 consultation.getRoom(),
                 consultation.getConsultationType()
         );
+        if(isStudent || (consultation.getStatus() != LECTURER_REJECTED && consultation.getConsultationDateStart().value > std::chrono::system_clock::now().time_since_epoch()))
         consultations.push_back(consultationInfo);
     }
     return consultations;
