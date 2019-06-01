@@ -45,16 +45,23 @@ std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& contex
         auto account = context.getAccount();
 
         AccountInfoForClient info(account.getName(), account.getSurname(), account.getLogin());
-         if (oldConsultation.getStudent() != info) {
+         if ((context.getAccountRole() == STUDENT && oldConsultation.getStudent() != info) ||
+                 (context.getAccountRole() == LECTURER && oldConsultation.getLecturer() != info)) {
               std::cout << "konsultacja nie nalezy do tego uzytkownika:" << oldConsultation.getStudent() <<  std::endl;
               std::unique_ptr<Serializable> response(new CancelConsultationResponse(ERROR));
               return std::move(response);
           }
         AccountInfoForClient undefined;
-        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(),undefined, FREE,
+        ConsultationStatus newStatus;
+         if (context.getAccountRole() == STUDENT) {
+             newStatus = FREE;
+         } else{
+             newStatus = LECTURER_REJECTED;
+             undefined = oldConsultation.getStudent();
+         }
+        Consultation newConsultation(oldConsultation.getLecturer(), oldConsultation.getRoom(), undefined, newStatus,
                                      oldConsultation.getType(), oldConsultation.getConsultationDateStart(),
                                      oldConsultation.getConsultationDateEnd());
-
         newConsultation.setID(oldConsultation.getId().to_string());
 
         dao->updateDocument(oldConsultation.getDocumentFormat(), newConsultation.getDocumentFormat());
