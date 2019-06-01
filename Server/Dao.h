@@ -56,7 +56,7 @@ public:
 
     void reserveConsultation(Consultation cons, std::string username);
 
-    std::vector<ConsultationInfoForClient> getUnconfirmedConsultations();
+    std::vector<ConsultationInfoForClient> getUnconfirmedConsultations(AccountInfoForClient lecturer);
 
     std::vector<ConsultationInfoForClient> getConsultationsByUser(AccountInfoForClient &user, bool isStudent);
 

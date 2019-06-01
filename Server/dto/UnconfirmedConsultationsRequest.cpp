@@ -27,7 +27,8 @@ std::unique_ptr<Serializable> UnconfirmedConsultationsRequest::execute(Context& 
     auto dao = Dao::getDaoCollection("TIN", "consultation");
 
     try {
-        auto consultations = dao->getUnconfirmedConsultations();
+        AccountInfoForClient info(context.getAccount());
+        auto consultations = dao->getUnconfirmedConsultations(info);
         std::unique_ptr<Serializable> response(new UnconfirmedConsultationsResponse(consultations));
         return std::move(response);
     } catch (std::exception &e) {

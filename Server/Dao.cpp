@@ -78,9 +78,11 @@ Consultation Dao::getConsultationById(std::string id) {
 
 }
 
-std::vector<ConsultationInfoForClient> Dao::getUnconfirmedConsultations() {
+std::vector<ConsultationInfoForClient> Dao::getUnconfirmedConsultations(AccountInfoForClient lecturer) {
 
-    auto results = coll.find(s_document{} << "consultationStatus" << ConsultationStatus::AWAITING_LECTURER_CONFIRMATION << bsoncxx::builder::stream::finalize);
+    auto results = coll.find(s_document{} << "consultationStatus" << ConsultationStatus::AWAITING_LECTURER_CONFIRMATION
+            <<"lecturer"<<lecturer.getDocumentFormat()
+            << bsoncxx::builder::stream::finalize);
 
     std::vector<ConsultationInfoForClient> consultations;
 

@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <iostream>
 #include "ServerSocket.h"
 
 
@@ -79,7 +80,7 @@ bool ServerSocket::initialize() {
 }
 
 void ServerSocket::changePort(in_port_t newPort) {
-    close(port);
+    std::cout<<"Wynik zamkniecia: "<<close(port)<<errno<<std::endl;
     port = newPort;
     isInitialized = false;
 }

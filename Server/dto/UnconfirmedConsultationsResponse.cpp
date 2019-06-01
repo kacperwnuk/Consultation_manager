@@ -19,6 +19,6 @@ Json::Value UnconfirmedConsultationsResponse::getJson() {
         }
     }
 
-    value["type"] = "DailyConsultationListResponse";
+    value["type"] = "UnconfirmedConsultationsResponse";
     return value;
 }

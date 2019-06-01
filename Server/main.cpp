@@ -26,26 +26,12 @@
 #include "dto/LoginResponse.h"
 #include "threads/TCPThread.h"
 #include "threads/MessageSender.h"
+#include "Admin.h"
 #include <jsoncpp/json/json.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
 using namespace std;
-
-enum Commands {
-    stopCommand,
-    restartCommand,
-    changePortCommand,
-    sendToCommand
-};
-map<string, Commands> mapStringCommands;
-
-void initialize() {
-    mapStringCommands["stop"] = stopCommand;
-    mapStringCommands["restart"] = restartCommand;
-    mapStringCommands["changeport"] = changePortCommand;
-    mapStringCommands["sendto"] = sendToCommand;
-}
 
 in_port_t getPortFromArgument(char *arg) {
     in_port_t port;
@@ -84,37 +70,23 @@ int main(int argc, char *argv[]) {
             cout << e.what() << endl << "starting on default port(" << port << ")" << endl;
         }
     }
-    auto running = true;
+
     TCPThread tcpThread(port);
     tcpThread.start();
 
-    initialize();
+    Admin admin(&tcpThread);
+    int result = admin.run();
 
-
-    char value[256];
-    while (running) {
-        string message;
-        cin >> value;
-        switch (mapStringCommands[value]) {
-            case stopCommand:
-                cout << "Stopping server..." << endl;
-                tcpThread.cancel();
-                running = false;
-                break;
-            case changePortCommand:
-//                tcpThread.changePort(9998);
-                break;
-            case restartCommand:
-                break;
-            case sendToCommand:
-                break;
-            default:
-                break;
-        }
-    }
-    tcpThread.join();
+    //tcpThread.join();
     cout << "Server stopped." << endl;
-    return 0;
+    if (result == 42) {
+        tcpThread.changePort(9998);
+        tcpThread.cancel();
+        sleep(10);
+        execve(argv[0], argv, NULL);
+    }
+    else
+        return 0;
 }
 
 
