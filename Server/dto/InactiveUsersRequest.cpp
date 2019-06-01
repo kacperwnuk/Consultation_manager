@@ -9,7 +9,7 @@ InactiveUsersRequest::InactiveUsersHelper InactiveUsersRequest::helper;
 
 
 InactiveUsersRequest::InactiveUsersRequest(Json::Value value) {
-
+    this->role = (AccountRole) value["rola"].asInt();
 
 }
 
@@ -30,7 +30,7 @@ std::unique_ptr<Serializable> InactiveUsersRequest::execute(Context& context) {
 
     auto dao = Dao::getDaoCollection("TIN", "account");
     try {
-        auto inactiveAccounts = dao->getAccountsByStatusAndRole(INACTIVE, STUDENT);
+        auto inactiveAccounts = dao->getAccountsByStatusAndRole(INACTIVE, this->role);
 
         std::vector<AccountInfoForClient> inactiveAccountsInfo;
         for (auto account : inactiveAccounts) {
