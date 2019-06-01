@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="476.0" prefWidth="342.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.tutor.TutorNewConsultation">
+    <children>
+        <DatePicker fx:id="dateBox" layoutX="71.0" layoutY="69.0" prefHeight="28.0" prefWidth="201.0" />
+        <Label layoutX="129.0" layoutY="45.0" text="Data konsultacji" />
+        <TextField fx:id="startTimeBox" layoutX="71.0" layoutY="155.0" prefHeight="28.0" prefWidth="201.0" />
+        <TextField fx:id="endTimeBox" layoutX="71.0" layoutY="237.0" prefHeight="28.0" prefWidth="201.0" />
+        <TextField fx:id="roomBox" layoutX="71.0" layoutY="329.0" prefHeight="28.0" prefWidth="201.0" />
+        <Label layoutX="116.0" layoutY="131.0" text="Godzina rozpoczęcia" />
+        <Label layoutX="115.0" layoutY="213.0" text="Godzina zakończenia" />
+        <Label layoutX="157.0" layoutY="304.0" text="Pokój" />
+        <Button fx:id="addButton" layoutX="117.0" layoutY="405.0" mnemonicParsing="false" onAction="#addButtonClicked" prefHeight="35.0" prefWidth="112.0" text="Dodaj" />
+    </children>
+</AnchorPane>

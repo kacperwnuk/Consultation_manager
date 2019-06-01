@@ -6,6 +6,7 @@ import com.example.tin.Serializer;
 import com.example.tin.dto.*;
 import com.example.tin.entity.Login;
 import com.example.tin.entity.Participant;
+import com.example.tin.tutor.TutorMainWindow;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -72,9 +73,21 @@ public class LoginThread extends Thread  {
         }
     }
     private void showTutorMainWindow(){
-        System.out.println("TODO: Wyświetlenie okna tutora");
-        TESTDEBUG();
-        //TODO
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/tutormain.fxml"));
+            AnchorPane root = fxmlLoader.load();
+            final TutorMainWindow controller = fxmlLoader.getController();
+            controller.setSerializer(serializer);
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("TIN Tutor Main");
+            stage.setOnHidden(e -> controller.disconnect());
+            stage.show();
+            oldstage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showDialog(){

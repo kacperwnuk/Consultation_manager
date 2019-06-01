@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<?import javafx.scene.control.ComboBox?>
-<AnchorPane prefHeight="486.0" prefWidth="342.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.NewConsultationWindow">
+<AnchorPane prefHeight="571.0" prefWidth="342.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.NewConsultationWindow">
    <children>
-      <DatePicker fx:id="dateBox" layoutX="71.0" layoutY="65.0" prefHeight="28.0" prefWidth="201.0" />
-      <Label layoutX="129.0" layoutY="41.0" text="Data konsultacji" />
-      <TextField fx:id="startTimeBox" layoutX="71.0" layoutY="151.0" prefHeight="28.0" prefWidth="201.0" />
-      <TextField fx:id="endTimeBox" layoutX="71.0" layoutY="233.0" prefHeight="28.0" prefWidth="201.0" />
-      <TextField fx:id="roomBox" layoutX="71.0" layoutY="325.0" prefHeight="28.0" prefWidth="201.0" />
-      <Label layoutX="116.0" layoutY="127.0" text="Godzina rozpoczęcia" />
-      <Label layoutX="115.0" layoutY="209.0" text="Godzina zakończenia" />
-      <Label layoutX="157.0" layoutY="300.0" text="Pokój" />
-      <ComboBox fx:id="tutorPicker" layoutX="115.0" layoutY="393.0" />
-      <Button fx:id="addButton" layoutX="115.0" layoutY="423.0" mnemonicParsing="false" onAction="#addButtonClicked" prefHeight="35.0" prefWidth="112.0" text="Dodaj" />
+      <DatePicker fx:id="dateBox" layoutX="71.0" layoutY="150.0" prefHeight="28.0" prefWidth="201.0" />
+      <Label layoutX="129.0" layoutY="126.0" text="Data konsultacji" />
+      <TextField fx:id="startTimeBox" layoutX="71.0" layoutY="236.0" prefHeight="28.0" prefWidth="201.0" />
+      <TextField fx:id="endTimeBox" layoutX="71.0" layoutY="318.0" prefHeight="28.0" prefWidth="201.0" />
+      <TextField fx:id="roomBox" layoutX="71.0" layoutY="410.0" prefHeight="28.0" prefWidth="201.0" />
+      <Label layoutX="116.0" layoutY="212.0" text="Godzina rozpoczęcia" />
+      <Label layoutX="115.0" layoutY="294.0" text="Godzina zakończenia" />
+      <Label layoutX="157.0" layoutY="385.0" text="Pokój" />
+      <ComboBox fx:id="tutorPicker" layoutX="72.0" layoutY="72.0" prefHeight="25.0" prefWidth="201.0" />
+      <Button fx:id="addButton" layoutX="117.0" layoutY="486.0" mnemonicParsing="false" onAction="#addButtonClicked" prefHeight="35.0" prefWidth="112.0" text="Dodaj" />
+      <Label layoutX="138.0" layoutY="46.0" text="Wykładowca" />
    </children>
 </AnchorPane>
