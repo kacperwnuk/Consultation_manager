@@ -22,7 +22,7 @@ public class YourConsultationsWindow {
 
     private Serializer serializer;
     private ObservableList<Consultation> observableList;
-    
+
 
     public void setSerializer(Serializer serializer) {
         this.serializer = serializer;
