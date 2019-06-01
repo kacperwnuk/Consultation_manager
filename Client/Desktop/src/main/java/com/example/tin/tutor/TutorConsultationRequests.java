@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ public class TutorConsultationRequests {
     Button acceptButton;
     @FXML
     Button declineButton;
+
     private Serializer serializer;
     private ObservableList<Consultation> observableList;
 
@@ -65,45 +65,35 @@ public class TutorConsultationRequests {
     private void showDialog(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Błąd");
-        alert.setHeaderText("Anulowanie konsultacji nie powiodło się!");
+        alert.setHeaderText("Przetwarzanie konsultacji nie powiodło się!");
         alert.showAndWait();
     }
     public void btnAcceptClicked(ActionEvent actionEvent) {
-        /*
-        List<Login> logins = new ArrayList<Login>();
-        List<Participant> selectedUsers = userList.getSelectionModel().getSelectedItems();
-        if(selectedUsers != null && selectedUsers.size() != 0) {
-            for(Participant p : selectedUsers){
-                logins.add(new Login(p.getLogin()));
-            }
-        }
-        AcceptAccountsRequest request = new AcceptAccountsRequest();
-        request.setLogins(logins);
+        Consultation con = consultationList.getSelectionModel().getSelectedItem();
+        MenageConsultationRequest request = new MenageConsultationRequest();
+        request.setType("AcceptConsultationRequest");
+        request.setId(con.getId());
         try{
             serializer.serializeAndSend(request);
-        } catch (Exception e){
+        }catch (Exception e){
             e.printStackTrace();
+            showDialog();
         }
-*/
+
+
     }
 
     public void btnDeclineClicked(ActionEvent actionEvent) {
-        /*
-        List<Login> logins = new ArrayList<Login>();
-        List<Participant> selectedUsers = userList.getSelectionModel().getSelectedItems();
-        if(selectedUsers != null && selectedUsers.size() != 0) {
-            for(Participant p : selectedUsers){
-                logins.add(new Login(p.getLogin()));
-            }
-        }
-        RejectAccountsRequest request = new RejectAccountsRequest();
-        request.setLogins(logins);
+        Consultation con = consultationList.getSelectionModel().getSelectedItem();
+        MenageConsultationRequest request = new MenageConsultationRequest();
+        request.setType("RejectConsultationRequest");
+        request.setId(con.getId());
         try{
             serializer.serializeAndSend(request);
-        } catch (Exception e){
+        }catch (Exception e){
             e.printStackTrace();
+            showDialog();
         }
-*/
     }
 
 

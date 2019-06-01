@@ -6,15 +6,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="499.0" prefWidth="393.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.tutor.TutorConsultationRequests">
+<AnchorPane prefHeight="527.0" prefWidth="525.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tin.tutor.TutorConsultationRequests">
     <children>
-        <Label layoutX="104.0" layoutY="31.0" text="Propozycje konsultacji" underline="true">
+        <Label layoutX="170.0" layoutY="31.0" text="Propozycje konsultacji" underline="true">
             <font>
                 <Font size="19.0" />
             </font>
         </Label>
-        <ListView fx:id="consultationList" layoutX="35.0" layoutY="78.0" prefHeight="353.0" prefWidth="324.0" />
-        <Button fx:id="acceptButton" layoutX="35.0" layoutY="448.0" mnemonicParsing="false" onAction="#btnAcceptClicked" prefHeight="35.0" prefWidth="124.0" text="Zatwierdź" />
-        <Button fx:id="declineButton" layoutX="235.0" layoutY="448.0" mnemonicParsing="false" onAction="#btnDeclineClicked" prefHeight="35.0" prefWidth="124.0" text="Usuń" />
+        <ListView fx:id="consultationList" layoutX="35.0" layoutY="78.0" prefHeight="375.0" prefWidth="463.0" />
+        <Button fx:id="acceptButton" layoutX="35.0" layoutY="472.0" mnemonicParsing="false" onAction="#btnAcceptClicked" prefHeight="35.0" prefWidth="124.0" text="Zatwierdź" />
+        <Button fx:id="declineButton" layoutX="374.0" layoutY="472.0" mnemonicParsing="false" onAction="#btnDeclineClicked" prefHeight="35.0" prefWidth="124.0" text="Usuń" />
     </children>
 </AnchorPane>
