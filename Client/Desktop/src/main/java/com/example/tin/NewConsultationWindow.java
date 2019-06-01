@@ -58,8 +58,7 @@ public class NewConsultationWindow {
         System.out.println("" + start + "  " + end);
 
         int room = Integer.parseInt(roomBox.getText());
-        String tutor = tutorPicker.getValue().toString();
-
+        String tutor = ((Participant)tutorPicker.getValue()).getLogin();
 
         NewConsultationRequest consultation = new NewConsultationRequest(start, end, tutor, room);
         serializer.serializeAndSend(consultation);

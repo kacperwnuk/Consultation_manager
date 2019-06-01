@@ -43,4 +43,9 @@ public class Participant {
     public void setSurname(String surname) {
         this.surname = surname;
     }
+
+    @Override
+    public String toString(){
+        return name + " " + surname;
+    }
 }
