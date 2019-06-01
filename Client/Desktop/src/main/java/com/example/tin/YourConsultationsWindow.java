@@ -37,7 +37,7 @@ public class YourConsultationsWindow {
     public void btnCancelClicked(ActionEvent actionEvent) {
         Consultation con = consultationList.getSelectionModel().getSelectedItem();
         try{
-            serializer.serializeAndSend(new MenageConsultationRequest(con.getId(), "MenageConsultationRequest"));
+            serializer.serializeAndSend(new MenageConsultationRequest(con.getId(), "CancelConsultationRequest"));
             if (!serializer.deserialize()){
                 showDialog();
             }
