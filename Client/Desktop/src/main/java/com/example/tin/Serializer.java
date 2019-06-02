@@ -2,6 +2,7 @@ package com.example.tin;
 
 import com.example.tin.dto.*;
 import com.example.tin.entity.Consultation;
+import com.example.tin.entity.ConsultationStatus;
 import com.example.tin.entity.Participant;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,11 +110,12 @@ public class Serializer {
         for (int  i=0; i < array.length(); ++i){
             JSONObject ob = array.getJSONObject(i);
             Consultation con = new Consultation();
-            con.setId(ob.getString("id"));
+            con.setId(ob.getString("_id"));
             con.setConsultationDateStart(ob.getLong("consultationDateStart"));
             con.setConsultationDateEnd(ob.getLong("consultationDateEnd"));
             con.setConsultationType(ob.getInt("consultationType"));
             con.setRoom(ob.getInt("room"));
+            con.setStatus(ConsultationStatus.values()[ob.getInt("consultationStatus")]);
             con.setLecturer(new Participant(ob.getJSONObject("lecturer")));
             con.setStudent(new Participant(ob.getJSONObject("student")));
             consultationsList.add(con);

@@ -1,0 +1,9 @@
+package com.example.tin.entity;
+
+public enum ConsultationStatus{
+    OCZEKUJACE_NA_POTWIERDZENIE_TUTORA,
+    POTWIERDZONY_PRZEZ_TUTORA,
+    ODRZUCONY_PRZEZ_TUTORA,
+    ZAREZERWOWANY_PRZEZ_STUDENTA,
+    WOLNY
+}

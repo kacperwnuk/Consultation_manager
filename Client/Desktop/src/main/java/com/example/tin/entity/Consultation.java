@@ -9,6 +9,16 @@ public class Consultation {
     long consultationDateEnd;
     int consultationType;
 
+    public ConsultationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ConsultationStatus status) {
+        this.status = status;
+    }
+
+    ConsultationStatus status;
+
     public String getId() {
         return id;
     }
@@ -84,6 +94,6 @@ public class Consultation {
                 " do: " + getEndDate().getHour() + ":" + String.format("%02d", getEndDate().getMinute())+
                 ", tutor: " + lecturer.getName() + " " + lecturer.getSurname() +
                 ", pokój: " + room  +
-                ", STATUS: " ;
+                ", STATUS: " + status;
     }
 }
