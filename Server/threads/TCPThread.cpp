@@ -112,7 +112,18 @@ void TCPThread::preparePoll(pollfd *pollList) {
             clients[i]->stop();
             delete clients[i];
             clients.erase(clients.begin() + i);
-            std::cout << "disconnect client" << std::endl;
+            std::cout << "disconnect client1" << std::endl;
+        }
+    }
+}
+
+void TCPThread::disconnectUsers() {
+    for (int i = 0; i < clients.size(); ++i) {
+        if (!clients[i]->isConnected()) {
+            clients[i]->stop();
+            delete clients[i];
+            clients.erase(clients.begin() + i);
+            std::cout << "disconnect client1" << std::endl;
         }
     }
 }
