@@ -115,15 +115,16 @@ void Admin::handleDisconnect(){
         e.what();
     }
 }
-void Admin::disconnectAll(){
-    while(tcpThread->getClients().size()>0) {
+void Admin::disconnectAll() {
+    while (tcpThread->getClients().size() > 0) {
         disconnectOne(0);
     }
+    tcpThread->disconnectUsers();
 }
-
 void Admin::disconnectOne(int index){
-    tcpThread->getClients()[index]->stop();
     tcpThread->getClients()[index]->disconnect();
+    tcpThread->disconnectUsers();
+
 }
 
 void Admin::changePass(){

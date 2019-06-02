@@ -43,6 +43,8 @@ public:
 
     void shutdownPort();
 
+    void disconnectUsers();
+
 };
 
 
