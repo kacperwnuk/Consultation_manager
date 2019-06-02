@@ -82,7 +82,6 @@ int main(int argc, char *argv[]) {
     if (result == 42) {
 
         tcpThread.cancel();
-        tcpThread.changePort(9998);
         execve(argv[0], argv, NULL);
     }
     else
