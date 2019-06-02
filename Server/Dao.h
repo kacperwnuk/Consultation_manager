@@ -58,11 +58,11 @@ public:
 
     void reserveConsultation(Consultation cons, std::string username);
 
-    std::vector<ConsultationInfoForClient> getUnconfirmedConsultations(AccountInfoForClient lecturer);
+    std::vector<Consultation> getUnconfirmedConsultations(AccountInfoForClient lecturer);
 
-    std::vector<ConsultationInfoForClient> getConsultationsByUser(AccountInfoForClient &user, bool isStudent);
+    std::vector<Consultation> getConsultationsByUser(AccountInfoForClient &user, bool isStudent);
 
-    std::vector<ConsultationInfoForClient> getConsultationsByDate(b_date, b_date);
+    std::vector<Consultation> getConsultationsByDate(b_date, b_date);
 };
 
 template<typename T>

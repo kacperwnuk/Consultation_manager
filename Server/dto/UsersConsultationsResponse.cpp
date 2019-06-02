@@ -4,7 +4,7 @@
 
 #include "UsersConsultationsResponse.h"
 
-UsersConsultationsResponse::UsersConsultationsResponse(std::vector<ConsultationInfoForClient> &consultations){
+UsersConsultationsResponse::UsersConsultationsResponse(std::vector<Consultation> &consultations){
     this->consultations = consultations;
 }
 

@@ -4,7 +4,7 @@
 
 #include "UnconfirmedConsultationsResponse.h"
 
-UnconfirmedConsultationsResponse::UnconfirmedConsultationsResponse(std::vector<ConsultationInfoForClient> consultations) :
+UnconfirmedConsultationsResponse::UnconfirmedConsultationsResponse(std::vector<Consultation> consultations) :
         consultations(std::move(consultations)) {
 
 }

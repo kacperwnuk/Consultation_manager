@@ -21,7 +21,7 @@ ConsultationInfoForClient::ConsultationInfoForClient(std::string id, const Accou
                                                      const b_date &consultationDateStart,
                                                      const b_date &consultationDateEnd, const std::string &room,
                                                      ConsultationType consultationType) : id(id), consultationDateStart(consultationDateStart), consultationDateEnd(consultationDateEnd),
-                                                                                          room(room), consultationType(consultationType) {
+                                                                                          room(room), consultationType(consultationType){
         this->lecturer = lecturer;
         this->student = student;
 

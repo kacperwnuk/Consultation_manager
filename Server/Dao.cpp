@@ -88,57 +88,40 @@ Consultation Dao::getConsultationById(std::string id) {
 
 }
 
-std::vector<ConsultationInfoForClient> Dao::getUnconfirmedConsultations(AccountInfoForClient lecturer) {
+std::vector<Consultation> Dao::getUnconfirmedConsultations(AccountInfoForClient lecturer) {
 
     auto results = coll.find(s_document{} << "consultationStatus" << ConsultationStatus::AWAITING_LECTURER_CONFIRMATION
             <<"lecturer"<<lecturer.getDocumentFormat()
             << bsoncxx::builder::stream::finalize);
 
-    std::vector<ConsultationInfoForClient> consultations;
+    std::vector<Consultation> consultations;
 
     for (auto consultationDoc : results) {
         Consultation consultation = Consultation(consultationDoc);
         std::cout << consultation << std::endl;
-        auto consultationInfo = ConsultationInfoForClient(
-                consultation.getId().to_string(),
-                consultation.getLecturer(),
-                consultation.getStudent(),
-                consultation.getConsultationDateStart(),
-                consultation.getConsultationDateEnd(),
-                consultation.getRoom(),
-                consultation.getConsultationType()
-        );
-        consultations.push_back(consultationInfo);
+
+        consultations.push_back(consultation);
     }
     return consultations;
 }
 
-std::vector<ConsultationInfoForClient> Dao::getConsultationsByUser(AccountInfoForClient &user, bool isStudent) {
+std::vector<Consultation> Dao::getConsultationsByUser(AccountInfoForClient &user, bool isStudent) {
 
     std::string who = isStudent ? "student" : "lecturer";
     auto results = coll.find(s_document{} << who << user.getDocumentFormat() << bsoncxx::builder::stream::finalize);
 
-    std::vector<ConsultationInfoForClient> consultations;
+    std::vector<Consultation> consultations;
 
     for (auto consultationDoc : results) {
         Consultation consultation = Consultation(consultationDoc);
         std::cout << consultation << std::endl;
-        auto consultationInfo = ConsultationInfoForClient(
-                consultation.getId().to_string(),
-                consultation.getLecturer(),
-                consultation.getStudent(),
-                consultation.getConsultationDateStart(),
-                consultation.getConsultationDateEnd(),
-                consultation.getRoom(),
-                consultation.getConsultationType()
-        );
         if(isStudent || (consultation.getStatus() != LECTURER_REJECTED && consultation.getConsultationDateStart().value > std::chrono::system_clock::now().time_since_epoch()))
-        consultations.push_back(consultationInfo);
+            consultations.push_back(consultation);
     }
     return consultations;
 }
 
-std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
+std::vector<Consultation> Dao::getConsultationsByDate(b_date dateStart, b_date dateEnd) {
 
 //    auto result = coll.find(s_document{} << "consultationDateStart" << bsoncxx::builder::stream::open_document <<
 //                                          "$gte" << dateStart <<
@@ -158,30 +141,14 @@ std::vector<ConsultationInfoForClient> Dao::getConsultationsByDate(b_date dateSt
 
 
 
-    std::vector<ConsultationInfoForClient> consultations;
+    std::vector<Consultation> consultations;
 
     for (auto consultationDoc : results) {
         Consultation consultation = Consultation(consultationDoc);
         std::cout << consultation << std::endl;
-        auto consultationInfo = ConsultationInfoForClient(
-                consultation.getId().to_string(),
-                consultation.getLecturer(),
-                consultation.getStudent() ,
-                consultation.getConsultationDateStart(),
-                consultation.getConsultationDateEnd(),
-                consultation.getRoom(),
-                consultation.getConsultationType()
-                );
-        consultations.push_back(consultationInfo);
+        consultations.push_back(consultation);
     }
 
     return consultations;
 }
-
-void Dao::reserveConsultation(Consultation cons, std::string username)
-{
-}
-
-
-
 
