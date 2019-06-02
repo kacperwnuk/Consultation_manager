@@ -132,6 +132,3 @@ void TCPThread::changePort(in_port_t newPort) {
     serverSocket.changePort(newPort);
     write(pipefd[1], "a", 1);
 }
-
-
-

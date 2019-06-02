@@ -47,6 +47,8 @@ public:
 
     void receive();
 
+    void disconnect(){connected = false;}
+
 };
 
 

@@ -25,6 +25,9 @@ public:
     ClientLogic(SynchronizedQueue<std::unique_ptr<Request>>&, SynchronizedQueue<std::unique_ptr<Serializable>>&, bool &, int);
 
     void run() override;
+
+    Context getContext(){return context;}
+
 };
 
 

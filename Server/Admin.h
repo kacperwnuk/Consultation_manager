@@ -11,10 +11,15 @@
 
 using namespace std;
 enum Commands {
-    stopCommand,
+    stopCommand = 1,
     restartCommand,
     changePortCommand,
-    sendToCommand
+    sendToCommand,
+    seelogged,
+    seeusers,
+    disconnect,
+    resetPassword,
+    deleteAccount
 };
 
 class Admin {
@@ -23,6 +28,13 @@ class Admin {
     TCPThread* tcpThread;
 
     void initialize();
+    void printLogged();
+    void printUsers();
+    void handleDisconnect();
+    void disconnectAll();
+    void disconnectOne(int);
+    void deleteAcc();
+    void changePass();
 public:
     Admin(TCPThread*);
     int run();

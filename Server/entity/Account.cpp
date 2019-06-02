@@ -82,6 +82,7 @@ Account::Account(std::string email, std::string login, std::string passwordHash,
 document_view_or_value Account::getDocumentFormat() {
     auto builder = bsoncxx::builder::stream::document{};
     bsoncxx::document::value docValue = builder
+            << "_id" << this->id
             << "emailAddress" << this->emailAddress
             << "login" << this->login
             << "passwordHash" << this->passwordHash

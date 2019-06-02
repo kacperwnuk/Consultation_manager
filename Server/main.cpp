@@ -77,12 +77,12 @@ int main(int argc, char *argv[]) {
     Admin admin(&tcpThread);
     int result = admin.run();
 
-    //tcpThread.join();
+    tcpThread.join();
     cout << "Server stopped." << endl;
     if (result == 42) {
-        tcpThread.changePort(9998);
+
         tcpThread.cancel();
-        sleep(10);
+        tcpThread.changePort(9998);
         execve(argv[0], argv, NULL);
     }
     else

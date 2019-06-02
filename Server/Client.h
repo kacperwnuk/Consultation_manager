@@ -46,6 +46,9 @@ public:
 
     bool isConnected();
 
+    ClientLogic getLogic(){return clientLogic;}
+
+    void disconnect(){clientInOutAction.disconnect();connected=false;}
 };
 
 

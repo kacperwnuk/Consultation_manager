@@ -47,6 +47,16 @@ void Dao::deleteDocument(const document_view_or_value &document) {
     coll.delete_one(document);
 }
 
+std::vector<Account> Dao::getAllAccounts() {
+    std::vector<Account> students;
+    auto result = coll.find({});
+    for (auto studentDoc : result) {
+        Account studentAccount = Account(studentDoc);
+        students.push_back(studentAccount);
+    }
+    return students;
+}
+
 std::vector<Account> Dao::getAccountsByStatusAndRole(AccountStatus accountStatus, AccountRole accountRole) {
     std::vector<Account> students;
     auto result = coll.find(s_document{} << "accountStatus" << accountStatus << "accountRole" << accountRole

@@ -48,6 +48,8 @@ public:
 
     void deleteDocument(const document_view_or_value &);
 
+    std::vector<Account> getAllAccounts();
+
     std::vector<Account> getAccountsByStatusAndRole(AccountStatus, AccountRole);
 
     Account getAccountByLogin(std::string login);

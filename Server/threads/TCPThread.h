@@ -39,6 +39,8 @@ public:
 
     void changePort(in_port_t);
 
+    std::vector<Client*> getClients(){return clients;}
+
 };
 
 
