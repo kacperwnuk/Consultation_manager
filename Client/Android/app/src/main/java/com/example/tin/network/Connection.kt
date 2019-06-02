@@ -14,7 +14,7 @@ object Connection : Runnable {
     }
 
     private var serverAddress = "192.168.0.11"
-    private var portNumber = 9999
+    private var portNumber = 9995
     private lateinit var socket: Socket
     private lateinit var outToServer: OutputStreamWriter
     private lateinit var inFromServer: DataInputStream

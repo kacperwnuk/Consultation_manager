@@ -7,13 +7,17 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.tin.R
 import com.example.tin.data.DataService
 import com.example.tin.data.entity.ConsultationInfo
+import com.example.tin.data.entity.enums.ConsultationStatus
 import com.example.tin.recyler_adapters.FreeConsultationsRecyclerAdapter
+import com.example.tin.recyler_adapters.TextRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.*
 import kotlinx.android.synthetic.main.fragment_reserve_consultation.view.*
 import java.util.*
@@ -34,15 +38,37 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
 
     private val handler = Handler()
 
-    override fun updateFreeConsultations(consultations: List<ConsultationInfo>) {
+    override fun onReservationSuccess() {
         handler.post {
-            updateView(
-                FreeConsultationsRecyclerAdapter(
-                    consultations.sortedWith(
-                        compareBy { it.consultationDateStart }
-                    ), this
+            Toast.makeText(context, "Udało się zarezerwować konsultację", Toast.LENGTH_LONG).show()
+            update()
+        }
+    }
+
+    override fun onReservationFailure() {
+        handler.post {
+            Toast.makeText(context, "Nie udało się zarezerwować konsultacji", Toast.LENGTH_LONG).show()
+            update()
+        }
+    }
+
+    override fun updateFreeConsultations(consultations: List<ConsultationInfo>) {
+        if (consultations.any { it.consultationStatus == ConsultationStatus.FREE }) {
+            handler.post {
+                updateView(
+                    FreeConsultationsRecyclerAdapter(
+                        consultations.filter {it.consultationStatus == ConsultationStatus.FREE }.sortedWith(
+                            compareBy { it.consultationDateStart }
+                        ), this
+                    )
                 )
-            )
+            }
+        } else {
+            handler.post {
+                updateView(
+                    TextRecyclerAdapter(context!!.getString(R.string.no_consultations_found_message))
+                )
+            }
         }
     }
 
@@ -95,7 +121,7 @@ class ReserveConsultationFragment : Fragment(), FreeConsultationsRecyclerAdapter
         MyAsyncTask(date).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
-    fun updateView(result: FreeConsultationsRecyclerAdapter) {
+    fun updateView(result: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
         view!!.recyclerView.apply {
             setHasFixedSize(true)
             adapter = result

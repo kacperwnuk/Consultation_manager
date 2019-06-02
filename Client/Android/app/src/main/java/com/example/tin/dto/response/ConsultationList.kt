@@ -5,5 +5,5 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties("type")
 class ConsultationList {
-    var consultations: List<ConsultationInfo> = listOf()
+    var consultations: List<ConsultationInfo>? = listOf()
 }

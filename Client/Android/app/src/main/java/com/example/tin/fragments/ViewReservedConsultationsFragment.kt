@@ -11,12 +11,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.tin.MainActivity
 import com.example.tin.R
 import com.example.tin.data.DataService
 import com.example.tin.data.entity.ConsultationInfo
 import com.example.tin.recyler_adapters.MyBookedConsultationsRecyclerAdapter
-import com.example.tin.recyler_adapters.NoConsultationsRecyclerAdapter
+import com.example.tin.recyler_adapters.TextRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.*
 import kotlinx.android.synthetic.main.fragment_view_reserved_consultations.view.*
 import java.lang.ref.WeakReference
@@ -41,6 +42,24 @@ class ViewReservedConsultationsFragment : Fragment(),
 
     private val handler = Handler()
 
+    init {
+        DataService.setMyConsultationsListener(this)
+    }
+
+    override fun onCancellationSuccess() {
+        handler.post {
+            Toast.makeText(context, "Udało się odwołać konsultację", Toast.LENGTH_LONG).show()
+            update()
+        }
+    }
+
+    override fun onCancellationFailure() {
+        handler.post {
+            Toast.makeText(context, "Nie udało się odwołać konsultacji", Toast.LENGTH_LONG).show()
+            update()
+        }
+    }
+
     override fun cancelConsultation(id: String) {
         (context as ActionListener).cancelConsultation(id)
     }
@@ -51,10 +70,6 @@ class ViewReservedConsultationsFragment : Fragment(),
 
     interface ActionListener {
         fun cancelConsultation(id: String)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -86,7 +101,7 @@ class ViewReservedConsultationsFragment : Fragment(),
             }
         } else {
             handler.post {
-                updateView(NoConsultationsRecyclerAdapter())
+                updateView(TextRecyclerAdapter(context!!.getString(R.string.no_consultations_message)))
             }
         }
     }

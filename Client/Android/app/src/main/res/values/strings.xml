@@ -12,6 +12,7 @@
     <string name="my_consultations_title">Moje konsultacje</string>
     <string name="suggest_consultation_title">Zaproponuj konsultację</string>
     <string name="no_consultations_message">Nie masz żadnych zarezerwowanych konsultacji</string>
+    <string name="no_consultations_found_message">Nie znaleziono żadnych konsultacji w tym terminie</string>
     <string name="add_before_button">Dodaj przed</string>
     <string name="add_after_button">Dodaj po</string>
     <string name="search_consultations_button">Szukaj</string>

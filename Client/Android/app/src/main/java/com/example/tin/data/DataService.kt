@@ -3,19 +3,22 @@ package com.example.tin.data
 import com.example.tin.data.entity.Account
 import com.example.tin.data.entity.ConsultationInfo
 import com.example.tin.dto.request.*
-import com.example.tin.dto.response.ConsultationList
-import com.example.tin.dto.response.LoginResponse
-import com.example.tin.dto.response.NewConsultationResponse
-import com.example.tin.dto.response.RegisterResponse
+import com.example.tin.dto.response.*
 import com.example.tin.network.Connection
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.lang.ref.WeakReference
 
 object DataService : Connection.NetworkEventListener {
 
+    private val connection = Connection
+
+    init {
+        connection.setNetworkEventListener(this)
+    }
+
     interface LoginListener {
         fun onLoginSuccess()
-        fun onLoginFailure()
+        fun onLoginFailure(errorMessage: String)
     }
 
     interface RegisterListener {
@@ -25,10 +28,14 @@ object DataService : Connection.NetworkEventListener {
 
     interface ConsultationsListener {
         fun updateFreeConsultations(consultations: List<ConsultationInfo>)
+        fun onReservationSuccess()
+        fun onReservationFailure()
     }
 
     interface MyConsultationsListener {
         fun updateMyReservedConsultations(consultations: List<ConsultationInfo>)
+        fun onCancellationSuccess()
+        fun onCancellationFailure()
     }
 
     interface SuggestConsultationListener {
@@ -78,6 +85,15 @@ object DataService : Connection.NetworkEventListener {
             "NewConsultationResponse" -> {
                 processSuggestConsultation(message)
             }
+            "ReservationResponse" -> {
+                processReservation(message)
+            }
+            "CancelConsultationResponse" -> {
+                processCancellation(message)
+            }
+            "UsersConsultationsResponse" -> {
+                processUserConsultations(message)
+            }
         }
 
     }
@@ -87,9 +103,12 @@ object DataService : Connection.NetworkEventListener {
             val loginResponse = objectMapper.readValue(message, LoginResponse::class.java)
             try {
                 if (loginResponse.status == 0) {
-                    loginListener!!.get()!!.onLoginSuccess()
+                    if (loginResponse.role == 2)
+                        loginListener!!.get()!!.onLoginSuccess()
+                    else
+                        loginListener!!.get()!!.onLoginFailure("Nie możesz się zalogować jako wykładowca")
                 } else {
-                    loginListener!!.get()!!.onLoginFailure()
+                    loginListener!!.get()!!.onLoginFailure("Hasło jest niepoprawne")
                 }
             } catch (e: NullPointerException) {
 
@@ -116,7 +135,9 @@ object DataService : Connection.NetworkEventListener {
         val consultationsResponse = objectMapper.readValue(message, ConsultationList::class.java)
 
         try {
-            consultationsListener!!.get()!!.updateFreeConsultations(consultationsResponse.consultations)
+            if (consultationsResponse.consultations == null)
+                consultationsResponse.consultations = listOf()
+            consultationsListener!!.get()!!.updateFreeConsultations(consultationsResponse.consultations!!)
         } catch (e: NullPointerException) {
 
         }
@@ -135,12 +156,43 @@ object DataService : Connection.NetworkEventListener {
         }
     }
 
-    private val connection = Connection
+    private fun processReservation(message: String) {
+        val reservationResponse = objectMapper.readValue(message, ReservationResponse::class.java)
+        try {
+            if (reservationResponse.status == 0) {
+                consultationsListener!!.get()!!.onReservationSuccess()
+            } else {
+                consultationsListener!!.get()!!.onReservationFailure()
+            }
+        } catch (e: NullPointerException) {
 
-    init {
-        connection.setNetworkEventListener(this)
+        }
     }
 
+    private fun processCancellation(message: String) {
+        val cancellationResponse = objectMapper.readValue(message, CancelConsultationResponse::class.java)
+        try {
+            if (cancellationResponse.status == 0) {
+                myConsultationsListener!!.get()!!.onCancellationSuccess()
+            } else {
+                myConsultationsListener!!.get()!!.onCancellationFailure()
+            }
+        } catch (e: NullPointerException) {
+
+        }
+    }
+
+    private fun processUserConsultations(message: String) {
+        val consultationsResponse = objectMapper.readValue(message, ConsultationList::class.java)
+
+        try {
+            if (consultationsResponse.consultations == null)
+                consultationsResponse.consultations = listOf()
+            myConsultationsListener!!.get()!!.updateMyReservedConsultations(consultationsResponse.consultations!!)
+        } catch (e: NullPointerException) {
+
+        }
+    }
 
     fun getFreeConsultations(date: Long) {
         connection.sendMessage(objectMapper.writeValueAsString(GetFreeConsultationsForDateRequest(date)))
@@ -149,7 +201,7 @@ object DataService : Connection.NetworkEventListener {
     fun reserveConsultation(id: String, username: String) {
         connection.sendMessage(
             objectMapper.writeValueAsString(
-                ReserveConsultationRequest(
+                ReservationRequest(
                     id,
                     username
                 )
@@ -173,7 +225,13 @@ object DataService : Connection.NetworkEventListener {
     }
 
     fun getReservedConsultations(username: String) {
-
+        connection.sendMessage(
+            objectMapper.writeValueAsString(
+                UsersConsultationsRequest(
+                    username
+                )
+            )
+        )
     }
 
     fun register(account: Account) {

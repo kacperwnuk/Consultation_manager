@@ -1,6 +1,7 @@
 package com.example.tin
 
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -87,12 +88,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.my_consultations -> {
                 viewReservedConsultationsFragment = ViewReservedConsultationsFragment.newInstance()
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, viewReservedConsultationsFragment)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, viewReservedConsultationsFragment)
                     .addToBackStack(null).commit()
                 supportActionBar!!.title = getString(R.string.my_consultations_title)
             }
             R.id.suggest_consultation -> {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, null, ""))
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, null, null, ""))
                     .addToBackStack(null).commit()
                 supportActionBar!!.title = getString(R.string.suggest_consultation_title)
             }
@@ -112,20 +115,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun addBefore(day: String, endTime: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, endTime, day, ""))
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(null, endTime, day, ""))
             .addToBackStack(null).commit()
     }
 
     override fun addAfter(day: String, startTime: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(startTime, null, day,""))
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, SuggestConsultationFragment.newInstance(startTime, null, day, ""))
             .addToBackStack(null).commit()
     }
 
     override fun reserve(id: String) {
-        dataService.reserveConsultation(id, credential!!.id)
-        reserveConsultationFragment.update()
-        Toast.makeText(this, "reserve", Toast.LENGTH_LONG).show()
-
+        ReserveAsyncTask(id, credential!!.id).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
     override fun suggestedConsultation() {
@@ -133,9 +135,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun cancelConsultation(id: String) {
-        dataService.cancelConsultation(id, credential!!.id)
-        viewReservedConsultationsFragment.update()
-        Toast.makeText(this, "cancel", Toast.LENGTH_LONG).show()
+        CancelConsultationTask(id, credential!!.id).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null)
     }
 
     override fun onSearchConsultation(date: Long) {
@@ -143,5 +143,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, reserveConsultationFragment)
             .addToBackStack(null).commit()
         supportActionBar!!.title = getString(R.string.consultation_reservation_title)
+    }
+
+    private class ReserveAsyncTask internal constructor(val id: String, val username: String) :
+        AsyncTask<Void, Void, Unit>() {
+
+        override fun doInBackground(vararg params: Void) {
+            DataService.reserveConsultation(id, username)
+        }
+    }
+
+    private class CancelConsultationTask internal constructor(val id: String, val username: String) :
+        AsyncTask<Void, Void, Unit>() {
+
+        override fun doInBackground(vararg params: Void) {
+            DataService.cancelConsultation(id, username)
+        }
     }
 }

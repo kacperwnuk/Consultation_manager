@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.tin.R
-import com.example.tin.data.DataService
 import com.example.tin.data.entity.ConsultationInfo
 import kotlinx.android.synthetic.main.my_booked_consultation_item.view.*
 import java.text.SimpleDateFormat
@@ -40,6 +39,7 @@ class MyBookedConsultationsRecyclerAdapter(
         holder.itemView.person.text = "${consultation.lecturer.name} ${consultation.lecturer.surname}"
         holder.itemView.day.text = startDate
         holder.itemView.start_time.text = "$startTime - $endTime"
+        holder.itemView.room.text = consultation.room
         holder.itemView.cancellation_button.setOnClickListener { v ->
             actionListener.cancelConsultation(consultation._id)
         }

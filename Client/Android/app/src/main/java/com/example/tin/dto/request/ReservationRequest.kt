@@ -1,8 +1,8 @@
 package com.example.tin.dto.request
 
-class CancelConsultationRequest(
+class ReservationRequest(
     val id: String,
     val login: String,
-    val type: String = "CancelConsultationRequest"
+    val type: String = "ConsultationReservationRequest"
 ) {
 }

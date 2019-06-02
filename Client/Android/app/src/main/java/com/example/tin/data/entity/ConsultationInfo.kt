@@ -1,5 +1,6 @@
 package com.example.tin.data.entity
 
+import com.example.tin.data.entity.enums.ConsultationStatus
 import com.example.tin.data.entity.enums.ConsultationType
 
 class ConsultationInfo {
@@ -11,4 +12,5 @@ class ConsultationInfo {
     var consultationDateEnd: Long = 0
     var room: String = "101"
     var consultationType: ConsultationType = ConsultationType.LECTURER_SUGGESTED
+    var consultationStatus: ConsultationStatus = ConsultationStatus.FREE
 }

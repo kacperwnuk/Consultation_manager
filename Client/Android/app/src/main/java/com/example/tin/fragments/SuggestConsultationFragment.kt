@@ -123,8 +123,8 @@ class SuggestConsultationFragment : Fragment(), DataService.SuggestConsultationL
             startTime = "$startTimeHour:${String.format("%02d", startTimeMinute)}"
             disableView(view.end_time)
         } else {
-            startTime = "13:00"
-            endTime = "14:00"
+            startTime = "12:00"
+            endTime = "12:00"
         }
         if (date != null) {
             view.date.text = SpannableStringBuilder(date)
