@@ -20,7 +20,7 @@ std::unique_ptr<Request> UsersConsultationsRequest::create(Json::Value value) {
 std::unique_ptr<Serializable> UsersConsultationsRequest::execute(Context& context) {
 
     if (!context.isLogged()){
-        std::vector<ConsultationInfoForClient> vector;
+        std::vector<Consultation> vector;
         std::unique_ptr<Serializable> response (new UsersConsultationsResponse(vector));
         return std::move(response);
     }
@@ -30,13 +30,13 @@ std::unique_ptr<Serializable> UsersConsultationsRequest::execute(Context& contex
     Account user = context.getAccount();
     AccountInfoForClient userInfo(user.getName(), user.getSurname(), user.getLogin());
     try{
-        std::vector<ConsultationInfoForClient> consultations = daoCon->getConsultationsByUser(userInfo, user.getAccountRole() == STUDENT);
+        std::vector<Consultation> consultations = daoCon->getConsultationsByUser(userInfo, user.getAccountRole() == STUDENT);
         std::unique_ptr<Serializable> response(new UsersConsultationsResponse(consultations));
         return std::move(response);
     }
     catch (std::exception &e){
         std::cout<<e.what();
-        std::vector<ConsultationInfoForClient> vector;
+        std::vector<Consultation> vector;
         std::unique_ptr<Serializable> response(new UsersConsultationsResponse(vector));
         return std::move(response);
     }

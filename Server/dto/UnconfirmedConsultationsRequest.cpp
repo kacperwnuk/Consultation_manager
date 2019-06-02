@@ -20,7 +20,7 @@ std::unique_ptr<Request> UnconfirmedConsultationsRequest::create(Json::Value val
 std::unique_ptr<Serializable> UnconfirmedConsultationsRequest::execute(Context& context) {
 
     if (!context.isLogged() || context.getAccountRole() != LECTURER){
-        std::unique_ptr<Serializable> response (new UnconfirmedConsultationsResponse(std::vector<ConsultationInfoForClient>()));
+        std::unique_ptr<Serializable> response (new UnconfirmedConsultationsResponse(std::vector<Consultation>()));
         return std::move(response);
     }
 
@@ -33,7 +33,7 @@ std::unique_ptr<Serializable> UnconfirmedConsultationsRequest::execute(Context& 
         return std::move(response);
     } catch (std::exception &e) {
         std::cout << e.what();
-        std::unique_ptr<Serializable> response (new UnconfirmedConsultationsResponse(std::vector<ConsultationInfoForClient>()));
+        std::unique_ptr<Serializable> response (new UnconfirmedConsultationsResponse(std::vector<Consultation>()));
         return std::move(response);
     }
 

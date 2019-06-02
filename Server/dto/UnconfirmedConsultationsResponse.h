@@ -8,12 +8,13 @@
 
 #include "../serialization/Serializable.h"
 #include "../entity/ConsultationInfoForClient.h"
+#include "../entity/Consultation.h"
 
 class UnconfirmedConsultationsResponse : public Serializable {
     private:
-    std::vector<ConsultationInfoForClient> consultations;
+    std::vector<Consultation> consultations;
     public:
-    UnconfirmedConsultationsResponse(std::vector<ConsultationInfoForClient>);
+    UnconfirmedConsultationsResponse(std::vector<Consultation>);
 
     Json::Value getJson() override;
 };

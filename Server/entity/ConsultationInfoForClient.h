@@ -10,6 +10,7 @@
 #include "Account.h"
 #include "enums/ConsultationType.h"
 #include "AccountInfoForClient.h"
+#include "enums/ConsultationStatus.h"
 
 class ConsultationInfoForClient: Serializable {
 

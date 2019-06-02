@@ -25,7 +25,7 @@ std::unique_ptr<Request> DailyConsultationsListRequest::create(Json::Value value
 std::unique_ptr<Serializable> DailyConsultationsListRequest::execute(Context& context) {
 
     if (!context.isLogged()){
-        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<ConsultationInfoForClient>()));
+        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<Consultation>()));
         return std::move(response);
     }
 
@@ -39,7 +39,7 @@ std::unique_ptr<Serializable> DailyConsultationsListRequest::execute(Context& co
         return std::move(response);
     } catch (std::exception &e) {
         std::cout << e.what();
-        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<ConsultationInfoForClient>()));
+        std::unique_ptr<Serializable> response (new DailyConsultationsListResponse(std::vector<Consultation>()));
         return std::move(response);
     }
 
