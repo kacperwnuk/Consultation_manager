@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <poll.h>
+#include <iostream>
 #include "ServerSocket.h"
 
 
@@ -15,6 +16,7 @@ ServerSocket::ServerSocket(in_port_t port) {
 }
 
 ServerSocket::~ServerSocket() {
+    shutdown(serverSocket,SHUT_RDWR);
     close(serverSocket);
 }
 
@@ -79,7 +81,15 @@ bool ServerSocket::initialize() {
 }
 
 void ServerSocket::changePort(in_port_t newPort) {
+    shutdown(serverSocket,SHUT_RDWR);
+    close(serverSocket);
     close(port);
     port = newPort;
     isInitialized = false;
+}
+
+void ServerSocket::shutdownAndClose(){
+    shutdown(serverSocket,SHUT_RDWR);
+    close(serverSocket);
+    close(port);
 }

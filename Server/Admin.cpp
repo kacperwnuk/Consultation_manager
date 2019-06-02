@@ -26,15 +26,18 @@ int Admin::run(){
             case changePortCommand:
                 std::cout<<"changing port"<<std::endl;
                 disconnectAll();
-                //tcpThread->changePort(9998);
-                tcpThread->cancel();
+                int newPort;
+                std::cin>>newPort;
+                tcpThread->changePort(newPort);
                 break;
             case restartCommand:
                 cout << "Restarting server..." << endl;
                 disconnectAll();
+                tcpThread->shutdownPort();
                 tcpThread->cancel();
                 running = false;
                 toRet = 42;
+                sleep(5);
                 break;
             case sendToCommand:
                 break;

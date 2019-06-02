@@ -41,6 +41,8 @@ public:
 
     std::vector<Client*> getClients(){return clients;}
 
+    void shutdownPort();
+
 };
 
 

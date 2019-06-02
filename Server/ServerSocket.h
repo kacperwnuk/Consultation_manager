@@ -39,6 +39,8 @@ public:
     bool initialize();
 
     void changePort(in_port_t);
+
+    void shutdownAndClose();
 };
 
 
