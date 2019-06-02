@@ -39,11 +39,11 @@ std::unique_ptr<Serializable> ReservationRequest::execute(Context& context) {
     try {
         auto oldConsultation = dao->getConsultationById(this->getId());
 
-      /*  if (oldConsultation.getStatus() != FREE) {
+        if (oldConsultation.getStatus() != FREE) {
             std::cout << "konsultacja nie jest wolna:" << oldConsultation.getStatus() <<  std::endl;
             std::unique_ptr<Serializable> response(new ReservationResponse(ERROR));
             return std::move(response);
-        }*/
+        }
 
         auto account = context.getAccount();
 

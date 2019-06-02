@@ -54,7 +54,10 @@ std::unique_ptr<Serializable> CancelConsultationRequest::execute(Context& contex
         AccountInfoForClient undefined;
         ConsultationStatus newStatus;
          if (context.getAccountRole() == STUDENT) {
-             newStatus = FREE;
+             if (oldConsultation.getStatus() == STUDENT_BOOKED)
+                newStatus = FREE;
+             else
+                 newStatus = oldConsultation.getStatus();
          } else{
              newStatus = LECTURER_REJECTED;
              undefined = oldConsultation.getStudent();
