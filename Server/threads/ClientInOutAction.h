@@ -13,6 +13,7 @@
 #include "../ClientMessageBuilder.h"
 #include "../containers/synchronizedcontainers/SynchronizedQueue.h"
 #include "MessageSender.h"
+#include "Encryption.h"
 
 class ClientInOutAction {
 private:
@@ -36,6 +37,8 @@ private:
     size_t bytesWritten;
 
     bool &wantsToWrite;
+
+    Encryption encryption;
 
 
 public:

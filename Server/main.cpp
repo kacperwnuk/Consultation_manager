@@ -61,7 +61,7 @@ in_port_t getPortFromArgument(char *arg) {
 }
 
 int main(int argc, char *argv[]) {
-    in_port_t port = 9999; // default port
+    in_port_t port = 9997; // default port
     if (argc > 1) {
         try {
             port = getPortFromArgument(argv[1]);
