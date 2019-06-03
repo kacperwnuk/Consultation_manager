@@ -14,6 +14,34 @@ public class Serializer {
 
     private ConnectionController connectionController = new ConnectionController();
 
+
+    public Serializer()
+    {
+        ustalKlucz();
+
+    }
+
+    public void ustalKlucz() {
+        try {
+            serializeAndSend(new KeyRequest());
+            KeyResponse response = deserializeKeyResponse();
+            if(response.isValid())
+            {
+                serializeAndSend(new KeyConfirmationRequest());
+                connectionController.setKey(response.getKey());
+                if(deserialize()) {
+                    System.out.println("!!!Poprawnie ustalono klucz!");
+                }
+            }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     public void serializeAndSend(Object ob) throws IOException {
         JSONObject obj = new JSONObject(ob);
         connectionController.send(obj.toString());
@@ -41,6 +69,19 @@ public class Serializer {
             return new LoginResponse(false);
         }
         return new LoginResponse(false);
+    }
+
+    public KeyResponse deserializeKeyResponse() throws Exception {
+        JSONObject obj = new JSONObject(connectionController.receive());
+        try{
+            String key = obj.getString("key");
+            if (key.length() == 32)
+                return new KeyResponse(true, key);
+        }
+        catch(Exception e){
+            return new KeyResponse(false, "");
+        }
+        return new KeyResponse(false, "");
     }
 
     public ConsultationsResponse deserializeConsultations() throws IOException, JSONException {

@@ -15,11 +15,11 @@ void Client::stop() {
 }
 
 void Client::receive() {
-    clientInOutAction.receive();
+    clientInOutAction.receive(clientLogic.getContext().getKey());
 }
 
 void Client::send() {
-    clientInOutAction.send();
+    clientInOutAction.send(clientLogic.getContext().getKey());
 }
 
 bool Client::isConnected() {

@@ -11,15 +11,16 @@ using namespace std;
 class Encryption {
 private:
     AES256 aes;
-    string key = "adamsobieski1234";
-public:
-    const string &getKey() const;
-
-    void setKey(const string &key);
+    //string key = "adamsobieski1234adamsobieski1234";
 
 public:
-    string encrypt(string message);
-    string decrypt(string message);
+    //const string &getKey() const;
+
+    //void setKey(const string &key);
+
+public:
+    string encrypt(string message,string key);
+    string decrypt(string message,string key);
 };
 
 

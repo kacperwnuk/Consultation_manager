@@ -14,6 +14,18 @@ class Context {
 
     bool loggedIn;
     Account account;
+    std::string key = "adamsobieski1234adamsobieski1234";
+    std::string notYetConfirmedKey;
+public:
+    const std::string &getNotYetConfirmedKey() const;
+
+    void setNotYetConfirmedKey(const std::string &notYetConfirmedKey);
+
+public:
+    const std::string &getKey() const;
+
+    void setKey(const std::string &key);
+
 
 public:
     Context();
@@ -27,6 +39,10 @@ public:
     std::string getEmail() const;
     void setAccount(Account);
     Account getAccount() const;
+    void confirmKey() {
+        key = notYetConfirmedKey;
+        notYetConfirmedKey = "";
+    }
 
 };
 

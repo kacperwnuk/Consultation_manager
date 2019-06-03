@@ -142,11 +142,9 @@ string AES256::encryptFinal(unsigned char *text, int text_len, unsigned char *ke
  * @param passphrase Passphrase
  * @return Decrypted string
  */
-string AES256::decrypt(string text, string passphrase)
+string AES256::decrypt(string text, string key)
 {
-    std::cout << "!!!!! Jestem w deszyfratorze, dostalem znakow " << text.length() <<": " << text << std::endl;
     string in = base64_decode(text);
-    std::cout << "Dlugosc base64: " <<in.length() << std::endl;
     string salted = in.substr(0, 8);
 
     if (salted != "Salted__") {
@@ -154,42 +152,12 @@ string AES256::decrypt(string text, string passphrase)
     }
 
     string salt = in.substr(8, 8);
-    string key;
     string iv;
-    std::cout << "********************************************************************" << std::endl;
-    std::cout << "Salt: " <<  std::endl;
-    for(int i=0; i<salt.length(); ++i)
-        std::cout <<  (int)salt[i] << " ";
 
-    int j = 200;
-    do {
-        string dx = "";
-        string salted = "";
-
-        while (salted.length() < 48) {
-            dx = MD5(dx + passphrase + salt).binary();
-            salted += dx;
-        }
-
-        key = salted.substr(0, 32);
-        iv = salted.substr(32, 16);
-    }
-    while ((key.length() != 32 || iv.length() != 16) && j--);
 
     string ct = in.substr(16);
 
-    iv = {0, 36, 14, 99, 118, -45, -79, 113, 117, -17, -66, 47, 99, -51, -11, -36};
-    key = {87, -128, 56, -19, 27, -87, -108, 41, -38, -45, 81, -44, -64, -41, -109, 84, -84, -96, 89, 109, 100, -44, 0, 65, -16, -44, -11, 114, -64, 79, -64, -34};
-    std::cout << "Key: " << std::endl;
-    for(int i=0; i<key.length(); ++i)
-        std::cout <<  (int)key[i] << " ";
-    std::cout << std::endl << "Iv: " << std::endl;
-    for(int i=0; i<iv.length(); ++i)
-        std::cout <<  (int)iv[i] << " ";
-    std::cout << std::endl << "Text: " << std::endl;
-    for(int i=0; i<ct.length(); ++i)
-        std::cout <<  (int)ct[i] << " ";
-    std::cout << std::endl << "************************************************************************" << std::endl;
+    iv = {0, 36, 19, 99, 118, -45, -79, 113, 117, -17, -66, 47, 99, -51, -11, -36};
 
     return decryptFinal((unsigned char *)ct.c_str(), ct.length(),
                         (unsigned char *)key.c_str(), (unsigned char *)iv.c_str());
@@ -206,12 +174,7 @@ string AES256::decrypt(string text, string passphrase)
  */
 string AES256::decryptFinal(unsigned char *ciphertext, int ciphertext_len, unsigned char *key, unsigned char *iv)
 {
-    std::cout << "Key ze sprawdzania DECRYPT: " << std::endl;
-    for(int i=0; i<32; ++i)
-        std::cout <<  (int)key[i] << " ";
-    std::cout << std::endl << "Iv ze sprawdzania DECRYPT: " << std::endl;
-    for(int i=0; i<16; ++i)
-        std::cout <<  (int)iv[i] << " ";
+
     EVP_CIPHER_CTX *ctx;
     unsigned char *plaintexts;
     int len;
@@ -229,7 +192,6 @@ string AES256::decryptFinal(unsigned char *ciphertext, int ciphertext_len, unsig
         handleOpenSSLErrors();
     }
 
-    std::cout << "max " << EVP_MAX_KEY_LENGTH << std::endl;
     EVP_CIPHER_CTX_set_key_length(ctx, 32);
 
     if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len)) {

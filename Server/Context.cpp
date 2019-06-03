@@ -40,3 +40,19 @@ Account Context::getAccount() const{
     return account;
 }
 
+const std::string &Context::getKey() const {
+    return key;
+}
+
+void Context::setKey(const std::string &key) {
+    Context::key = key;
+}
+
+const std::string &Context::getNotYetConfirmedKey() const {
+    return notYetConfirmedKey;
+}
+
+void Context::setNotYetConfirmedKey(const std::string &notYetConfirmedKey) {
+    Context::notYetConfirmedKey = notYetConfirmedKey;
+}
+

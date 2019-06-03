@@ -22,6 +22,10 @@ public class ConnectionController {
         throw new IOException("Nie połączono z serwerem");
     } */
 
+    public ConnectionController(){
+    }
+
+
     public void send(String message) throws IOException {
         if (!connection.isConnected)
             connection.connect();
@@ -52,5 +56,9 @@ public class ConnectionController {
 
     public void disconnect(){
         connection.disconnect();
+    }
+
+    public void setKey(String key) {
+        encryption.setKey(key);
     }
 }

@@ -46,9 +46,9 @@ public:
     explicit ClientInOutAction(int, SynchronizedQueue<std::unique_ptr<Request>> &,
                                SynchronizedQueue<std::unique_ptr<Serializable>> &, bool&, bool &);
 
-    void send();
+    void send(std::string key);
 
-    void receive();
+    void receive(std::string key);
 
     void disconnect(){connected = false;}
 

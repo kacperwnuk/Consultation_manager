@@ -41,40 +41,17 @@ public class Aes256 {
      * @return A base64 encoded string containing the encrypted data.
      * @throws Exception
      */
-    static String encrypt(String text, String password) throws Exception
+    static String encrypt(String text, String password, byte[] keyValue) throws Exception
     {
-        System.out.println("*********************************************************");
-        final byte[] pass = password.getBytes(US_ASCII);
         final byte[] salt = (new SecureRandom()).generateSeed(8);
-        System.out.println(Arrays.toString(salt));
-        //final byte[] salt = {62, 80, 21, -82, -49, 51, -29, -57};
         final byte[] inBytes = text.getBytes(UTF_8);
-        System.out.println("Salt: " + salt);
-        final byte[] passAndSalt = array_concat(pass, salt);
-        byte[] hash = new byte[0];
-        byte[] keyAndIv = new byte[0];
-        for (int i = 0; i < 3 && keyAndIv.length < 48; i++) {
-            final byte[] hashData = array_concat(hash, passAndSalt);
-            final MessageDigest md = MessageDigest.getInstance("MD5");
-            hash = md.digest(hashData);
-            keyAndIv = array_concat(keyAndIv, hash);
-        }
+        final byte[] iv = {0, 36, 19, 99, 118, -45, -79, 113, 117, -17, -66, 47, 99, -51, -11, -36};
 
-        //final byte[] keyValue = Arrays.copyOfRange(keyAndIv, 0, 32);
-        //final byte[] iv = Arrays.copyOfRange(keyAndIv, 32, 48);
-        final byte[] iv = {0, 36, 14, 99, 118, -45, -79, 113, 117, -17, -66, 47, 99, -51, -11, -36};
-        final byte[] keyValue = {87, -128, 56, -19, 27, -87, -108, 41, -38, -45, 81, -44, -64, -41, -109, 84, -84, -96, 89, 109, 100, -44, 0, 65, -16, -44, -11, 114, -64, 79, -64, -34};
-        System.out.println("Key: " + Arrays.toString(keyValue) + " " + keyValue.length);
-        System.out.println("IV: " + Arrays.toString(iv));
         final SecretKeySpec key = new SecretKeySpec(keyValue, "AES");
-
         final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
         byte[] data = cipher.doFinal(inBytes);
         data = array_concat(array_concat(SALTED_MAGIC, salt), data);
-        System.out.println("Text: " + Arrays.toString(data));
-
-        System.out.println("**********************************************************");
         return Base64.getEncoder().encodeToString(data);
     }
 
@@ -87,26 +64,15 @@ public class Aes256 {
      */
     static String decrypt(String encrypted, String password) throws Exception
     {
-        System.out.println("Jestem w dekrypcie");
         final byte[] pass = password.getBytes(US_ASCII);
-
         final byte[] inBytes = Base64.getDecoder().decode(encrypted);
-        System.out.println("przed rozkodowaniem: " + inBytes.length);
-
-/*
-        String zaszyfrowanyTekst = inBytes.toString().substring(16);
-        System.out.println("Text: " + Arrays.toString(zaszyfrowanyTekst.getBytes()));
-*/
-
         final byte[] shouldBeMagic = Arrays.copyOfRange(inBytes, 0, SALTED_MAGIC.length);
         if (!Arrays.equals(shouldBeMagic, SALTED_MAGIC)) {
             throw new IllegalArgumentException("Initial bytes from input do not match OpenSSL SALTED_MAGIC salt value.");
         }
-
         final byte[] salt = Arrays.copyOfRange(inBytes, SALTED_MAGIC.length, SALTED_MAGIC.length + 8);
         final byte[] text = Arrays.copyOfRange(inBytes, 16, inBytes.length);
         final byte[] passAndSalt = array_concat(pass, salt);
-
         byte[] hash = new byte[0];
         byte[] keyAndIv = new byte[0];
         for (int i = 0; i < 3 && keyAndIv.length < 48; i++) {
@@ -115,20 +81,13 @@ public class Aes256 {
             hash = md.digest(hashData);
             keyAndIv = array_concat(keyAndIv, hash);
         }
-
         //final byte[] keyValue = Arrays.copyOfRange(keyAndIv, 0, 32);
         final byte[] keyValue = {87, -128, 56, -19, 27, -87, -108, 41, -38, -45, 81, -44, -64, -41, -109, 84, -84, -96, 89, 109, 100, -44, 0, 65, -16, -44, -11, 114, -64, 79, -64, -34};
         final byte[] iv = {0, 36, 14, 99, 118, -45, -79, 113, 117, -17, -66, 47, 99, -51, -11, -36};
         final SecretKeySpec key = new SecretKeySpec(keyValue, "AES");
 
-//        final byte[] iv = Arrays.copyOfRange(keyAndIv, 32, 48);
-
         final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-
-        System.out.println("Key: " + Arrays.toString(keyValue) + " " + keyValue.length);
-        System.out.println("IV: " + Arrays.toString(iv));
-        System.out.println("Text: " + Arrays.toString(text));
 
         final byte[] clear = cipher.doFinal(text);
         return new String(clear, UTF_8);
@@ -149,12 +108,6 @@ public class Aes256 {
      */
     public static void main(String[] args) throws Exception
     {
-      //String message = "{\"type\":\"LoginRequest\",\"login\":\"testuser\",\"passwordHash\":\"haslo123\"}";
-       //String encrypted = encrypt(message, "adamsobieski1234");
-       // System.out.println(encrypted);
-        //String decrypted = decrypt(encrypted, "adamsobieski1234");
-        //System.out.println(decrypted);
-
         String code = "U2FsdGVkX1/FsDf3EqgL0kdacU0+LTyLNZTbkO99KlieL56b1UQSMG6dVWaAyz+UFj0R/8pS6jdGPzCmjr1lug==";
         String odszyfr = decrypt(code, "adamsobieski1234");
         System.out.println(odszyfr);
